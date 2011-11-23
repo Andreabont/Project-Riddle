@@ -67,7 +67,7 @@ header_arp parseArp(std::string start)
 	temp.reserve(6);
 	temp = "0x";
 	
-	for(i=29;i<=32;i++)	// Hardware Type
+	for(i=28;i<=31;i++)	// Hardware Type
 	{
 		temp += start[i];
 	}
@@ -78,7 +78,7 @@ header_arp parseArp(std::string start)
 	
 	temp = "0x";
 	
-	for(i=33;i<=36;i++)	// Protocol Type
+	for(i=32;i<=35;i++)	// Protocol Type
 	{
 		temp += start[i];	
 	}
@@ -89,7 +89,7 @@ header_arp parseArp(std::string start)
 	
 	temp = "0x";
 	
-	for(i=41;i<=44;i++)	// Opcode
+	for(i=40;i<=43;i++)	// Opcode
 	{
 		temp += start[i];
 	}
