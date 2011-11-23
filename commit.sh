@@ -1,5 +1,6 @@
 #!/bin/bash
 git add .
-git commit -m 'Update `date +%d/%m/%Y\ %H:%M`'
+data_corrente = `date +%d/%m/%Y\ %H:%M`
+git commit -m 'Update $data_corrente'
 git push -u origin master
 
