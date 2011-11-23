@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 		getline(cin,line);
 		if(cin.eof()) break;
 		etherhead = parseEthernet(line,line.length());
-		cout<<"---- Packet ("<<dec<<line.length()<<" byte)"<<endl;
+		cout<<"---- Packet ("<<line.length()<<" byte)"<<endl;
 		cout<<"EtherAddr | "<<etherhead.mac_src<<" --> "<<etherhead.mac_dst<<endl;
 		cout<<"EtherType | 0x"<<hex<<etherhead.ether_type<<" ("<<ether_type_decode(etherhead.ether_type)<<")"<<endl;
 		cout<<endl;

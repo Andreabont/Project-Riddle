@@ -27,6 +27,6 @@ struct header_ethernet
 };
 
 header_ethernet parseEthernet(std::string start, int len);
-std::string ether_type_decode(int start);
+std::string ether_type_decode(std::int start);
 
 #endif //LIBCIGARETTE_H
