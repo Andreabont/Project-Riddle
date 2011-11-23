@@ -6,6 +6,7 @@ libpcap
 Riddle:
 
 Sniffer raw. Restituisce pacchetti ricevuti in hex su standard output. (Uno per linea)
+NB: E' la sola parte da eseguire con permessi di root!!
 
 --dump		Scrive in formato umanamente comprensibile (piu' o meno)
 --limit	<x>	Impone massimo numero di pacchetti ricevibili.
