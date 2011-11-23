@@ -14,6 +14,7 @@
 
 #include <string>
 
+#define ETHER_V2_CODE		0x0600
 #define ETHER_TYPE_IPV4		0x0800
 #define ETHER_TYPE_IPV6		0x86DD
 #define ETHER_TYPE_ARP		0x0806
