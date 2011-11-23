@@ -141,6 +141,8 @@ std::string ether_type_decode(int start)
 			return "ARP";
 			case (ETHER_TYPE_IPV6):
 			return "IPv6";
+			case (ETHER_TYPE_PPP):
+			return "PPP";
 			case (ETHER_TYPE_IEEE802):
 			return "IEEE 802.1Q";
 			default:
