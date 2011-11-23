@@ -39,13 +39,14 @@ int main(int argc, char **argv) {
 	}
 
 	header_ethernet etherhead;
+	header_arp arphead;
 
 	while(1)
 	{
 		string line;
 		getline(cin,line);
 		if(cin.eof()) break;
-		etherhead = parseEthernet(line,line.length());
+		etherhead = parseEthernet(line);
 		
 		int flag = 0;
 		
@@ -61,7 +62,15 @@ int main(int argc, char **argv) {
 			cout<<"---- Packet ("<<dec<<line.length()<<" byte)"<<endl;
 			cout<<"EtherAddr | "<<etherhead.mac_src<<" --> "<<etherhead.mac_dst<<endl;
 			cout<<"EtherType | 0x"<<hex<<etherhead.ether_type<<" ("<<ether_type_decode(etherhead.ether_type)<<")"<<endl;
+			
+			if(etherhead.ether_type == ETHER_TYPE_ARP)
+			{
+				arphead = parseArp(line);
+				cout<<"ARP       | "<<arphead.mac_src<<" ("<<arphead.ip_src<<") --> "<<arphead.mac_dst<<" ("<<arphead.ip_dst<<")"<<endl;
+			}
+			
 			cout<<endl;
+			
 		}
 	}
 

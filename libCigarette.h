@@ -26,7 +26,19 @@ struct header_ethernet
 	int ether_type;
 };
 
-header_ethernet parseEthernet(std::string start, int len);
+struct header_arp
+{
+	int hardware_type;
+	int protocol_type;
+	int opcode;
+	std::string mac_dst;
+	std::string mac_src;
+	std::string ip_dst;
+	std::string ip_src;
+};
+
+header_ethernet parseEthernet(std::string start);
+header_arp parseArp(std::string start);
 std::string ether_type_decode(int start);
 
 #endif //LIBCIGARETTE_H

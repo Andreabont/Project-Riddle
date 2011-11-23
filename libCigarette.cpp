@@ -18,7 +18,7 @@
 #include <ios>
 #include "libCigarette.h"
 
-header_ethernet parseEthernet(std::string start, int len)
+header_ethernet parseEthernet(std::string start)
 {
 	header_ethernet etherhead;
 
@@ -53,6 +53,78 @@ header_ethernet parseEthernet(std::string start, int len)
 	convert>> std::hex >> etherhead.ether_type;
 
 	return etherhead;
+}
+
+header_arp parseArp(std::string start)
+{
+	header_arp arphead;
+	
+	int i;
+	std::string temp;
+	
+	arphead.mac_dst.reserve(17);
+	arphead.mac_src.reserve(17);
+	temp.reserve(6);
+	temp = "0x";
+	
+	for(i=29;i<=32;i++)	// Hardware Type
+	{
+		temp += start[i];
+	}
+	
+	std::stringstream convert ( temp );
+	
+	convert>> std::hex >> arphead.hardware_type;
+	
+	temp = "0x";
+	
+	for(i=33;i<=36;i++)	// Protocol Type
+	{
+		temp += start[i];	
+	}
+	
+	std::stringstream convert1 ( temp );
+	
+	convert1>> std::hex >> arphead.protocol_type;
+	
+	temp = "0x";
+	
+	for(i=41;i<=44;i++)	// Opcode
+	{
+		temp += start[i];
+	}
+	
+	std::stringstream convert2 ( temp );
+	
+	convert2>> std::hex >> arphead.opcode;
+	
+	temp = "0x";
+	
+	for(i=44;i<=55;i++)	// Sender MAC
+	{
+		arphead.mac_src += start[i];
+		if(i%2 != 0 && i != 55) arphead.mac_src += ':';
+	}
+	
+	for(i=56;i<=63;i++)	// Sender IP
+	{
+		arphead.ip_src += start[i];
+		if(i%2 != 0 && i != 63) arphead.ip_src += '.';
+	}
+	
+	for(i=64;i<=75;i++)	// Target MAC
+	{
+		arphead.mac_dst += start[i];
+		if(i%2 != 0 && i != 75) arphead.mac_dst += ':';
+	}
+	
+	for(i=76;i<=83;i++)	// Target IP
+	{
+		arphead.ip_dst += start[i];
+		if(i%2 != 0 && i != 83) arphead.ip_dst += '.';
+	}
+	
+	return arphead;
 }
 
 std::string ether_type_decode(int start)
