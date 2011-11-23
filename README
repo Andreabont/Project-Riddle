@@ -1,0 +1,21 @@
+Dipendenze:
+
+libboost
+libpcap
+
+Riddle:
+
+Sniffer raw. Restituisce pacchetti ricevuti in hex su standard output. (Uno per linea)
+
+--dump		Scrive in formato umanamente comprensibile (più o meno)
+--limit	<x>	Impone massimo numero di pacchetti ricevibili.
+--iface <x>	Impone sniffing su una interfaccia specifica (se non presente usa standard)
+--help		Ovvio.
+
+Hendrix:
+
+Legge output di Riddle e ricostruisce eventuali flussi. (TODO)
+
+Cigarette:
+
+Legge output di Riddle e restituisce a video informazioni in tempo reale sui pacchetti ricevuti.
