@@ -129,15 +129,23 @@ header_arp parseArp(std::string start)
 
 std::string ether_type_decode(int start)
 {	
-	//TODO maggiore o uguale di 1536(0x0600) per Ethernet v2, minore per versione IEEE 802.3
+	// Maggiore o uguale di 1536(0x0600) per Ethernet v2, minore per versione IEEE 802.3
 	
 	if(start >= ETHER_V2_CODE)
 	{
-		if (start == ETHER_TYPE_IPV4) return "IPv4 Packet";
-		else if (start == ETHER_TYPE_IPV6) return "IPv6 Packet";
-		else if (start == ETHER_TYPE_ARP) return "ARP Packet";
-		else if (start == ETHER_TYPE_IEEE802) return "IEEE 802.1Q Frame";
-		else return "undefined";
+		switch(start)
+		{
+			case (ETHER_TYPE_IPV4):
+			return "IPv4";
+			case (ETHER_TYPE_ARP):
+			return "ARP";
+			case (ETHER_TYPE_IPV6):
+			return "IPv6";
+			case (ETHER_TYPE_IEEE802):
+			return "IEEE 802.1Q";
+			default:
+			return "UNDEFINED";
+		}
 	}
-	else return "Old Ethernet";
+	else return "Ethernet IEEE 802.3";
 }
