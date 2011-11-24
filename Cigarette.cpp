@@ -23,10 +23,7 @@ int main(int argc, char **argv) {
 	options_description desc("Cigarette - Network Packet Parser");
 	desc.add_options()
 		("help", "prints this")
-		("dump", "enable dump mode")
-		("ipv4", "show only IPv4 Packets")
-		("ipv6", "show only IPv6 Packets")
-		("arp", "show only ARP Packets")
+		("dump", "enable dump mode") // TODO
 	;
 
 	variables_map vm;
@@ -39,29 +36,28 @@ int main(int argc, char **argv) {
 	    return 1;
 	}
 
-	header_ethernet etherhead;
-	
-	void (*dumper)(std::string);
-	if(vm.count("dump")) dumper=decDump; else dumper=rawDump;
-
 	while(1)
 	{
 		string line;
 		getline(cin,line);
 		if(cin.eof()) break;
+		
+		header_ethernet etherhead;
+		
 		etherhead = parseEthernet(line);
+		std::cout<<"---- Packet ("<<std::dec<<line.length()<<" byte)"<<std::endl;
+		std::cout<<"EtherAddr | "<<etherhead.mac_src<<" --> "<<etherhead.mac_dst<<std::endl;
+		std::cout<<"EtherType | 0x"<<std::hex<<etherhead.ether_type<<" ("<<ether_type_decode(etherhead.ether_type)<<")"<<std::endl;
 		
-		int flag = 0;
-		
-		// TODO Da ottimizzare, magari sotto un unico parametro.
-		if(vm.count("arp") || vm.count("ipv4") || vm.count("ipv6"))
+		if(etherhead.ether_type == ETHER_TYPE_ARP)
 		{
-			if(vm.count("arp") && etherhead.ether_type == ETHER_TYPE_ARP) flag = 1;
-			if(vm.count("ipv4") && etherhead.ether_type == ETHER_TYPE_IPV4) flag = 1;
-			if(vm.count("ipv6") && etherhead.ether_type == ETHER_TYPE_IPV6) flag = 1;
-		} else flag = 1;
+			header_arp arphead;
+			arphead = parseArp(line);
+			std::cout<<"ARP       | "<<arphead.mac_src<<" ("<<arphead.ip_src<<") --> "<<arphead.mac_dst<<" ("<<arphead.ip_dst<<")"<<std::endl;
+		}
 		
-		if(flag) dumper(line);
+		std::cout<<std::endl;
+		
 	}
 
 	return EXIT_SUCCESS;

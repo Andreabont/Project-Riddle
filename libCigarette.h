@@ -42,7 +42,5 @@ struct header_arp
 header_ethernet parseEthernet(std::string start);
 header_arp parseArp(std::string start);
 std::string ether_type_decode(int start);
-void decDump(std::string);
-void rawDump(std::string);
 
 #endif //LIBCIGARETTE_H
