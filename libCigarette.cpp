@@ -151,3 +151,30 @@ std::string ether_type_decode(int start)
 	}
 	else return "Ethernet IEEE 802.3";
 }
+
+void decDump(std::string line)
+{
+	header_ethernet etherhead;
+	header_arp arphead;
+	
+	etherhead = parseEthernet(line);
+	std::cout<<"---- Packet ("<<std::dec<<line.length()<<" byte)"<<std::endl;
+	std::cout<<"EtherAddr | "<<etherhead.mac_src<<" --> "<<etherhead.mac_dst<<std::endl;
+	std::cout<<"EtherType | 0x"<<std::hex<<etherhead.ether_type<<" ("<<ether_type_decode(etherhead.ether_type)<<")"<<std::endl;
+	
+	if(etherhead.ether_type == ETHER_TYPE_ARP)
+	{
+		arphead = parseArp(line);
+		std::cout<<"ARP       | "<<arphead.mac_src<<" ("<<arphead.ip_src<<") --> "<<arphead.mac_dst<<" ("<<arphead.ip_dst<<")"<<std::endl;
+	}
+	
+	std::cout<<std::endl;
+	
+	return;
+}
+
+void rawDump(std::string line)
+{
+	std::cout<<line<<std::endl;
+	return;
+}

@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
 		("dump", "enable dump mode")
 		("iface", value<string>(), "interface to sniff from")
 		("limit", value<int>(), "set max number of packet")
+		("filter", value<string>(), "use to filter packet")
 	;
 
 	variables_map vm;
@@ -53,8 +54,6 @@ int main(int argc, char **argv) {
 		else pcap_fatal("pcap_lookupdev", error_buffer);
 	}
 
-	cerr<<"Sniffing on device "<<pcap_device<<endl;
-
 	pcap_t *pcap_handle;
 
 	// Apre il device in mod promiscua
@@ -62,7 +61,29 @@ int main(int argc, char **argv) {
 	if(pcap_handle == NULL){
 		pcap_fatal("pcap_open_live", error_buffer);
 	}
-
+	
+	cerr<<"Sniffing on device "<<pcap_device<<endl;
+	
+	if(vm.count("filter"))
+	{
+		string filter = vm["filter"].as<string>();
+		struct bpf_program fp;
+		bpf_u_int32 net;
+		
+		cerr<<"Filtering with '"<<filter<<"'"<<endl;
+		
+		if (pcap_compile(pcap_handle, &fp, filter.c_str(), 0, net) == -1) 
+		{
+			cerr<< "Couldn't parse filter "<<filter<<": "<<pcap_geterr(pcap_handle)<<endl;
+			return(2);
+		}
+		
+		if (pcap_setfilter(pcap_handle, &fp) == -1) {
+			cerr<< "Couldn't install filter "<<filter<<": "<<pcap_geterr(pcap_handle)<<endl;
+			return(2);
+		}
+	}
+		
 	int maxpacket = numeric_limits<int>::max();
 
 	if(vm.count("limit"))

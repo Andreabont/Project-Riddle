@@ -40,7 +40,9 @@ int main(int argc, char **argv) {
 	}
 
 	header_ethernet etherhead;
-	header_arp arphead;
+	
+	void (*dumper)(std::string);
+	if(vm.count("dump")) dumper=decDump; else dumper=rawDump;
 
 	while(1)
 	{
@@ -51,6 +53,7 @@ int main(int argc, char **argv) {
 		
 		int flag = 0;
 		
+		// TODO Da ottimizzare, magari sotto un unico parametro.
 		if(vm.count("arp") || vm.count("ipv4") || vm.count("ipv6"))
 		{
 			if(vm.count("arp") && etherhead.ether_type == ETHER_TYPE_ARP) flag = 1;
@@ -58,28 +61,7 @@ int main(int argc, char **argv) {
 			if(vm.count("ipv6") && etherhead.ether_type == ETHER_TYPE_IPV6) flag = 1;
 		} else flag = 1;
 		
-		if(flag)
-		{
-			if(vm.count("dump"))
-			{
-				cout<<"---- Packet ("<<dec<<line.length()<<" byte)"<<endl;
-				cout<<"EtherAddr | "<<etherhead.mac_src<<" --> "<<etherhead.mac_dst<<endl;
-				cout<<"EtherType | 0x"<<hex<<etherhead.ether_type<<" ("<<ether_type_decode(etherhead.ether_type)<<")"<<endl;
-				
-				if(etherhead.ether_type == ETHER_TYPE_ARP)
-				{
-					arphead = parseArp(line);
-					cout<<"ARP       | "<<arphead.mac_src<<" ("<<arphead.ip_src<<") --> "<<arphead.mac_dst<<" ("<<arphead.ip_dst<<")"<<endl;
-				}
-			}
-			else
-			{
-				cout<<line;
-			}
-			
-			cout<<endl;
-			
-		}
+		if(flag) dumper(line);
 	}
 
 	return EXIT_SUCCESS;
