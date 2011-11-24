@@ -12,7 +12,7 @@ NB: E' la sola parte da eseguire con permessi di root!!
 --limit	<x>	Impone massimo numero di pacchetti ricevibili.
 --iface <x>	Impone sniffing su una interfaccia specifica (se non presente usa standard)
 --help		Ovvio.
-
+--filter	Visualizza solo pacchetti voluti (non filtra a livello applicativo)
 Hendrix:
 
 Legge output di Riddle e ricostruisce eventuali flussi. (TODO)
