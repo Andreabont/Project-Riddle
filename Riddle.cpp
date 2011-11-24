@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 		("dump", "enable dump mode")
 		("iface", value<string>(), "interface to sniff from")
 		("limit", value<int>(), "set max number of packet")
-		("filter", value<string>(), "use to filter packet")
+		("filter", value<string>(), "use to filter packet with bpf")
 	;
 
 	variables_map vm;
