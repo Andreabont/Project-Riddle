@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 
 	pcap_t *pcap_handle;
 
-	// Apre il device in modalità promiscua
+	// Apre il device in mod promiscua
 	pcap_handle = pcap_open_live(pcap_device.c_str(), 4096, 1, 0, error_buffer);
 	if(pcap_handle == NULL){
 		pcap_fatal("pcap_open_live", error_buffer);

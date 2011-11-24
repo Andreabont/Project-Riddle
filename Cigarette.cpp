@@ -23,6 +23,7 @@ int main(int argc, char **argv) {
 	options_description desc("Cigarette - Network Packet Parser");
 	desc.add_options()
 		("help", "prints this")
+		("dump", "enable dump mode")
 		("ipv4", "show only IPv4 Packets")
 		("ipv6", "show only IPv6 Packets")
 		("arp", "show only ARP Packets")
@@ -59,14 +60,21 @@ int main(int argc, char **argv) {
 		
 		if(flag)
 		{
-			cout<<"---- Packet ("<<dec<<line.length()<<" byte)"<<endl;
-			cout<<"EtherAddr | "<<etherhead.mac_src<<" --> "<<etherhead.mac_dst<<endl;
-			cout<<"EtherType | 0x"<<hex<<etherhead.ether_type<<" ("<<ether_type_decode(etherhead.ether_type)<<")"<<endl;
-			
-			if(etherhead.ether_type == ETHER_TYPE_ARP)
+			if(vm.count("dump"))
 			{
-				arphead = parseArp(line);
-				cout<<"ARP       | "<<arphead.mac_src<<" ("<<arphead.ip_src<<") --> "<<arphead.mac_dst<<" ("<<arphead.ip_dst<<")"<<endl;
+				cout<<"---- Packet ("<<dec<<line.length()<<" byte)"<<endl;
+				cout<<"EtherAddr | "<<etherhead.mac_src<<" --> "<<etherhead.mac_dst<<endl;
+				cout<<"EtherType | 0x"<<hex<<etherhead.ether_type<<" ("<<ether_type_decode(etherhead.ether_type)<<")"<<endl;
+				
+				if(etherhead.ether_type == ETHER_TYPE_ARP)
+				{
+					arphead = parseArp(line);
+					cout<<"ARP       | "<<arphead.mac_src<<" ("<<arphead.ip_src<<") --> "<<arphead.mac_dst<<" ("<<arphead.ip_dst<<")"<<endl;
+				}
+			}
+			else
+			{
+				cout<<line;
 			}
 			
 			cout<<endl;
