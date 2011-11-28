@@ -69,7 +69,7 @@ std::string print_ipv4_address(ipv4_address ip)
 
 	for(i=0;i<=3;i++)
 	{
-		temp<<ip.byte[i];
+		temp<<std::dec<<ip.byte[i];
 		stamp += temp.str();
 		temp.str("");
 		if(i != 3) stamp += '.';;
@@ -115,7 +115,7 @@ ipv4_address extract_ipv4_address(std::string packet, int start)
 		if(i%2 != 0)
 		{
 			std::stringstream convert(temp);
-			convert>>std::dec>>ip.byte[l];
+			convert>>std::hex>>ip.byte[l];
 			l++;
 			temp = "";
 		}

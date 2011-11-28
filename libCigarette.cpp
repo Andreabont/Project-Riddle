@@ -93,7 +93,7 @@ header_arp parseArp(std::string start)
 
 	arphead.ip_src = extract_ipv4_address(start, 56);
 
-	arphead.ip_dst = extract_ipv4_address(start, 78);
+	arphead.ip_dst = extract_ipv4_address(start, 76);
 
 	return arphead;
 }
