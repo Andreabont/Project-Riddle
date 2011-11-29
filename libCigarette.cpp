@@ -89,7 +89,8 @@ header_arp parseArp(std::string start)
 
 	arphead.mac_src = extract_mac_address(start, 44);
 
-	arphead.mac_dst = extract_mac_address(start, 64);
+	// Per ora e' inutile.
+	// arphead.mac_dst = extract_mac_address(start, 64);
 
 	arphead.ip_src = extract_ipv4_address(start, 56);
 
