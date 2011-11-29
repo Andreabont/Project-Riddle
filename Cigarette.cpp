@@ -67,7 +67,7 @@ int main(int argc, char **argv) {
 			else
 			{
 				// Reply
-				cout<<"ARP   | "<<print_ipv4_address(arp.ip_src)<<"is at ";
+				cout<<"ARP   | "<<print_ipv4_address(arp.ip_src)<<" is at ";
 				cout<<print_mac_address(arp.mac_src)<<endl;
 			}
 			break;
