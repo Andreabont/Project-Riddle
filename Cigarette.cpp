@@ -47,19 +47,34 @@ int main(int argc, char **argv) {
 
 		etherhead = parseEthernet(line);
 		std::cout<<"---- Packet ("<<std::dec<<line.length()<<" byte)"<<std::endl;
-		std::cout<<"EtherAddr | "<<print_mac_address(etherhead.mac_src);
+		std::cout<<"Ether | "<<print_mac_address(etherhead.mac_src);
 		std::cout<<" --> "<<print_mac_address(etherhead.mac_dst)<<std::endl;
-		std::cout<<"EtherType | 0x"<<std::hex<<etherhead.ether_type;
+		std::cout<<"Ether | Type: 0x"<<std::hex<<etherhead.ether_type<<" ";
 		std::cout<<"("<<ether_type_decode(etherhead.ether_type)<<")"<<std::endl;
 
-		if(etherhead.ether_type == ETHER_TYPE_ARP)
+		switch(etherhead.ether_type)
 		{
-			header_arp arphead;
-			arphead = parseArp(line);
-			std::cout<<"ARP       | "<<print_mac_address(arphead.mac_src);
-			std::cout<<" ("<<print_ipv4_address(arphead.ip_src);
-			std::cout<<") --> "<<print_mac_address(arphead.mac_dst);
-			std::cout<<" ("<<print_ipv4_address(arphead.ip_dst)<<")"<<std::endl;
+			case ETHER_TYPE_ARP:
+			header_arp arp;
+			arp = parseArp(line);
+			if(arp.opcode == 1)
+			{
+				// Request
+				cout<<"ARP   | Who has "<<print_ipv4_address(arp.ip_dst)<<"? ";
+				cout<<"Tell "<<print_mac_address(arp.mac_src)<<" ";
+				cout<<"("<<print_ipv4_address(arp.ip_src)<<")"<<endl;
+			}
+			else
+			{
+				// Reply
+			}
+			break;
+			case ETHER_TYPE_IPV4:
+			break;
+			case ETHER_TYPE_IPV6:
+			break;
+			default:
+			break;
 		}
 
 		std::cout<<std::endl;
