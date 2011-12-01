@@ -40,22 +40,26 @@ static void memPrint(const unsigned char *start, char len, int index)
 	printf("\n");
 }
 
-void hexDump(const unsigned char *start, int len)
+void hexDump(const unsigned char *start, struct pcap_pkthdr header)
 {
-	std::cout<<std::endl<<"Received "<<len<<" byte:"<<std::endl;
+	std::cout<<std::endl<<"[TS: "<<header.ts.tv_sec;
+	std::cout<<" uS: "<<header.ts.tv_usec;
+	std::cout<<"] Received "<<header.len<<" byte:"<<std::endl;
 	int index=0;
-	while(len>16)
+	while(header.len>16)
 	{
 		memPrint(start,16,index);
-		len-=16;
+		header.len-=16;
 		start+=16;
 		index+=16;
 	}
-	if(len>0) memPrint(start,len,index);
+	if(header.len>0) memPrint(start,header.len,index);
 }
 
-void rawDump(const unsigned char *start, int len)
+void rawDump(const unsigned char *start, struct pcap_pkthdr header)
 {
-	for(int i=0;i<len;i++) printf("%02x",start[i]);
+	printf("%d!",header.ts.tv_sec);
+	printf("%d!",header.ts.tv_usec);
+	for(int i=0;i<header.len;i++) printf("%02x",start[i]);
 	printf("\n");
 }

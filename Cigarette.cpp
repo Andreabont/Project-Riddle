@@ -14,6 +14,8 @@
 #include <cstdlib>
 #include <string>
 #include <boost/program_options.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include "libCigarette.h"
 #include "libExtract.h"
 
@@ -39,14 +41,18 @@ int main(int argc, char **argv) {
 
 	while(1)
 	{
-		string line;
-		getline(cin,line);
+		string packet;
+		getline(cin,packet);
 		if(cin.eof()) break;
+
+		std::vector< std::string > line;
+		boost::algorithm::split(line, packet, boost::algorithm::is_any_of("!"));
 
 		header_ethernet etherhead;
 
-		etherhead = parseEthernet(line);
-		std::cout<<"---- Packet ("<<std::dec<<line.length()<<" byte)"<<std::endl;
+		etherhead = parseEthernet(line[2]);
+		std::cout<<"---- ["<<line[0]<<" "<<line[1]; 
+		std::cout<<"] Packet ("<<std::dec<<line[2].length()<<" byte)"<<std::endl;
 		std::cout<<"Ether | "<<print_mac_address(etherhead.mac_src);
 		std::cout<<" --> "<<print_mac_address(etherhead.mac_dst)<<std::endl;
 		std::cout<<"Ether | Type: 0x"<<std::hex<<etherhead.ether_type<<" ";
@@ -56,7 +62,7 @@ int main(int argc, char **argv) {
 		{
 			case ETHER_TYPE_ARP:
 			header_arp arp;
-			arp = parseArp(line);
+			arp = parseArp(line[2]);
 			if(arp.opcode == 1)
 			{
 				// Request

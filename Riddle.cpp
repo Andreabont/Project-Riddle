@@ -61,29 +61,29 @@ int main(int argc, char **argv) {
 	if(pcap_handle == NULL){
 		pcap_fatal("pcap_open_live", error_buffer);
 	}
-	
+
 	cerr<<"Sniffing on device "<<pcap_device<<endl;
-	
+
 	if(vm.count("filter"))
 	{
 		string filter = vm["filter"].as<string>();
 		struct bpf_program fp;
 		bpf_u_int32 net;
-		
+
 		cerr<<"Filtering with '"<<filter<<"'"<<endl;
-		
-		if (pcap_compile(pcap_handle, &fp, filter.c_str(), 0, net) == -1) 
+
+		if (pcap_compile(pcap_handle, &fp, filter.c_str(), 0, net) == -1)
 		{
 			cerr<< "Couldn't parse filter '"<<filter<<"': "<<pcap_geterr(pcap_handle)<<endl;
 			return(2);
 		}
-		
+
 		if (pcap_setfilter(pcap_handle, &fp) == -1) {
 			cerr<< "Couldn't install filter '"<<filter<<"': "<<pcap_geterr(pcap_handle)<<endl;
 			return(2);
 		}
 	}
-		
+
 	int maxpacket = numeric_limits<int>::max();
 
 	if(vm.count("limit"))
@@ -91,7 +91,7 @@ int main(int argc, char **argv) {
 		maxpacket=vm["limit"].as<int>();
 	}
 
-	void (*dumper)(const unsigned char*,int);
+	void (*dumper)(const unsigned char*,struct pcap_pkthdr);
 	if(vm.count("dump")) dumper=hexDump; else dumper=rawDump;
 
 	const u_char *packet;
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
 	for(;maxpacket > 0;)
 	{
 		packet = pcap_next(pcap_handle, &header);
-		dumper(packet, header.len);
+		dumper(packet, header);
 		if(maxpacket!=numeric_limits<int>::max()) maxpacket--;
 	}
 
