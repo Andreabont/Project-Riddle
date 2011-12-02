@@ -19,6 +19,31 @@
 #include "libCigarette.h"
 #include "libExtract.h"
 
+std::string ether_type_decode(int start)
+{
+	// Maggiore o uguale di 1536(0x0600) per Ethernet v2, minore per versione
+
+	if(start >= ETHER_V2_CODE)
+	{
+		switch(start)
+		{
+			case (ETHER_TYPE_IPV4):
+				return "IPv4";
+			case (ETHER_TYPE_ARP):
+				return "ARP";
+			case (ETHER_TYPE_IPV6):
+				return "IPv6";
+			case (ETHER_TYPE_PPP):
+				return "PPP";
+			case (ETHER_TYPE_IEEE802):
+				return "IEEE 802.1Q";
+			default:
+				return "UNDEFINED";
+		}
+	}
+	else return "Ethernet IEEE 802.3";
+}
+
 header_ethernet parseEthernet(std::string start)
 {
 	header_ethernet etherhead;
@@ -40,7 +65,7 @@ header_ethernet parseEthernet(std::string start)
 
 	std::stringstream convert ( temp );
 
-	convert>> std::hex >> etherhead.ether_type;
+	convert>> std::hex >> etherhead.protocol_type;
 
 	return etherhead;
 }
@@ -52,17 +77,6 @@ header_arp parseArp(std::string start)
 	int i;
 	std::string temp;
 	temp.reserve(6);
-	temp = "0x";
-
-	for(i=28;i<=31;i++)	// Hardware Type
-	{
-		temp += start[i];
-	}
-
-	std::stringstream convert ( temp );
-
-	convert>> std::hex >> arphead.hardware_type;
-
 	temp = "0x";
 
 	for(i=32;i<=35;i++)	// Protocol Type
@@ -97,4 +111,30 @@ header_arp parseArp(std::string start)
 	arphead.ip_dst = extract_ipv4_address(start, 76);
 
 	return arphead;
+}
+
+header_ipv4 parseIPV4(std::string start)
+{
+	header_ipv4 ipv4;
+	
+	int i;
+	std::string temp;
+	temp.reserve(4);
+	temp = "0x";
+
+	for(i=47;i<=48;i++)	// Protocol Type
+	{
+		temp += start[i];
+	}
+	
+	std::stringstream convert1 ( temp );
+
+	convert1>> std::hex >> ipv4.protocol_type;
+	
+	ipv4.ip_src = extract_ipv4_address(start, 52);
+	
+	ipv4.ip_dst = extract_ipv4_address(start, 60);
+	
+	return ipv4;
+	
 }

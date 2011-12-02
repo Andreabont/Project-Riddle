@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 	options_description desc("Cigarette - Network Packet Parser");
 	desc.add_options()
 		("help", "prints this")
-		("dump", "enable dump mode") // TODO
+		("verbose", "enable verbose mode") // TODO
 	;
 
 	variables_map vm;
@@ -51,14 +51,14 @@ int main(int argc, char **argv) {
 		header_ethernet etherhead;
 
 		etherhead = parseEthernet(line[2]);
-		std::cout<<"---- ["<<line[0]<<" "<<line[1]; 
+		std::cout<<"----- ["<<line[0]<<" "<<line[1]; 
 		std::cout<<"] Packet ("<<std::dec<<line[2].length()<<" byte)"<<std::endl;
 		std::cout<<"Ether | "<<print_mac_address(etherhead.mac_src);
 		std::cout<<" --> "<<print_mac_address(etherhead.mac_dst)<<std::endl;
-		std::cout<<"Ether | Type: 0x"<<std::hex<<etherhead.ether_type<<" ";
-		std::cout<<"("<<ether_type_decode(etherhead.ether_type)<<")"<<std::endl;
+		std::cout<<"Ether | Type: 0x"<<std::hex<<etherhead.protocol_type<<" ";
+		std::cout<<"("<<ether_type_decode(etherhead.protocol_type)<<")"<<std::endl;
 
-		switch(etherhead.ether_type)
+		switch(etherhead.protocol_type)
 		{
 			case ETHER_TYPE_ARP:
 			header_arp arp;
@@ -78,6 +78,18 @@ int main(int argc, char **argv) {
 			}
 			break;
 			case ETHER_TYPE_IPV4:
+			header_ipv4 ipv4;
+			ipv4 = parseIPV4(line[2]);
+			
+			cout<<"IPV4  | "<<print_ipv4_address(ipv4.ip_src)<<" --> "<<print_ipv4_address(ipv4.ip_dst)<<endl;
+			
+				switch(ipv4.protocol_type)
+				{
+					case IPV4_TYPE_TCP:
+					break;
+					default:
+					break;
+				}
 			break;
 			case ETHER_TYPE_IPV6:
 			break;
