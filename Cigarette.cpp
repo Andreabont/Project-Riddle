@@ -17,7 +17,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include "libCigarette.h"
-#include "libExtract.h"
+#include "libAddress.h"
 
 using namespace std;
 using namespace boost::program_options;
@@ -53,8 +53,8 @@ int main(int argc, char **argv) {
 		etherhead = parseEthernet(line[2]);
 		std::cout<<"----- ["<<line[0]<<" "<<line[1]; 
 		std::cout<<"] Packet ("<<std::dec<<line[2].length()<<" byte)"<<std::endl;
-		std::cout<<"Ether | "<<print_mac_address(etherhead.mac_src);
-		std::cout<<" --> "<<print_mac_address(etherhead.mac_dst)<<std::endl;
+		std::cout<<"Ether | "<<etherhead.mac_src.print();
+		std::cout<<" --> "<<etherhead.mac_dst.print()<<std::endl;
 		std::cout<<"Ether | Type: 0x"<<std::hex<<etherhead.protocol_type<<" ";
 		std::cout<<"("<<ether_type_decode(etherhead.protocol_type)<<")"<<std::endl;
 
@@ -66,22 +66,22 @@ int main(int argc, char **argv) {
 			if(arp.opcode == 1)
 			{
 				// Request
-				cout<<"ARP   | Who has "<<print_ipv4_address(arp.ip_dst)<<"? ";
-				cout<<"Tell "<<print_mac_address(arp.mac_src)<<" ";
-				cout<<"("<<print_ipv4_address(arp.ip_src)<<")"<<endl;
+				cout<<"ARP   | Who has "<<arp.ip_dst.print()<<"? ";
+				cout<<"Tell "<<arp.mac_src.print()<<" ";
+				cout<<"("<<arp.ip_src.print()<<")"<<endl;
 			}
 			else
 			{
 				// Reply
-				cout<<"ARP   | "<<print_ipv4_address(arp.ip_src)<<" is at ";
-				cout<<print_mac_address(arp.mac_src)<<endl;
+				cout<<"ARP   | "<<arp.ip_src.print()<<" is at ";
+				cout<<arp.mac_src.print()<<endl;
 			}
 			break;
 			case ETHER_TYPE_IPV4:
 			header_ipv4 ipv4;
 			ipv4 = parseIPV4(line[2]);
 			
-			cout<<"IPV4  | "<<print_ipv4_address(ipv4.ip_src)<<" --> "<<print_ipv4_address(ipv4.ip_dst)<<endl;
+			cout<<"IPV4  | "<<ipv4.ip_src.print()<<" --> "<<ipv4.ip_dst.print()<<endl;
 			
 				switch(ipv4.protocol_type)
 				{

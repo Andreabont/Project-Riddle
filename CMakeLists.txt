@@ -8,7 +8,7 @@ add_executable(riddle ${RIDDLE_SRCS})
 set(HENDRIX_SRCS Hendrix.cpp)
 add_executable(hendrix ${HENDRIX_SRCS})
 
-set(CIGARETTE_SRCS libExtract.cpp libExtract.h libCigarette.cpp libCigarette.h Cigarette.cpp)
+set(CIGARETTE_SRCS libAddress.cpp libAddress.h libCigarette.cpp libCigarette.h Cigarette.cpp)
 add_executable(cigarette ${CIGARETTE_SRCS})
 
 set(BOOST_LIBS program_options system)

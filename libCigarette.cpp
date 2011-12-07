@@ -17,7 +17,7 @@
 #include <string>
 #include <ios>
 #include "libCigarette.h"
-#include "libExtract.h"
+#include "libAddress.h"
 
 std::string ether_type_decode(int start)
 {
@@ -53,9 +53,9 @@ header_ethernet parseEthernet(std::string start)
 	temp.reserve(6);
 	temp = "0x";
 
-	etherhead.mac_dst = extract_mac_address(start, 0);
+	etherhead.mac_dst.set(start, 0);
 
-	etherhead.mac_src = extract_mac_address(start, 12);
+	etherhead.mac_src.set(start, 12);
 
 	for(i=24;i<=27;i++)	// Next Protocol
 	{
@@ -101,14 +101,14 @@ header_arp parseArp(std::string start)
 
 	temp = "0x";
 
-	arphead.mac_src = extract_mac_address(start, 44);
+	arphead.mac_src.set(start, 44);
 
 	// Per ora e' inutile.
-	// arphead.mac_dst = extract_mac_address(start, 64);
+	// arphead.mac_dst.set(start, 64);
 
-	arphead.ip_src = extract_ipv4_address(start, 56);
+	arphead.ip_src.set(start, 56);
 
-	arphead.ip_dst = extract_ipv4_address(start, 76);
+	arphead.ip_dst.set(start, 76);
 
 	return arphead;
 }
@@ -131,9 +131,9 @@ header_ipv4 parseIPV4(std::string start)
 
 	convert1>> std::hex >> ipv4.protocol_type;
 	
-	ipv4.ip_src = extract_ipv4_address(start, 52);
+	ipv4.ip_src.set(start, 52);
 	
-	ipv4.ip_dst = extract_ipv4_address(start, 60);
+	ipv4.ip_dst.set(start, 60);
 	
 	return ipv4;
 	

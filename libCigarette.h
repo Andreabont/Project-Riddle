@@ -13,7 +13,7 @@
 #define LIBCIGARETTE_H
 
 #include <string>
-#include "libExtract.h"
+#include "libAddress.h"
 
 #define ETHER_V2_CODE		0x0600
 #define ETHER_TYPE_IPV4		0x0800
