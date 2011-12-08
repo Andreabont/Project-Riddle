@@ -44,6 +44,19 @@ std::string ether_type_decode(int start)
 	else return "Ethernet IEEE 802.3";
 }
 
+std::string ipv4_type_decode(int start)
+{
+	switch(start)
+	{
+		case (IPV4_TYPE_TCP):
+			return "TCP";
+		case (IPV4_TYPE_UDP):
+			return "UDP";
+		default:
+			return "UNDEFINED";
+	}
+}
+
 header_ethernet parseEthernet(std::string start)
 {
 	header_ethernet etherhead;
@@ -122,7 +135,7 @@ header_ipv4 parseIPV4(std::string start)
 	temp.reserve(4);
 	temp = "0x";
 
-	for(i=47;i<=48;i++)	// Protocol Type
+	for(i=46;i<=47;i++)	// Protocol Type
 	{
 		temp += start[i];
 	}

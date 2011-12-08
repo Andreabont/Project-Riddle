@@ -82,10 +82,13 @@ int main(int argc, char **argv) {
 			ipv4 = parseIPV4(line[2]);
 			
 			cout<<"IPV4  | "<<ipv4.ip_src.print()<<" --> "<<ipv4.ip_dst.print()<<endl;
+			cout<<"IPV4  | Type: 0x"<<std::hex<<ipv4.protocol_type;
+			cout<<" ("<<ipv4_type_decode(ipv4.protocol_type)<<")"<<endl;
 			
 				switch(ipv4.protocol_type)
 				{
 					case IPV4_TYPE_TCP:
+						cout<<"TCP   | Flag: "<<endl;
 					break;
 					default:
 					break;

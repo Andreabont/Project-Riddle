@@ -50,6 +50,7 @@ struct header_ipv4
 };
 
 std::string ether_type_decode(int start);
+std::string ipv4_type_decode(int start);
 header_ethernet parseEthernet(std::string start);
 header_arp parseArp(std::string start);
 header_ipv4 parseIPV4(std::string start);
