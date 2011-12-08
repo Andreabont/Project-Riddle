@@ -18,6 +18,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include "libCigarette.h"
 #include "libAddress.h"
+#include "libHeader.h"
 
 using namespace std;
 using namespace boost::program_options;
@@ -48,21 +49,26 @@ int main(int argc, char **argv) {
 		std::vector< std::string > line;
 		boost::algorithm::split(line, packet, boost::algorithm::is_any_of("!"));
 
-		header_ethernet etherhead;
-
-		etherhead = parseEthernet(line[2]);
+		ethernet_header ethernet;
+		ethernet.getMacAddress(line[2]);
+		ethernet.getProtocolType(line[2]);
+		
 		std::cout<<"----- ["<<line[0]<<" "<<line[1]; 
 		std::cout<<"] Packet ("<<std::dec<<line[2].length()<<" byte)"<<std::endl;
-		std::cout<<"Ether | "<<etherhead.mac_src.print();
-		std::cout<<" --> "<<etherhead.mac_dst.print()<<std::endl;
-		std::cout<<"Ether | Type: 0x"<<std::hex<<etherhead.protocol_type<<" ";
-		std::cout<<"("<<ether_type_decode(etherhead.protocol_type)<<")"<<std::endl;
+		std::cout<<"Ether | "<<ethernet.mac_src.print();
+		std::cout<<" --> "<<ethernet.mac_dst.print()<<std::endl;
+		std::cout<<"Ether | Type: 0x"<<std::hex<<ethernet.protocol_type<<" ";
+		std::cout<<"("<<ether_type_decode(ethernet.protocol_type)<<")"<<std::endl;
 
-		switch(etherhead.protocol_type)
+		switch(ethernet.protocol_type)
 		{
 			case ETHER_TYPE_ARP:
-			header_arp arp;
-			arp = parseArp(line[2]);
+			
+			arp_header arp;
+			arp.getIpAddress(line[2]);
+			arp.getMacAddress(line[2]);
+			arp.getOpcode(line[2]);
+			
 			if(arp.opcode == 1)
 			{
 				// Request
@@ -78,8 +84,10 @@ int main(int argc, char **argv) {
 			}
 			break;
 			case ETHER_TYPE_IPV4:
-			header_ipv4 ipv4;
-			ipv4 = parseIPV4(line[2]);
+			  
+			ipv4_header ipv4;
+			ipv4.getIpAddress(line[2]);
+			ipv4.getProtocolType(line[2]);
 			
 			cout<<"IPV4  | "<<ipv4.ip_src.print()<<" --> "<<ipv4.ip_dst.print()<<endl;
 			cout<<"IPV4  | Type: 0x"<<std::hex<<ipv4.protocol_type;

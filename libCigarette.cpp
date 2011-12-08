@@ -10,14 +10,9 @@
 //============================================================================
 
 #include <cstdio>
-#include <iostream>
 #include <cstdlib>
-#include <sstream>
-#include <stdexcept>
 #include <string>
-#include <ios>
 #include "libCigarette.h"
-#include "libAddress.h"
 
 std::string ether_type_decode(int start)
 {
@@ -55,99 +50,4 @@ std::string ipv4_type_decode(int start)
 		default:
 			return "UNDEFINED";
 	}
-}
-
-header_ethernet parseEthernet(std::string start)
-{
-	header_ethernet etherhead;
-
-	int i;
-	std::string temp;
-	temp.reserve(6);
-	temp = "0x";
-
-	etherhead.mac_dst.set(start, 0);
-
-	etherhead.mac_src.set(start, 12);
-
-	for(i=24;i<=27;i++)	// Next Protocol
-	{
-		temp += start[i];
-
-	}
-
-	std::stringstream convert ( temp );
-
-	convert>> std::hex >> etherhead.protocol_type;
-
-	return etherhead;
-}
-
-header_arp parseArp(std::string start)
-{
-	header_arp arphead;
-
-	int i;
-	std::string temp;
-	temp.reserve(6);
-	temp = "0x";
-
-	for(i=32;i<=35;i++)	// Protocol Type
-	{
-		temp += start[i];
-	}
-
-	std::stringstream convert1 ( temp );
-
-	convert1>> std::hex >> arphead.protocol_type;
-
-	temp = "0x";
-
-	for(i=40;i<=43;i++)	// Opcode
-	{
-		temp += start[i];
-	}
-
-	std::stringstream convert2 ( temp );
-
-	convert2>> std::hex >> arphead.opcode;
-
-	temp = "0x";
-
-	arphead.mac_src.set(start, 44);
-
-	// Per ora e' inutile.
-	// arphead.mac_dst.set(start, 64);
-
-	arphead.ip_src.set(start, 56);
-
-	arphead.ip_dst.set(start, 76);
-
-	return arphead;
-}
-
-header_ipv4 parseIPV4(std::string start)
-{
-	header_ipv4 ipv4;
-	
-	int i;
-	std::string temp;
-	temp.reserve(4);
-	temp = "0x";
-
-	for(i=46;i<=47;i++)	// Protocol Type
-	{
-		temp += start[i];
-	}
-	
-	std::stringstream convert1 ( temp );
-
-	convert1>> std::hex >> ipv4.protocol_type;
-	
-	ipv4.ip_src.set(start, 52);
-	
-	ipv4.ip_dst.set(start, 60);
-	
-	return ipv4;
-	
 }

@@ -58,8 +58,8 @@ void hexDump(const unsigned char *start, struct pcap_pkthdr header)
 
 void rawDump(const unsigned char *start, struct pcap_pkthdr header)
 {
-	printf("%d!",header.ts.tv_sec);
-	printf("%d!",header.ts.tv_usec);
+	std::cout<<header.ts.tv_sec<<"!";
+	std::cout<<header.ts.tv_usec<<"!";
 	for(int i=0;i<header.len;i++) printf("%02x",start[i]);
-	printf("\n");
+	std::cout<<std::endl;
 }
