@@ -15,6 +15,12 @@
 #include <string>
 #include "libAddress.h"
 
+class packet
+{
+  private:
+  std::string raw;
+};
+
 /* Class for managing Ethernet Header */
 class ethernet_header
 {
