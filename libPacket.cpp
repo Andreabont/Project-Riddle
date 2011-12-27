@@ -19,6 +19,42 @@
 #include "libPacket.h"
 #include "libAddress.h"
 
+packet::packet(long int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+{
+  rawData = new std::string;
+  *rawData = rawData_i;
+  pkgLength = rawData_i.length();
+  timeEpoch = timeEpoch_i;
+  timeMillis = timeMillis_i;
+  return;
+}
+
+packet::~packet()
+{
+  delete[] rawData;
+  return;
+}
+
+int packet::getLenghtByte()
+{
+  return pkgLength / 2;
+}
+
+int packet::getLenghtHex()
+{
+  return pkgLength;
+}
+
+long int packet::getEpoch()
+{
+  return timeEpoch;
+}
+
+int packet::getMillis()
+{
+  return timeMillis;
+}
+
 void ethernet_header::getMacAddress(std::string start)
 {
   mac_dst.set(start, 0);

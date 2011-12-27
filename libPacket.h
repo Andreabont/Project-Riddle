@@ -15,13 +15,38 @@
 #include <string>
 #include "libAddress.h"
 
+/* Class for managing packets*/
 class packet
 {
+  
   private:
-  std::string raw;
+    
+    
+    std::string *rawData;
+    long int timeEpoch;
+    int timeMillis;
+    int pkgLength;
   
   public:
-  packet(std::string initpacket);
+    
+    /* Costruttore Pacchetto */
+    packet(long int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+  
+    /* Distruttore Pacchetto */
+    ~packet();
+    
+    /* Ottieni lunghezza in byte */
+    int getLenghtByte();
+    
+    /* Ottieni lunghezza in numero di simboli esadecimali */
+    int getLenghtHex();
+    
+    /* Ottieni epoch */
+    long int getEpoch();
+    
+    /* Ottienti millisecondi passati dopo epoch */
+    int getMillis();
+    
 };
 
 /* Class for managing Ethernet Header */

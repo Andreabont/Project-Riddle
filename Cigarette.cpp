@@ -42,14 +42,16 @@ int main(int argc, char **argv) {
 
 	while(1)
 	{
-		string packet;
-		getline(cin,packet);
+		string r_packet;
+		getline(cin,r_packet);
 		if(cin.eof()) break;
 
 		std::vector< std::string > line;
-		boost::algorithm::split(line, packet, boost::algorithm::is_any_of("!"));
+		boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
 
 		ethernet_header ethernet;
+		
+		
 		ethernet.getMacAddress(line[2]);
 		ethernet.getProtocolType(line[2]);
 		
