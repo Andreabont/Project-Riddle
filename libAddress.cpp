@@ -14,16 +14,15 @@
 #include <iomanip>
 #include "libAddress.h"
 
-void mac_address::set(std::string packet, int start)
+mac_address::mac_address(const std::string& rawData)
 {
-	int i;
 	int l = 0;
 	std::string temp;
 	temp.reserve(2);
 
-	for(i=start;i<=start+11;i++)
+	for(int i=0;i<=11;i++)
 	{
-		temp += packet[i];
+		temp += rawData[i];
 		if(i%2 != 0)
 		{
 			std::stringstream convert(temp);
@@ -40,9 +39,8 @@ std::string mac_address::print()
 {
   	std::string stamp;
 	std::stringstream temp;
-	int i;
 
-	for(i=0;i<=5;i++)
+	for(int i=0;i<=5;i++)
 	{
 		temp<<std::setfill('0')<<std::setw(2)<<std::hex<<(int) byte[i];
 		stamp += temp.str();
@@ -53,16 +51,15 @@ std::string mac_address::print()
 	return stamp;
 }
 
-void ipv4_address::set(std::string packet, int start)
+ipv4_address::ipv4_address(const std::string& rawData)
 {
-	int i;
 	int l = 0;
 	std::string temp;
 	temp.reserve(2);
 
-	for(i=start;i<=start+7;i++)
+	for(int i=0;i<=7;i++)
 	{
-		temp += packet[i];
+		temp += rawData[i];
 		if(i%2 != 0)
 		{
 			std::stringstream convert(temp);
