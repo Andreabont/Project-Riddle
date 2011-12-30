@@ -81,8 +81,8 @@ ethernet_header packet::getEthernetHeader()
 {
   ethernet_header header_temp;
   
-  header_temp.mac_dst() = this->getMacAddress(0);
-  header_temp.mac_src() = this->getMacAddress(6);
+  header_temp.mac_dst = this->getMacAddress(0);
+  header_temp.mac_src = this->getMacAddress(6);
   
   std::stringstream convert ( this->getHexString(12, 2) );
   convert>>std::hex>>header_temp.protocol_type;
@@ -96,11 +96,11 @@ arp_header packet::getArpHeader()
 
   arp_header header_temp;
   
-  header_temp.mac_dst() = this->getMacAddress(32);
-  header_temp.mac_src() = this->getMacAddress(22);
+  header_temp.mac_dst = this->getMacAddress(32);
+  header_temp.mac_src = this->getMacAddress(22);
   
-  header_temp.ip_dst() = this->getIPv4Address(38);
-  header_temp.ip_src() = this->getIPv4Address(28);
+  header_temp.ip_dst = this->getIPv4Address(38);
+  header_temp.ip_src = this->getIPv4Address(28);
   
   std::stringstream convert ( this->getHexString(16, 2) );
   convert>>std::hex>>header_temp.protocol_type;
@@ -117,8 +117,8 @@ ipv4_header packet::getIPv4Header()
 
   ipv4_header header_temp;
   
-  header_temp.ip_dst() = this->getIPv4Address(30);
-  header_temp.ip_src() = this->getIPv4Address(26);
+  header_temp.ip_dst = this->getIPv4Address(30);
+  header_temp.ip_src = this->getIPv4Address(26);
   
   std::stringstream convert ( this->getHexString(23, 1) );
   convert>>std::hex>>header_temp.protocol_type;

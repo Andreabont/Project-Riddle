@@ -57,8 +57,8 @@ int main(int argc, char **argv) {
 		
 		std::cout<<"----- ["<<pkg.getEpoch()<<" "<<pkg.getMillis(); 
 		std::cout<<"] Packet ("<<std::dec<<pkg.getLenght()<<" byte)"<<std::endl;
-		std::cout<<"Ether | "<<ethernet.mac_src().print();
-		std::cout<<" --> "<<ethernet.mac_dst().print()<<std::endl;
+		std::cout<<"Ether | "<<ethernet.mac_src.print();
+		std::cout<<" --> "<<ethernet.mac_dst.print()<<std::endl;
 		std::cout<<"Ether | Type: 0x"<<std::hex<<ethernet.protocol_type<<" ";
 		std::cout<<"("<<ether_type_decode(ethernet.protocol_type)<<")"<<std::endl;
 
@@ -71,15 +71,15 @@ int main(int argc, char **argv) {
 			if(arp.opcode == 1)
 			{
 				// Request
-				cout<<"ARP   | Who has "<<arp.ip_dst().print()<<"? ";
-				cout<<"Tell "<<arp.mac_src().print()<<" ";
-				cout<<"("<<arp.ip_src().print()<<")"<<endl;
+				cout<<"ARP   | Who has "<<arp.ip_dst.print()<<"? ";
+				cout<<"Tell "<<arp.mac_src.print()<<" ";
+				cout<<"("<<arp.ip_src.print()<<")"<<endl;
 			}
 			else
 			{
 				// Reply
-				cout<<"ARP   | "<<arp.ip_src().print()<<" is at ";
-				cout<<arp.mac_src().print()<<endl;
+				cout<<"ARP   | "<<arp.ip_src.print()<<" is at ";
+				cout<<arp.mac_src.print()<<endl;
 			}
 			}
 			break;
@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
 			{  
 			ipv4_header ipv4 = pkg.getIPv4Header();
 			
-			cout<<"IPV4  | "<<ipv4.ip_src().print()<<" --> "<<ipv4.ip_dst().print()<<endl;
+			cout<<"IPV4  | "<<ipv4.ip_src.print()<<" --> "<<ipv4.ip_dst.print()<<endl;
 			cout<<"IPV4  | Type: 0x"<<std::hex<<ipv4.protocol_type;
 			cout<<" ("<<ipv4_type_decode(ipv4.protocol_type)<<")"<<endl;
 			

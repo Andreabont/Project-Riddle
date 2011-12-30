@@ -29,8 +29,8 @@
 class ethernet_header
 {
   public:
-  mac_address mac_dst();
-  mac_address mac_src();
+  mac_address mac_dst;
+  mac_address mac_src;
   short int protocol_type;
 };
 
@@ -38,10 +38,10 @@ class ethernet_header
 class arp_header
 {
   public:
-  mac_address mac_dst();
-  mac_address mac_src();
-  ipv4_address ip_dst();
-  ipv4_address ip_src();
+  mac_address mac_dst;
+  mac_address mac_src;
+  ipv4_address ip_dst;
+  ipv4_address ip_src;
   short int protocol_type;
   short int opcode;
 };
@@ -49,8 +49,8 @@ class arp_header
 class ipv4_header
 {
   public:
-  ipv4_address ip_dst();
-  ipv4_address ip_src();
+  ipv4_address ip_dst;
+  ipv4_address ip_src;
   short int protocol_type;
 };
 
