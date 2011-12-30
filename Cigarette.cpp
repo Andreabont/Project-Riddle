@@ -44,6 +44,8 @@ int main(int argc, char **argv) {
 
 	while(1)
 	{
+	  try
+	  {
 		string r_packet;
 		getline(cin,r_packet);
 		if(cin.eof()) break;
@@ -54,20 +56,21 @@ int main(int argc, char **argv) {
 		packet pkg(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
 		
 		ethernet_header ethernet = pkg.getEthernetHeader();
-		
+
 		std::cout<<"----- ["<<pkg.getEpoch()<<" "<<pkg.getMillis(); 
 		std::cout<<"] Packet ("<<std::dec<<pkg.getLenght()<<" byte)"<<std::endl;
 		std::cout<<"Ether | "<<ethernet.mac_src.print();
 		std::cout<<" --> "<<ethernet.mac_dst.print()<<std::endl;
 		std::cout<<"Ether | Type: 0x"<<std::hex<<ethernet.protocol_type<<" ";
 		std::cout<<"("<<ether_type_decode(ethernet.protocol_type)<<")"<<std::endl;
-
+		
 		switch(ethernet.protocol_type)
 		{
 			case ETHER_TYPE_ARP:
 			{
-			arp_header arp = pkg.getArpHeader();
 			
+			arp_header arp = pkg.getArpHeader();
+			  
 			if(arp.opcode == 1)
 			{
 				// Request
@@ -85,7 +88,8 @@ int main(int argc, char **argv) {
 			break;
 			case ETHER_TYPE_IPV4:
 			{  
-			ipv4_header ipv4 = pkg.getIPv4Header();
+			
+			  ipv4_header ipv4 = pkg.getIPv4Header();
 			
 			cout<<"IPV4  | "<<ipv4.ip_src.print()<<" --> "<<ipv4.ip_dst.print()<<endl;
 			cout<<"IPV4  | Type: 0x"<<std::hex<<ipv4.protocol_type;
@@ -110,8 +114,15 @@ int main(int argc, char **argv) {
 		}
 
 		std::cout<<std::endl;
-
+	  }
+	  catch(packet::Overflow)
+	  {
+	    std::cerr<<"Overflow! :-P"<<std::endl;
+	  }
+	  catch(packet::HeaderFault)
+	  {
+	    std::cerr<<"HeaderFault! :-P"<<std::endl;
+	  }
 	}
-
 	return EXIT_SUCCESS;
 }

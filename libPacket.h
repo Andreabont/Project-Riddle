@@ -29,29 +29,29 @@
 class ethernet_header
 {
   public:
-  mac_address mac_dst;
-  mac_address mac_src;
-  short int protocol_type;
+    mac_address mac_dst;
+    mac_address mac_src;
+    short int protocol_type;
 };
 
 /* Class for managing ARP Header */
 class arp_header
 {
   public:
-  mac_address mac_dst;
-  mac_address mac_src;
-  ipv4_address ip_dst;
-  ipv4_address ip_src;
-  short int protocol_type;
-  short int opcode;
+    mac_address mac_dst;
+    mac_address mac_src;
+    ipv4_address ip_dst;
+    ipv4_address ip_src;
+    short int protocol_type;
+    short int opcode;
 };
 
 class ipv4_header
 {
   public:
-  ipv4_address ip_dst;
-  ipv4_address ip_src;
-  short int protocol_type;
+    ipv4_address ip_dst;
+    ipv4_address ip_src;
+    short int protocol_type;
 };
 
 /* Class for managing packets*/
@@ -59,14 +59,15 @@ class packet
 {
   
   private:
-    
-    
     std::string rawData;
     long int timeEpoch;
     int timeMillis;
     int pkgLength;
   
   public:
+    
+    class Overflow {}; // Gestore overflow.
+    class HeaderFault {}; // Gestore header sbagliato.
     
     /* Costruttore Pacchetto */
     packet(long int timeEpoch_i, int timeMillis_i, std::string rawData_i);

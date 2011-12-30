@@ -48,7 +48,7 @@ std::string packet::getHexString(int string_cursor, int read_byte)
   std::string temp;
   temp.reserve(read_byte * 2);
   
-  if(string_cursor + read_byte > this->getLenght()){} // Eccezione di overflow.TODO;
+  if(string_cursor + read_byte > this->getLenght()) throw Overflow();
   
   for(int i = string_cursor * 2; i < read_byte * 2; i++)
   {
@@ -85,7 +85,7 @@ ethernet_header packet::getEthernetHeader()
 
 arp_header packet::getArpHeader()
 {
-  if(!this->isArp()){} // TODO eccezione non ARP
+  if(!this->isArp()) throw HeaderFault();
 
   arp_header header_temp;
   
@@ -106,7 +106,7 @@ arp_header packet::getArpHeader()
 
 ipv4_header packet::getIPv4Header()
 {
-  if(!this->isIPv4()){} // TODO eccezione non ARP
+  if(!this->isIPv4()) throw HeaderFault();
 
   ipv4_header header_temp;
   
