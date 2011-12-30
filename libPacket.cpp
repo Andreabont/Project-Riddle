@@ -21,17 +21,10 @@
 
 packet::packet(long int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
-  rawData = new std::string;
-  *rawData = rawData_i;
+  rawData = rawData_i;
   pkgLength = rawData_i.length() / 2;
   timeEpoch = timeEpoch_i;
   timeMillis = timeMillis_i;
-  return;
-}
-
-packet::~packet()
-{
-  delete[] rawData;
   return;
 }
 

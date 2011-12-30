@@ -61,7 +61,7 @@ class packet
   private:
     
     
-    std::string *rawData;
+    std::string rawData;
     long int timeEpoch;
     int timeMillis;
     int pkgLength;
@@ -70,9 +70,6 @@ class packet
     
     /* Costruttore Pacchetto */
     packet(long int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-  
-    /* Distruttore Pacchetto */
-    ~packet();
     
     /* Ottieni lunghezza in byte */
     int getLenght();
