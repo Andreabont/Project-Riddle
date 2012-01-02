@@ -54,6 +54,18 @@ class ipv4_header
     short int protocol_type;
 };
 
+/* Class for managing TCP */
+class tcp_header
+{
+  
+};
+
+/* Class for managing UDP */
+class udp_header
+{
+  
+};
+
 /* Class for managing packets*/
 class packet
 {
@@ -67,6 +79,7 @@ class packet
   public:
     
     class Overflow {}; // Gestore overflow.
+    class HeaderFault {}; // Gestore header sbagliato.
     
     /* Costruttore Pacchetto */
     packet(long int timeEpoch_i, int timeMillis_i, std::string rawData_i);

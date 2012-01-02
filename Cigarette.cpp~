@@ -100,6 +100,9 @@ int main(int argc, char **argv) {
 					case IPV4_TYPE_TCP:
 						cout<<"TCP   | Flag: "<<endl;
 					break;
+					case IPV4_TYPE_UDP:
+						cout<<"UDP   | Flag: "<<endl;
+					break;
 					default:
 					break;
 				}
@@ -117,7 +120,13 @@ int main(int argc, char **argv) {
 	  }
 	  catch(packet::Overflow)
 	  {
-	    //TODO
+	    std::cerr<<"Overflow! :-P"<<std::endl;
+	    return EXIT_FAILURE;
+	  }
+	  catch(packet::HeaderFault)
+	  {
+	    std::cerr<<"HeaderFault! :-P"<<std::endl;
+	    return EXIT_FAILURE;
 	  }
 	}
 	return EXIT_SUCCESS;

@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 		
 		ethernet_header ethernet = pkg.getEthernetHeader();
 
-		std::cout<<"----- ["<<pkg.getEpoch()<<" "<<pkg.getMillis(); 
+		std::cout<<"----- ["<<std::dec<<pkg.getEpoch()<<" "<<pkg.getMillis(); 
 		std::cout<<"] Packet ("<<std::dec<<pkg.getLenght()<<" byte)"<<std::endl;
 		std::cout<<"Ether | "<<ethernet.mac_src.print();
 		std::cout<<" --> "<<ethernet.mac_dst.print()<<std::endl;
@@ -100,6 +100,9 @@ int main(int argc, char **argv) {
 					case IPV4_TYPE_TCP:
 						cout<<"TCP   | Flag: "<<endl;
 					break;
+					case IPV4_TYPE_UDP:
+						cout<<"UDP   | Flag: "<<endl;
+					break;
 					default:
 					break;
 				}
@@ -118,10 +121,12 @@ int main(int argc, char **argv) {
 	  catch(packet::Overflow)
 	  {
 	    std::cerr<<"Overflow! :-P"<<std::endl;
+	    return EXIT_FAILURE;
 	  }
 	  catch(packet::HeaderFault)
 	  {
 	    std::cerr<<"HeaderFault! :-P"<<std::endl;
+	    return EXIT_FAILURE;
 	  }
 	}
 	return EXIT_SUCCESS;

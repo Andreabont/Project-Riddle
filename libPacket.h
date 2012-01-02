@@ -54,6 +54,20 @@ class ipv4_header
     short int protocol_type;
 };
 
+/* Class for managing TCP */
+class tcp_header
+{
+  public:
+    
+};
+
+/* Class for managing UDP */
+class udp_header
+{
+  public:
+
+};
+
 /* Class for managing packets*/
 class packet
 {

@@ -50,11 +50,11 @@ std::string packet::getHexString(int string_cursor, int read_byte)
   
   if(string_cursor + read_byte > this->getLenght()) throw Overflow();
   
-  for(int i = string_cursor * 2; i < read_byte * 2; i++)
+  for(int i = string_cursor * 2; i < (string_cursor * 2) + (read_byte * 2); i++)
   {
     temp += rawData[i];
   }
-
+  
   return temp;
 }
 
