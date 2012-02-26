@@ -19,23 +19,35 @@
 #include "libPacket.h"
 #include "libAddress.h"
 
-packet* packet::factory(std::string rawInput)
+static packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
   
-  if(this->isArp())
+  int protocol_type;
+  
+  std::string temp;
+  temp.reserve(read_byte * 2);
+  
+  for(int i = 24; i <= 27; i++)
+  {
+    temp += rawData[i];
+  }
+  std::stringstream convert ( temp );
+  convert>>std::hex>>protocol_type;
+  
+  if(protocol_type == ETHER_TYPE_ARP)
   {
     
-    packet = new ARPpacket();
+    packet = new ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     
-  } else if(this->isIPv4())
+  } else if(protocol_type == ETHER_TYPE_IPV4)
   {
     
-    packet = new IPv4packet();
+    packet = new IPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     
-  } else if(this->isIPv6())
+  } else if(protocol_type == ETHER_TYPE_IPV6)
   {
     
-    packet = new IPv6packet();
+    packet = new IPv6packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     
   } else {
     

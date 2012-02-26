@@ -43,7 +43,7 @@ class packet
     class HeaderFault {}; // Gestore header sbagliato.
     
     /* Costruttore Pacchetto */
-    static packet* factory(std::string rawInput);
+    static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     
     /* Ottieni lunghezza in byte */
     int getLenght();
