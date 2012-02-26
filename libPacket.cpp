@@ -29,7 +29,7 @@ static packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string ra
   
   for(int i = 24; i <= 27; i++)
   {
-    temp += rawData[i];
+    temp += rawData_i[i];
   }
   std::stringstream convert ( temp );
   convert>>std::hex>>protocol_type;

@@ -77,13 +77,13 @@ class packet
 /*Class for managing ARP packets*/
 class ARPpacket : public packet
 {
-    
+    // metodi per estrarre campi ARP
 };
 
 /*Class for managing IPv4 packets*/
 class IPv4packet : public packet
 {
-  
+
 };
 
 /*Class for managing IPv6 packets*/
