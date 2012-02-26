@@ -13,6 +13,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <boost/asio.hpp>
+#include <boost/asio/ip/address_v4.hpp>
 #include <boost/program_options.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -90,7 +92,10 @@ int main(int argc, char **argv) {
 			{  
 			
 			  ipv4_header ipv4 = pkg.getIPv4Header();
-			
+			  
+			boost::asio::ip::address addrtest = boost::asio::ip::address::from_string(pkg.getHexString(60,4));
+			  
+			cout<<"Test: "<<addrtest.to_string()<<endl;
 			cout<<"IPV4  | "<<ipv4.ip_src.print()<<" --> "<<ipv4.ip_dst.print()<<endl;
 			cout<<"IPV4  | Type: 0x"<<std::hex<<ipv4.protocol_type;
 			cout<<" ("<<ipv4_type_decode(ipv4.protocol_type)<<")"<<endl;

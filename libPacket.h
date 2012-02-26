@@ -95,7 +95,7 @@ class packet
     /* Ottienti millisecondi passati dopo epoch */
     int getMillis();
     
-    /* Legge n byte e li restituisce in stringa. */
+    /* Legge n byte a partire dal byte voluto e li restituisce in stringa. */
     std::string getHexString(int string_cursor, int read_byte);
     
     /* Salva MAC address a partire da un punto della stringa rawData */
@@ -104,10 +104,12 @@ class packet
     /* Salva IPv4 address a partire da un punto della stringa rawData */
     ipv4_address getIPv4Address(int string_cursor);
     
+    std::string gettest(int string_cursor, int read_byte);
+    
     /* Ottieni header ethernet */
     ethernet_header getEthernetHeader();
     
-    /* True se è un pacchetto ARP */
+    /* True se e' un pacchetto ARP */
     bool isArp();
     
     /* Ottieni header ARP */
