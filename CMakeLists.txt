@@ -6,9 +6,6 @@ project(SNIFFER)
 set(RIDDLE_SRCS libRiddle.cpp libRiddle.h Riddle.cpp)
 add_executable(riddle ${RIDDLE_SRCS})
 
-set(HENDRIX_SRCS Hendrix.cpp)
-add_executable(hendrix ${HENDRIX_SRCS})
-
 set(CIGARETTE_SRCS libAddress.cpp libAddress.h libPacket.cpp libPacket.h libCigarette.cpp libCigarette.h Cigarette.cpp)
 add_executable(cigarette ${CIGARETTE_SRCS})
 
