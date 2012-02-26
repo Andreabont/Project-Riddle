@@ -19,9 +19,31 @@
 #include "libPacket.h"
 #include "libAddress.h"
 
-packet::factory(std::string rawInput)
+packet* packet::factory(std::string rawInput)
 {
-
+  
+  if(this->isArp())
+  {
+    
+    packet = new ARPpacket();
+    
+  } else if(this->isIPv4())
+  {
+    
+    packet = new IPv4packet();
+    
+  } else if(this->isIPv6())
+  {
+    
+    packet = new IPv6packet();
+    
+  } else {
+    
+    packet = new UnknownPacket(); 
+    
+  }
+  
+  return packet;
 }
 
 int packet::getLenght()

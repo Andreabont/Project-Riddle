@@ -43,7 +43,7 @@ class packet
     class HeaderFault {}; // Gestore header sbagliato.
     
     /* Costruttore Pacchetto */
-    factory(std::string rawInput);
+    static packet* factory(std::string rawInput);
     
     /* Ottieni lunghezza in byte */
     int getLenght();
@@ -62,8 +62,6 @@ class packet
     
     /* Salva IPv4 address a partire da un punto della stringa rawData */
     boost::asio::ip::address getIPv4Address(int string_cursor);
-    
-    std::string gettest(int string_cursor, int read_byte);
     
     /* True se e' un pacchetto ARP */
     bool isArp();
@@ -102,6 +100,11 @@ class TCPv4packet : public IPv4packet
 
 /*Class for managing UDPv4 packets*/
 class UDPv4packet : public IPv4packet
+{
+  
+};
+
+class UnknownPacket : public packet
 {
   
 };
