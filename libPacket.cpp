@@ -19,13 +19,9 @@
 #include "libPacket.h"
 #include "libAddress.h"
 
-packet::packet(long int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+packet::factory(std::string rawInput)
 {
-  rawData = rawData_i;
-  pkgLength = rawData_i.length() / 2;
-  timeEpoch = timeEpoch_i;
-  timeMillis = timeMillis_i;
-  return;
+
 }
 
 int packet::getLenght()
@@ -64,9 +60,17 @@ mac_address packet::getMacAddress(int string_cursor)
   return mac_temp;
 }
 
-ipv4_address packet::getIPv4Address(int string_cursor)
+boost::asio::ip::address_v4 packet::getIPv4Address(int string_cursor)
 {
-  ipv4_address ipv4_temp(this->getHexString(string_cursor, 4));
+  std::addr = this->getHexString(string_cursor, 4);
+  std::string stamp;
+  std::stringstream temp;
+
+	for(int i=0;i<=5;i++)
+	{
+		
+	}
+	
   return ipv4_temp;
 }
 

@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
 			
 			  ipv4_header ipv4 = pkg.getIPv4Header();
 			  
-			boost::asio::ip::address addrtest = boost::asio::ip::address::from_string(pkg.getHexString(60,4));
+			boost::asio::ip::address addrtest = boost::asio::ip::address::from_string(pkg.getIPv4Address(60).print());
 			  
 			cout<<"Test: "<<addrtest.to_string()<<endl;
 			cout<<"IPV4  | "<<ipv4.ip_src.print()<<" --> "<<ipv4.ip_dst.print()<<endl;

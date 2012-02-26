@@ -31,20 +31,6 @@ class mac_address
   short int byte[6];
 };
 
-/* Class for managing IPv4 address */
-class ipv4_address
-{
-  public:
-  
-  ipv4_address() { std::memset(byte,0,4); }
-  ipv4_address(const std::string&);
-  
-  std::string print();
-  
-  private:
-  short int byte[4];
-};
-
 /* Class for managing IPv6 address */
 class ipv6_address
 {

@@ -23,50 +23,9 @@
 #define IPV4_TYPE_UDP		0x11
 
 #include <string>
+#include <boost/asio.hpp>
+#include <boost/asio/ip/address_v4.hpp>
 #include "libAddress.h"
-
-/* Class for managing Ethernet Header */
-class ethernet_header
-{
-  public:
-    mac_address mac_dst;
-    mac_address mac_src;
-    short int protocol_type;
-};
-
-/* Class for managing ARP Header */
-class arp_header
-{
-  public:
-    mac_address mac_dst;
-    mac_address mac_src;
-    ipv4_address ip_dst;
-    ipv4_address ip_src;
-    short int protocol_type;
-    short int opcode;
-};
-
-class ipv4_header
-{
-  public:
-    ipv4_address ip_dst;
-    ipv4_address ip_src;
-    short int protocol_type;
-};
-
-/* Class for managing TCP */
-class tcp_header
-{
-  public:
-    
-};
-
-/* Class for managing UDP */
-class udp_header
-{
-  public:
-
-};
 
 /* Class for managing packets*/
 class packet
@@ -84,7 +43,7 @@ class packet
     class HeaderFault {}; // Gestore header sbagliato.
     
     /* Costruttore Pacchetto */
-    packet(long int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    factory(std::string rawInput);
     
     /* Ottieni lunghezza in byte */
     int getLenght();
@@ -102,27 +61,49 @@ class packet
     mac_address getMacAddress(int string_cursor);
     
     /* Salva IPv4 address a partire da un punto della stringa rawData */
-    ipv4_address getIPv4Address(int string_cursor);
+    boost::asio::ip::address getIPv4Address(int string_cursor);
     
     std::string gettest(int string_cursor, int read_byte);
-    
-    /* Ottieni header ethernet */
-    ethernet_header getEthernetHeader();
     
     /* True se e' un pacchetto ARP */
     bool isArp();
     
-    /* Ottieni header ARP */
-    arp_header getArpHeader();
-    
-    /* True se è un pacchetto IPv4 */
+    /* True se e' un pacchetto IPv4 */
     bool isIPv4();
     
-    ipv4_header getIPv4Header();
-    
-    /* True se è un pacchetto IPv6*/
+    /* True se e' un pacchetto IPv6*/
     bool isIPv6();
     
+};
+
+/*Class for managing ARP packets*/
+class ARPpacket : public packet
+{
+    
+};
+
+/*Class for managing IPv4 packets*/
+class IPv4packet : public packet
+{
+  
+};
+
+/*Class for managing IPv6 packets*/
+class IPv6packet : public packet
+{
+  
+};
+
+/*Class for managing TCPv4 packets*/
+class TCPv4packet : public IPv4packet
+{
+  
+};
+
+/*Class for managing UDPv4 packets*/
+class UDPv4packet : public IPv4packet
+{
+  
 };
 
 #endif //LIBHEADER_H
