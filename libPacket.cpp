@@ -36,26 +36,27 @@ static packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string ra
   std::stringstream convert ( temp );
   convert>>std::hex>>protocol_type;
   
+  packet *p;
   if(protocol_type == ETHER_TYPE_ARP)
   {
     
-    packet = new ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    p = new ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     
   } else if(protocol_type == ETHER_TYPE_IPV4)
   {
     
-    packet = IPv4packet.factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    p = IPv4packet.factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     
   } else {
     
-    packet = new UnknownPacket(); 
+    p = new UnknownPacket(); 
     
   }
   
-  return packet;
+  return p;
 }
 
-int packet::getLenght()
+int packet::getLength()
 {
   return pkgLength;
 }
