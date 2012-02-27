@@ -43,7 +43,7 @@ packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i
   if(protocol_type == ETHER_TYPE_ARP)
   {
     
-    p=new ARPpacket(timeEpoch_i,timeMillis_i,rawData_i);
+    p = new ARPpacket(timeEpoch_i, timeMillis_i, rawData_i);
     
   } else if(protocol_type == ETHER_TYPE_IPV4)
   {
@@ -125,6 +125,27 @@ bool packet::isIPv6()
   return (protocol_type == ETHER_TYPE_IPV6);
 }
 
+mac_address packet::getSenderMac()
+{
+  return this->getMacAddress(0);
+}
+
+mac_address packet::getTargetMac()
+{
+  return this->getMacAddress(6);
+}
+
+int packet::getEtherType()
+{
+  int protocol_type;
+  
+  std::stringstream convert ( this->getHexString(12, 2) );
+  convert>>std::hex>>protocol_type;
+  
+  return protocol_type;
+}
+
+
 /* ARP */
 
 ARPpacket::ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
@@ -133,6 +154,7 @@ ARPpacket::ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
   timeEpoch = timeEpoch_i;
   timeMillis = timeMillis_i;
   rawData = rawData_i;
+  pkgLength = rawData_i.length() / 2;
   return;
 }
 
@@ -148,22 +170,14 @@ int ARPpacket::getOpCode()
 
 boost::asio::ip::address ARPpacket::getSenderIp()
 {
-  //TODO
-}
-
-mac_address ARPpacket::getSenderMac()
-{
-  //TODO
+  boost::asio::ip::address newaddr = boost::asio::ip::address::from_string("127.0.0.1");
+  return newaddr;
 }
 
 boost::asio::ip::address ARPpacket::getTargetIp()
 {
-  //TODO
-}
-
-mac_address ARPpacket::getTargetMac()
-{
-  //TODO
+  boost::asio::ip::address newaddr = boost::asio::ip::address::from_string("127.0.0.2");
+  return newaddr;
 }
 
 /* IPV4 */
@@ -197,6 +211,7 @@ UnknownPacket::UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawD
   timeEpoch = timeEpoch_i;
   timeMillis = timeMillis_i;
   rawData = rawData_i;
+  pkgLength = rawData_i.length() / 2;
   return;
 }
 
@@ -207,6 +222,7 @@ UnknownTCP::UnknownTCP(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
   timeEpoch = timeEpoch_i;
   timeMillis = timeMillis_i;
   rawData = rawData_i;
+  pkgLength = rawData_i.length() / 2;
   return;
 }
 
@@ -217,5 +233,6 @@ UnknownUDP::UnknownUDP(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
   timeEpoch = timeEpoch_i;
   timeMillis = timeMillis_i;
   rawData = rawData_i;
+  pkgLength = rawData_i.length() / 2;  
   return;
 }

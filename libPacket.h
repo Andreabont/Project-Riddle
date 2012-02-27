@@ -69,10 +69,10 @@ class packet
     /* Legge n byte a partire dal byte voluto e li restituisce in stringa. */
     std::string getHexString(int string_cursor, int read_byte);
     
-    /* Salva MAC address a partire da un punto della stringa rawData */
+    /* Salva MAC address a partire da un punto (n° del byte) della stringa rawData */
     mac_address getMacAddress(int string_cursor);
     
-    /* Salva IPv4 address a partire da un punto della stringa rawData */
+    /* Salva IPv4 address a partire da un punto (n° del byte) della stringa rawData */
     boost::asio::ip::address getIPv4Address(int string_cursor);
     
     /* True se e' un pacchetto ARP */
@@ -86,6 +86,15 @@ class packet
     
     /* ETHERNET FUNCTIONS */
     
+    /* Restituisce MAC della scheda di rete che ha inviato la trama*/
+    mac_address getSenderMac();
+    
+    /* Restituisce MAC del destinatario della trama*/
+    mac_address getTargetMac();
+    
+    /*Restituisce ethertype*/
+    int getEtherType();
+    
 };
 
 /*Class for managing ARP packets*/
@@ -94,8 +103,6 @@ class ARPpacket : public packet
     public:
       ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
       int getOpCode();
-      mac_address getSenderMac();
-      mac_address getTargetMac();
       boost::asio::ip::address getSenderIp();
       boost::asio::ip::address getTargetIp();
 };

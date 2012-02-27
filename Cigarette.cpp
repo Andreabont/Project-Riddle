@@ -55,9 +55,39 @@ int main(int argc, char **argv) {
 		std::vector< std::string > line;
 		boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
 
-		packet::factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
+		packet* pkg = packet::factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
 		
-		cout<<"Pacchetto " << lexical_cast<int>(line[0]) <<endl;
+		cout << "[" << std::dec << pkg->getEpoch() << " "<< pkg->getMillis() << "] Size: " << pkg->getLength() << " byte" << endl;
+		cout << "                    From " << pkg->getSenderMac().print() << " to "<< pkg->getTargetMac().print() << endl;
+		cout << "                    EtherType: 0x" << std::hex << pkg->getEtherType() << " ("<< ether_type_decode(pkg->getEtherType()) << ")" << endl;
+		cout << endl;
+		
+		if(pkg->isArp())
+		{
+		  
+		  if(((ARPpacket*)pkg)->getOpCode() == 1)
+		  {
+		    
+		    cout << "                    Who has " << ((ARPpacket*)pkg)->getTargetIp().to_string() << " ? Tell "<< ((ARPpacket*)pkg)->getSenderIp().to_string() << endl;
+		    cout << endl;
+		    
+		  } else {
+		    
+		    
+		    
+		  }
+		  
+		} else if(pkg->isIPv4())
+		{
+		  
+		  
+		  
+		} else {
+		  
+		  
+		  
+		}
+		
 	  }
 	  catch(packet::Overflow)
 	  {
