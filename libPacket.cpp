@@ -40,12 +40,12 @@ static packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string ra
   if(protocol_type == ETHER_TYPE_ARP)
   {
     
-    p = new ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    p = new ARPpacket(timeEpoch_i, timeMillis_i, rawData_i);
     
   } else if(protocol_type == ETHER_TYPE_IPV4)
   {
     
-    p = IPv4packet.factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    p = IPv4packet.factory(timeEpoch_i, timeMillis_i, rawData_i);
     
   } else {
     
