@@ -19,13 +19,15 @@
 #include "libPacket.h"
 #include "libAddress.h"
 
+/* PACKET */
+
 static packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
   
   int protocol_type;
   
   std::string temp;
-  temp.reserve(read_byte * 2);
+  temp.reserve(4);
   
   for(int i = 24; i <= 27; i++)
   {
@@ -42,12 +44,7 @@ static packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string ra
   } else if(protocol_type == ETHER_TYPE_IPV4)
   {
     
-    packet = new IPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-    
-  } else if(protocol_type == ETHER_TYPE_IPV6)
-  {
-    
-    packet = new IPv6packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    packet = IPv4packet.factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     
   } else {
     
@@ -94,69 +91,6 @@ mac_address packet::getMacAddress(int string_cursor)
   return mac_temp;
 }
 
-boost::asio::ip::address_v4 packet::getIPv4Address(int string_cursor)
-{
-  std::addr = this->getHexString(string_cursor, 4);
-  std::string stamp;
-  std::stringstream temp;
-
-	for(int i=0;i<=5;i++)
-	{
-		
-	}
-	
-  return ipv4_temp;
-}
-
-ethernet_header packet::getEthernetHeader()
-{
-  ethernet_header header_temp;
-  
-  header_temp.mac_dst = this->getMacAddress(0);
-  header_temp.mac_src = this->getMacAddress(6);
-  
-  std::stringstream convert ( this->getHexString(12, 2) );
-  convert>>std::hex>>header_temp.protocol_type;
-  
-  return header_temp;  
-}
-
-arp_header packet::getArpHeader()
-{
-  if(!this->isArp()) throw HeaderFault();
-
-  arp_header header_temp;
-  
-  header_temp.mac_dst = this->getMacAddress(32);
-  header_temp.mac_src = this->getMacAddress(22);
-  
-  header_temp.ip_dst = this->getIPv4Address(38);
-  header_temp.ip_src = this->getIPv4Address(28);
-  
-  std::stringstream convert ( this->getHexString(16, 2) );
-  convert>>std::hex>>header_temp.protocol_type;
-  
-  std::stringstream convert2 ( this->getHexString(20, 2) );
-  convert2>>std::hex>>header_temp.opcode;
-  
-  return header_temp;
-}
-
-ipv4_header packet::getIPv4Header()
-{
-  if(!this->isIPv4()) throw HeaderFault();
-
-  ipv4_header header_temp;
-  
-  header_temp.ip_dst = this->getIPv4Address(30);
-  header_temp.ip_src = this->getIPv4Address(26);
-  
-  std::stringstream convert ( this->getHexString(23, 1) );
-  convert>>std::hex>>header_temp.protocol_type;
-
-  return header_temp;
-}
-
 bool packet::isArp()
 {
   int protocol_type;
@@ -185,4 +119,101 @@ bool packet::isIPv6()
   convert>>std::hex>>protocol_type;
   
   return (protocol_type == ETHER_TYPE_IPV6);
+}
+
+/* ARP */
+
+ARPpacket::ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i): packet(timeEpoch_i, timeMillis_i, rawData_i)
+{
+  timeEpoch = timeEpoch_i;
+  timeMillis = timeMillis_i;
+  rawData = rawData_i;
+  return;
+}
+
+int ARPpacket::getOpCode()
+{
+  int opcode;
+  
+  std::stringstream convert ( this->getHexString(ARP_OFFSET, 2) );
+  convert>>std::hex>>opcode;
+  
+  return opcode;
+}
+
+boost::asio::ip::address ARPpacket::getSenderIp()
+{
+  //TODO
+}
+
+mac_address ARPpacket::getSenderMac()
+{
+  //TODO
+}
+
+boost::asio::ip::address ARPpacket::getTargetIp()
+{
+  //TODO
+}
+
+mac_address ARPpacket::getTargetMac()
+{
+  //TODO
+}
+
+/* IPV4 */
+
+packet* IPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+{
+//TODO
+packet = new UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+return packet;
+}
+
+/* TCP */
+
+packet* TCPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+{
+//TODO
+packet = new UnknownTCP(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+return packet;
+}
+
+/* UDP */
+
+packet* UDPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+{
+//TODO
+packet = new UnknownUDP(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+return packet;
+}
+
+/* UNKNOWN */
+
+UnknownPacket::UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i): packet(timeEpoch_i, timeMillis_i, rawData_i)
+{
+  timeEpoch = timeEpoch_i;
+  timeMillis = timeMillis_i;
+  rawData = rawData_i;
+  return;
+}
+
+/* UNKNOWN TCP */
+
+UnknownTCP::UnknownTCP(int timeEpoch_i, int timeMillis_i, std::string rawData_i): TCPv4packet(timeEpoch_i, timeMillis_i, rawData_i)
+{
+  timeEpoch = timeEpoch_i;
+  timeMillis = timeMillis_i;
+  rawData = rawData_i;
+  return;
+}
+
+/* UNKNOWN UDP */
+
+UnknownUDP::UnknownUDP(int timeEpoch_i, int timeMillis_i, std::string rawData_i): TCPv4packet(timeEpoch_i, timeMillis_i, rawData_i)
+{
+  timeEpoch = timeEpoch_i;
+  timeMillis = timeMillis_i;
+  rawData = rawData_i;
+  return;
 }

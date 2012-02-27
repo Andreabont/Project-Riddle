@@ -55,73 +55,9 @@ int main(int argc, char **argv) {
 		std::vector< std::string > line;
 		boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
 
-		packet pkg(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
+		packet.factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
 		
-		ethernet_header ethernet = pkg.getEthernetHeader();
-
-		std::cout<<"----- ["<<std::dec<<pkg.getEpoch()<<" "<<pkg.getMillis(); 
-		std::cout<<"] Packet ("<<std::dec<<pkg.getLenght()<<" byte)"<<std::endl;
-		std::cout<<"Ether | "<<ethernet.mac_src.print();
-		std::cout<<" --> "<<ethernet.mac_dst.print()<<std::endl;
-		std::cout<<"Ether | Type: 0x"<<std::hex<<ethernet.protocol_type<<" ";
-		std::cout<<"("<<ether_type_decode(ethernet.protocol_type)<<")"<<std::endl;
-		
-		switch(ethernet.protocol_type)
-		{
-			case ETHER_TYPE_ARP:
-			{
-			
-			arp_header arp = pkg.getArpHeader();
-			  
-			if(arp.opcode == 1)
-			{
-				// Request
-				cout<<"ARP   | Who has "<<arp.ip_dst.print()<<"? ";
-				cout<<"Tell "<<arp.mac_src.print()<<" ";
-				cout<<"("<<arp.ip_src.print()<<")"<<endl;
-			}
-			else
-			{
-				// Reply
-				cout<<"ARP   | "<<arp.ip_src.print()<<" is at ";
-				cout<<arp.mac_src.print()<<endl;
-			}
-			}
-			break;
-			case ETHER_TYPE_IPV4:
-			{  
-			
-			  ipv4_header ipv4 = pkg.getIPv4Header();
-			  
-			boost::asio::ip::address addrtest = boost::asio::ip::address::from_string(pkg.getIPv4Address(60).print());
-			  
-			cout<<"Test: "<<addrtest.to_string()<<endl;
-			cout<<"IPV4  | "<<ipv4.ip_src.print()<<" --> "<<ipv4.ip_dst.print()<<endl;
-			cout<<"IPV4  | Type: 0x"<<std::hex<<ipv4.protocol_type;
-			cout<<" ("<<ipv4_type_decode(ipv4.protocol_type)<<")"<<endl;
-			
-				switch(ipv4.protocol_type)
-				{
-					case IPV4_TYPE_TCP:
-						cout<<"TCP   | Flag: "<<endl;
-					break;
-					case IPV4_TYPE_UDP:
-						cout<<"UDP   | Flag: "<<endl;
-					break;
-					default:
-					break;
-				}
-			}
-			break;
-			case ETHER_TYPE_IPV6:
-			{}
-			break;
-			default:
-			{}
-			break;
-		}
-
-		std::cout<<std::endl;
+		cout<<"Pacchetto " << lexical_cast<int>(line[0]) <<endl;
 	  }
 	  catch(packet::Overflow)
 	  {
