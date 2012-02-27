@@ -1,7 +1,7 @@
 //============================================================================
 // Name        : Riddle
 // Author      : Andrea Bontempi
-// Version     : 0.1SO
+// Version     : 0.1
 // Copyright   : GNU GPL3
 // Description : Network Sniffer
 //
@@ -16,12 +16,15 @@
 #include <stdexcept>
 #include <string>
 #include <ios>
+#include <boost/shared_ptr.hpp>
 #include "libPacket.h"
 #include "libAddress.h"
 
 /* PACKET */
 
-static packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+using namespace boost;
+
+packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
   
   int protocol_type;
@@ -40,16 +43,16 @@ static packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string ra
   if(protocol_type == ETHER_TYPE_ARP)
   {
     
-    p = new ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    p=new ARPpacket(timeEpoch_i,timeMillis_i,rawData_i);
     
   } else if(protocol_type == ETHER_TYPE_IPV4)
   {
     
-    p = IPv4packet.factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    p = IPv4packet::factory(timeEpoch_i, timeMillis_i, rawData_i);
     
   } else {
     
-    p = new UnknownPacket(); 
+    p = new UnknownPacket(timeEpoch_i, timeMillis_i, rawData_i); 
     
   }
   
@@ -124,8 +127,9 @@ bool packet::isIPv6()
 
 /* ARP */
 
-ARPpacket::ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i): packet(timeEpoch_i, timeMillis_i, rawData_i)
+ARPpacket::ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
+  
   timeEpoch = timeEpoch_i;
   timeMillis = timeMillis_i;
   rawData = rawData_i;
@@ -167,8 +171,7 @@ mac_address ARPpacket::getTargetMac()
 packet* IPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
 //TODO
-packet = new UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-return packet;
+return new UnknownPacket(timeEpoch_i, timeMillis_i, rawData_i);
 }
 
 /* TCP */
@@ -176,8 +179,7 @@ return packet;
 packet* TCPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
 //TODO
-packet = new UnknownTCP(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-return packet;
+return new UnknownTCP(timeEpoch_i,timeMillis_i,rawData_i);
 }
 
 /* UDP */
@@ -185,13 +187,12 @@ return packet;
 packet* UDPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
 //TODO
-packet = new UnknownUDP(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-return packet;
+return new UnknownUDP(timeEpoch_i,  timeMillis_i,  rawData_i);
 }
 
 /* UNKNOWN */
 
-UnknownPacket::UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i): packet(timeEpoch_i, timeMillis_i, rawData_i)
+UnknownPacket::UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
   timeEpoch = timeEpoch_i;
   timeMillis = timeMillis_i;
@@ -201,7 +202,7 @@ UnknownPacket::UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawD
 
 /* UNKNOWN TCP */
 
-UnknownTCP::UnknownTCP(int timeEpoch_i, int timeMillis_i, std::string rawData_i): TCPv4packet(timeEpoch_i, timeMillis_i, rawData_i)
+UnknownTCP::UnknownTCP(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
   timeEpoch = timeEpoch_i;
   timeMillis = timeMillis_i;
@@ -211,7 +212,7 @@ UnknownTCP::UnknownTCP(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 
 /* UNKNOWN UDP */
 
-UnknownUDP::UnknownUDP(int timeEpoch_i, int timeMillis_i, std::string rawData_i): TCPv4packet(timeEpoch_i, timeMillis_i, rawData_i)
+UnknownUDP::UnknownUDP(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
   timeEpoch = timeEpoch_i;
   timeMillis = timeMillis_i;

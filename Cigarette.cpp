@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
 		std::vector< std::string > line;
 		boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
 
-		packet.factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
+		packet::factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
 		
 		cout<<"Pacchetto " << lexical_cast<int>(line[0]) <<endl;
 	  }
