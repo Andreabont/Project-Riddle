@@ -58,7 +58,7 @@ class packet
     /* GENERAL FUNCTIONS */
     
     /* Ottieni lunghezza in byte */
-    int getLenght();
+    int getLength();
     
     /* Ottieni epoch */
     long int getEpoch();
