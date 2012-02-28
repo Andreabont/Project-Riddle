@@ -18,28 +18,19 @@
 /* Class for managing MAC address */
 class mac_address
 {
-  public:
-  
-  /* Costruttore: riceve indirizzo in stringa codifica esadecimale. */
-  mac_address() { std::memset(byte,0,6); }
-  mac_address(const std::string&);
-  
-  /* Restituisce stringa stampabile a schermo. */
-  std::string print();
- 
-  private:
-  short int byte[6];
-};
+public:
 
-/* Class for managing IPv6 address */
-class ipv6_address
-{
-  public:
-  void set(std::string, int);
-  std::string print();
-  
-  private:
-  short int byte[8];
+    /* Costruttore: riceve indirizzo in stringa codifica esadecimale. */
+    mac_address() {
+        std::memset(byte,0,6);
+    }
+    mac_address(const std::string&);
+
+    /* Restituisce stringa stampabile a schermo. */
+    std::string print();
+
+private:
+    short int byte[6];
 };
 
 #endif //LIBADDRESS_H

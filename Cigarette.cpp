@@ -28,77 +28,77 @@ using namespace boost;
 using namespace boost::program_options;
 
 int main(int argc, char **argv) {
-	options_description desc("Cigarette - Network Packet Parser");
-	desc.add_options()
-		("help", "prints this")
-		("verbose", "enable verbose mode") // TODO
-	;
+    options_description desc("Cigarette - Network Packet Parser");
+    desc.add_options()
+    ("help", "prints this")
+    ("verbose", "enable verbose mode") // TODO
+    ;
 
-	variables_map vm;
-	store(parse_command_line(argc, argv, desc), vm);
-	notify(vm);
+    variables_map vm;
+    store(parse_command_line(argc, argv, desc), vm);
+    notify(vm);
 
-	if(vm.count("help"))
-	{
-	    cout<<desc<<"\n";
-	    return 1;
-	}
+    if (vm.count("help"))
+    {
+        cout<<desc<<"\n";
+        return 1;
+    }
 
-	while(1)
-	{
-	  try
-	  {
-		string r_packet;
-		getline(cin,r_packet);
-		if(cin.eof()) break;
+    while (1)
+    {
+        try
+        {
+            string r_packet;
+            getline(cin,r_packet);
+            if (cin.eof()) break;
 
-		std::vector< std::string > line;
-		boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
+            std::vector< std::string > line;
+            boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
 
-		packet* pkg = packet::factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
-		
-		cout << "[" << std::dec << pkg->getEpoch() << " "<< pkg->getMillis() << "] Size: " << pkg->getLength() << " byte" << endl;
-		cout << "                    From " << pkg->getSenderMac().print() << " to "<< pkg->getTargetMac().print() << endl;
-		cout << "                    EtherType: 0x" << std::hex << pkg->getEtherType() << " ("<< ether_type_decode(pkg->getEtherType()) << ")" << endl;
-		cout << endl;
-		
-		if(pkg->isArp())
-		{
-		  
-		  if(((ARPpacket*)pkg)->getOpCode() == 1)
-		  {
-		    cout << "                    Who has " << ((ARPpacket*)pkg)->getTargetIp().to_string() << " ? Tell "<< ((ARPpacket*)pkg)->getSenderIp().to_string() << endl;
-		    cout << endl;
-		    
-		  } else {
-		    
-		    cout << "                    " << ((ARPpacket*)pkg)->getSenderIp().to_string() << " is at "<< pkg->getSenderMac().print() << endl;
-		    cout << endl;
-		    
-		  }
-		  
-		} else if(pkg->isIPv4())
-		{
-		  
-		  
-		  
-		} else {
-		  
-		  
-		  
-		}
-		
-	  }
-	  catch(packet::Overflow)
-	  {
-	    std::cerr<<"Overflow! :-P"<<std::endl;
-	    return EXIT_FAILURE;
-	  }
-	  catch(packet::HeaderFault)
-	  {
-	    std::cerr<<"HeaderFault! :-P"<<std::endl;
-	    return EXIT_FAILURE;
-	  }
-	}
-	return EXIT_SUCCESS;
+            packet* pkg = packet::factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
+
+            cout << "[" << std::dec << pkg->getEpoch() << " "<< pkg->getMillis() << "] Size: " << pkg->getLength() << " byte" << endl;
+            cout << "                    From " << pkg->getSenderMac().print() << " to "<< pkg->getTargetMac().print() << endl;
+            cout << "                    EtherType: 0x" << std::hex << pkg->getEtherType() << " ("<< ether_type_decode(pkg->getEtherType()) << ")" << endl;
+            cout << endl;
+
+            if (pkg->isArp())
+            {
+
+                if (((ARPpacket*)pkg)->getOpCode() == 1)
+                {
+                    cout << "                    Who has " << ((ARPpacket*)pkg)->getTargetIp().to_string() << " ? Tell "<< ((ARPpacket*)pkg)->getSenderIp().to_string() << endl;
+                    cout << endl;
+
+                } else {
+
+                    cout << "                    " << ((ARPpacket*)pkg)->getSenderIp().to_string() << " is at "<< pkg->getSenderMac().print() << endl;
+                    cout << endl;
+
+                }
+
+            } else if (pkg->isIPv4())
+            {
+
+
+
+            } else {
+
+
+
+            }
+
+        }
+        catch (packet::Overflow)
+        {
+            std::cerr<<"Overflow! :-P"<<std::endl;
+            return EXIT_FAILURE;
+        }
+        catch (packet::HeaderFault)
+        {
+            std::cerr<<"HeaderFault! :-P"<<std::endl;
+            return EXIT_FAILURE;
+        }
+    }
+    return EXIT_SUCCESS;
 }

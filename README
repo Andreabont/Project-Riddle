@@ -21,6 +21,6 @@ Legge output di Riddle e restituisce a video informazioni in tempo reale sui pac
 
 ** TODO:
 
-- Filtro pacchetti avanzato (più potente del filtro pcap) con anche filtro livello applicativo.
+- Filtro pacchetti avanzato (piu' potente del filtro pcap) con anche filtro livello applicativo.
 - Follower TCP con ricostruzione file. (Hendirx)
 - Scanner passivo (ARP...)
