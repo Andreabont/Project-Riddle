@@ -16,6 +16,7 @@
 #include <stdexcept>
 #include <string>
 #include <ios>
+#include <boost/lexical_cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include "libPacket.h"
 #include "libAddress.h"
@@ -87,6 +88,28 @@ std::string packet::getHexString(int string_cursor, int read_byte)
   }
   
   return temp;
+}
+
+std::string packet::decodeIPaddress(int string_cursor)
+{
+	std::string temp;
+	std::string stamp;
+	temp.reserve(2);
+
+	for(int i=0;i<=7;i++)
+	{
+		temp += rawData[(string_cursor*2)+i];
+		if(i%2 != 0)
+		{
+			std::stringstream convert(temp);
+			int a;
+			convert>>std::hex>>a;
+			stamp += lexical_cast<std::string>(a);
+			if(i != 7) stamp += ".";
+			temp = "";
+		}
+	}
+	return stamp;
 }
 
 mac_address packet::getMacAddress(int string_cursor)
@@ -162,7 +185,7 @@ int ARPpacket::getOpCode()
 {
   int opcode;
   
-  std::stringstream convert ( this->getHexString(ARP_OFFSET, 2) );
+  std::stringstream convert ( this->getHexString(ARP_OFFSET+6, 2) );
   convert>>std::hex>>opcode;
   
   return opcode;
@@ -170,13 +193,13 @@ int ARPpacket::getOpCode()
 
 boost::asio::ip::address ARPpacket::getSenderIp()
 {
-  boost::asio::ip::address newaddr = boost::asio::ip::address::from_string("127.0.0.1");
+  boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->decodeIPaddress(ARP_OFFSET+14));
   return newaddr;
 }
 
 boost::asio::ip::address ARPpacket::getTargetIp()
 {
-  boost::asio::ip::address newaddr = boost::asio::ip::address::from_string("127.0.0.2");
+  boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->decodeIPaddress(ARP_OFFSET+24));
   return newaddr;
 }
 

@@ -28,7 +28,7 @@
 
 /* ARP */
 
-#define ARP_OFFSET		20
+#define ARP_OFFSET		14
 
 /* INCLUDE */
 
@@ -68,6 +68,9 @@ class packet
     
     /* Legge n byte a partire dal byte voluto e li restituisce in stringa. */
     std::string getHexString(int string_cursor, int read_byte);
+    
+    /* Legge IPv4 dal byte voluto e restituisce in formato decimale. */
+    std::string decodeIPaddress(int string_cursor);
     
     /* Salva MAC address a partire da un punto (n° del byte) della stringa rawData */
     mac_address getMacAddress(int string_cursor);

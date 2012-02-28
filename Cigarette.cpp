@@ -67,13 +67,13 @@ int main(int argc, char **argv) {
 		  
 		  if(((ARPpacket*)pkg)->getOpCode() == 1)
 		  {
-		    
 		    cout << "                    Who has " << ((ARPpacket*)pkg)->getTargetIp().to_string() << " ? Tell "<< ((ARPpacket*)pkg)->getSenderIp().to_string() << endl;
 		    cout << endl;
 		    
 		  } else {
 		    
-		    
+		    cout << "                    " << ((ARPpacket*)pkg)->getSenderIp().to_string() << " is at "<< pkg->getSenderMac().print() << endl;
+		    cout << endl;
 		    
 		  }
 		  
