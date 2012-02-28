@@ -1,26 +1,46 @@
-Dipendenze:
+----------
+Dipendenze
+----------
 
+cmake (opzionale)
 libboost
 libpcap
 
-** Riddle:
+------
+Riddle
+------
 
-Sniffer raw. Restituisce pacchetti ricevuti in hex su standard output. (Uno per linea)
-NB: E' la sola parte da eseguire con permessi di root!!
+Restituisce pacchetti ricevuti su standard output uno per riga nel formato:
 
+<epoch>!<millisecondi da epoch>!<pacchetto in formato hex>
+
+Accetta i seguenti parametri:
+
+--help		Scrive un messaggio di help.
 --dump		Scrive in formato umanamente comprensibile (piu' o meno)
 --limit	<x>	Impone massimo numero di pacchetti ricevibili.
 --iface <x>	Impone sniffing su una interfaccia specifica (se non presente usa standard)
---help		Ovvio.
 --filter <x>	Visualizza solo pacchetti voluti (non filtra a livello applicativo)
 
-** Cigarette:
+NB: E' la sola parte da eseguire con permessi di root!!
+
+---------
+Cigarette
+---------
 
 Legge output di Riddle e restituisce a video informazioni in tempo reale sui pacchetti ricevuti. (Solo Ethernet)
 
+-------------
+Esempio d'uso
+-------------
 
-** TODO:
+sudo ./riddle --iface eth0 --filter arp --dump 	--> Visualizza i pacchetti ARP di eth0.
+sudo ./riddle --iface wlan0 | ./cigarette	--> Stampa a schermo informazioni sui pacchetti di wlan0.
+
+----
+TODO
+----
 
 - Filtro pacchetti avanzato (piu' potente del filtro pcap) con anche filtro livello applicativo.
-- Follower TCP con ricostruzione file. (Hendirx)
-- Scanner passivo (ARP...)
+- Follower TCP con ricostruzione file.
+- Scanner IP passivo (ARP + DHCP)
