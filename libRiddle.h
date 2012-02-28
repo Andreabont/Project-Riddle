@@ -22,6 +22,8 @@
  */
 
 void pcap_fatal(const char *error_in, const char *error_buffer);
+
+/* Funzioni per la stampa su schermo dei dati in formato esadecimale */
 void hexDump(const unsigned char *start, struct pcap_pkthdr header);
 void rawDump(const unsigned char *start, struct pcap_pkthdr header);
 
