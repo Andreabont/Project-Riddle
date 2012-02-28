@@ -34,7 +34,6 @@
 
 #include <string>
 #include <boost/asio.hpp>
-#include <boost/asio/ip/address_v4.hpp>
 #include "libAddress.h"
 
 /* Class for managing packets*/

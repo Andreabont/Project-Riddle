@@ -14,7 +14,6 @@
 #include <cstdlib>
 #include <string>
 #include <boost/asio.hpp>
-#include <boost/asio/ip/address_v4.hpp>
 #include <boost/program_options.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/split.hpp>
