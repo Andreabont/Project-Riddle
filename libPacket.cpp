@@ -150,12 +150,12 @@ bool packet::isIPv6()
 
 mac_address packet::getSenderMac()
 {
-  return this->getMacAddress(0);
+  return this->getMacAddress(6);
 }
 
 mac_address packet::getTargetMac()
 {
-  return this->getMacAddress(6);
+  return this->getMacAddress(0);
 }
 
 int packet::getEtherType()
