@@ -95,7 +95,7 @@ std::string packet::decodeIPaddress(int string_cursor)
     std::string stamp;
     temp.reserve(2);
 
-    for (int i=0;i<=7;i++)
+    for (int i=0; i <= 7; i++)
     {
         temp += rawData[(string_cursor*2)+i];
         if (i%2 != 0)
@@ -121,7 +121,7 @@ bool packet::isArp()
 {
     int protocol_type;
 
-    std::stringstream convert ( this->getHexString(12, 2) );
+    std::stringstream convert (this->getHexString(12, 2));
     convert>>std::hex>>protocol_type;
 
     return (protocol_type == ETHER_TYPE_ARP);
@@ -131,7 +131,7 @@ bool packet::isIPv4()
 {
     int protocol_type;
 
-    std::stringstream convert ( this->getHexString(12, 2) );
+    std::stringstream convert (this->getHexString(12, 2));
     convert>>std::hex>>protocol_type;
 
     return (protocol_type == ETHER_TYPE_IPV4);
@@ -141,7 +141,7 @@ bool packet::isIPv6()
 {
     int protocol_type;
 
-    std::stringstream convert ( this->getHexString(12, 2) );
+    std::stringstream convert (this->getHexString(12, 2));
     convert>>std::hex>>protocol_type;
 
     return (protocol_type == ETHER_TYPE_IPV6);
@@ -161,7 +161,7 @@ int packet::getEtherType()
 {
     int protocol_type;
 
-    std::stringstream convert ( this->getHexString(12, 2) );
+    std::stringstream convert (this->getHexString(12, 2));
     convert>>std::hex>>protocol_type;
 
     return protocol_type;
@@ -184,7 +184,7 @@ int ARPpacket::getOpCode()
 {
     int opcode;
 
-    std::stringstream convert ( this->getHexString(ARP_OFFSET+6, 2) );
+    std::stringstream convert (this->getHexString(ARP_OFFSET+6, 2));
     convert>>std::hex>>opcode;
 
     return opcode;
@@ -207,8 +207,46 @@ boost::asio::ip::address ARPpacket::getTargetIp()
 
 packet* IPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
-//TODO
-    return new UnknownPacket(timeEpoch_i, timeMillis_i, rawData_i);
+    int protocol_type;
+
+    std::string temp;
+    temp.reserve(2);
+
+    for (int i = 47; i <= 48; i++)
+    {
+        temp += rawData_i[i];
+    }
+    std::stringstream convert ( temp );
+    convert>>std::hex>>protocol_type;
+
+    packet *p;
+    if (protocol_type == IPV4_TYPE_TCP)
+    {
+
+        p = new TCPv4packet::factory(timeEpoch_i, timeMillis_i, rawData_i);
+
+    } else if (protocol_type == IPV4_TYPE_UDP)
+    {
+
+        p = UDPv4packet::factory(timeEpoch_i, timeMillis_i, rawData_i);
+
+    } else {
+
+        p = new UnknownPacket(timeEpoch_i, timeMillis_i, rawData_i);
+
+    }
+
+    return p;
+}
+
+asio::ip::address IPv4packet::getSenderIp()
+{
+
+}
+
+asio::ip::address IPv4packet::getTargetIp()
+{
+
 }
 
 /* TCP */
@@ -217,6 +255,15 @@ packet* TCPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawD
 {
 //TODO
     return new UnknownTCP(timeEpoch_i,timeMillis_i,rawData_i);
+}
+
+int TCPv4packet::getSenderPort()
+{
+
+}
+int TCPv4packet::getTargetPort()
+{
+
 }
 
 /* UDP */

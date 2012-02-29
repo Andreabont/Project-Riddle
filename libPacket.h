@@ -21,14 +21,15 @@
 #define ETHER_TYPE_IPV6		0x86DD
 #define ETHER_TYPE_PPP		0x880B
 
-/* IP */
-
-#define IPV4_TYPE_TCP		0x06
-#define IPV4_TYPE_UDP		0x11
-
 /* ARP */
 
 #define ARP_OFFSET		14
+
+/* IPv4 */
+
+#define IPv4_OFFSET		14 
+#define IPV4_TYPE_TCP		0x06
+#define IPV4_TYPE_UDP		0x11
 
 /* INCLUDE */
 
@@ -49,7 +50,6 @@ protected:
 public:
 
     class Overflow {}; // Gestore overflow.
-    class HeaderFault {}; // Gestore header sbagliato.
 
     /* Costruttore Pacchetto */
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
@@ -114,6 +114,8 @@ class IPv4packet : public packet
 {
 public:
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    boost::asio::ip::address getSenderIp();
+    boost::asio::ip::address getTargetIp();
 };
 
 /*Class for managing TCPv4 packets*/
@@ -121,6 +123,8 @@ class TCPv4packet : public IPv4packet
 {
 public:
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    int getSenderPort();
+    int getTargetPort();
 };
 
 /*Class for managing UDPv4 packets*/
@@ -128,6 +132,8 @@ class UDPv4packet : public IPv4packet
 {
 public:
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    int getSenderPort();
+    int getTargetPort();
 };
 
 /*Class for managing unknown packets*/

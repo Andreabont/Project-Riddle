@@ -93,11 +93,6 @@ int main(int argc, char **argv) {
             std::cerr<<"Overflow! :-P"<<std::endl;
             return EXIT_FAILURE;
         }
-        catch (packet::HeaderFault)
-        {
-            std::cerr<<"HeaderFault! :-P"<<std::endl;
-            return EXIT_FAILURE;
-        }
     }
     return EXIT_SUCCESS;
 }
