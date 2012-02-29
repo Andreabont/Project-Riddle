@@ -47,6 +47,8 @@ std::string ipv4_type_decode(int start)
         return "TCP";
     case (IPV4_TYPE_UDP):
         return "UDP";
+    case (IPV4_TYPE_ICMP):
+	return "ICMP";
     default:
         return "UNDEFINED";
     }

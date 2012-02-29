@@ -27,7 +27,7 @@ public:
     mac_address(const std::string&);
 
     /* Restituisce stringa stampabile a schermo. */
-    std::string print();
+    std::string to_string();
 
 private:
     short int byte[6];

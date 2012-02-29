@@ -119,32 +119,17 @@ mac_address packet::getMacAddress(int string_cursor)
 
 bool packet::isArp()
 {
-    int protocol_type;
-
-    std::stringstream convert (this->getHexString(12, 2));
-    convert>>std::hex>>protocol_type;
-
-    return (protocol_type == ETHER_TYPE_ARP);
+    return (this->getEtherType() == ETHER_TYPE_ARP);
 }
 
 bool packet::isIPv4()
 {
-    int protocol_type;
-
-    std::stringstream convert (this->getHexString(12, 2));
-    convert>>std::hex>>protocol_type;
-
-    return (protocol_type == ETHER_TYPE_IPV4);
+    return (this->getEtherType() == ETHER_TYPE_IPV4);
 }
 
 bool packet::isIPv6()
 {
-    int protocol_type;
-
-    std::stringstream convert (this->getHexString(12, 2));
-    convert>>std::hex>>protocol_type;
-
-    return (protocol_type == ETHER_TYPE_IPV6);
+    return (this->getEtherType() == ETHER_TYPE_IPV6);
 }
 
 mac_address packet::getSenderMac()
@@ -223,13 +208,18 @@ packet* IPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawDa
     if (protocol_type == IPV4_TYPE_TCP)
     {
 
-        p = new TCPv4packet::factory(timeEpoch_i, timeMillis_i, rawData_i);
+        p = TCPv4packet::factory(timeEpoch_i, timeMillis_i, rawData_i);
 
     } else if (protocol_type == IPV4_TYPE_UDP)
     {
 
         p = UDPv4packet::factory(timeEpoch_i, timeMillis_i, rawData_i);
 
+    } else if (protocol_type == IPV4_TYPE_ICMP)
+    {
+      
+	p = new ICMPv4packet(timeEpoch_i, timeMillis_i, rawData_i);
+      
     } else {
 
         p = new UnknownPacket(timeEpoch_i, timeMillis_i, rawData_i);
@@ -241,12 +231,50 @@ packet* IPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawDa
 
 asio::ip::address IPv4packet::getSenderIp()
 {
-
+    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->decodeIPaddress(IPv4_OFFSET+12));
+    return newaddr;
 }
 
 asio::ip::address IPv4packet::getTargetIp()
 {
+    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->decodeIPaddress(IPv4_OFFSET+16));
+    return newaddr;
+}
 
+int IPv4packet::getProtocolType()
+{
+    int protocol_type;
+
+    std::stringstream convert (this->getHexString(IPv4_OFFSET+9, 1));
+    convert>>std::hex>>protocol_type;
+
+    return protocol_type;
+}
+
+bool IPv4packet::isTCP()
+{
+    return (this->getProtocolType() == IPV4_TYPE_TCP);
+}
+
+bool IPv4packet::isUDP()
+{
+    return (this->getProtocolType() == IPV4_TYPE_UDP);
+}
+
+bool IPv4packet::isICMP()
+{
+    return (this->getProtocolType() == IPV4_TYPE_ICMP);
+}
+
+/* ICMP */
+
+ICMPv4packet::ICMPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+{
+    timeEpoch = timeEpoch_i;
+    timeMillis = timeMillis_i;
+    rawData = rawData_i;
+    pkgLength = rawData_i.length() / 2;
+    return;
 }
 
 /* TCP */
@@ -259,11 +287,22 @@ packet* TCPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawD
 
 int TCPv4packet::getSenderPort()
 {
+    int port;
 
+    std::stringstream convert (this->getHexString(TCP_OFFSET+0, 2));
+    convert>>std::hex>>port;
+
+    return port;
 }
+
 int TCPv4packet::getTargetPort()
 {
+    int port;
 
+    std::stringstream convert (this->getHexString(TCP_OFFSET+2, 2));
+    convert>>std::hex>>port;
+
+    return port;
 }
 
 /* UDP */

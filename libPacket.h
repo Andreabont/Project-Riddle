@@ -28,8 +28,13 @@
 /* IPv4 */
 
 #define IPv4_OFFSET		14 
+#define IPV4_TYPE_ICMP		0x01
 #define IPV4_TYPE_TCP		0x06
 #define IPV4_TYPE_UDP		0x11
+
+/* TCP */
+
+#define TCP_OFFSET		34
 
 /* INCLUDE */
 
@@ -116,6 +121,10 @@ public:
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     boost::asio::ip::address getSenderIp();
     boost::asio::ip::address getTargetIp();
+    int getProtocolType();
+    bool isTCP();
+    bool isUDP();
+    bool isICMP();
 };
 
 /*Class for managing TCPv4 packets*/
@@ -134,6 +143,13 @@ public:
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     int getSenderPort();
     int getTargetPort();
+};
+
+/*Class for managing ICMPv4 packets*/
+class ICMPv4packet : public IPv4packet
+{
+public:
+    ICMPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 };
 
 /*Class for managing unknown packets*/

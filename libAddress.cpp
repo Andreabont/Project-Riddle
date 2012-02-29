@@ -35,7 +35,7 @@ mac_address::mac_address(const std::string& rawData)
     return;
 }
 
-std::string mac_address::print()
+std::string mac_address::to_string()
 {
     std::string stamp;
     std::stringstream temp;

@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <iomanip>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
 #include <boost/lexical_cast.hpp>
@@ -56,8 +57,8 @@ int main(int argc, char **argv) {
 
             packet* pkg = packet::factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
 
-            cout << "[" << std::dec << pkg->getEpoch() << " "<< pkg->getMillis() << "] Size: " << pkg->getLength() << " byte" << endl;
-            cout << "                    From " << pkg->getSenderMac().print() << " to "<< pkg->getTargetMac().print() << endl;
+            cout << "[" << std::dec << pkg->getEpoch() << " " << setfill('0') << std::setw(6) << pkg->getMillis() << "] Size: " << pkg->getLength() << " byte" << endl;
+            cout << "                    From " << pkg->getSenderMac().to_string() << " to "<< pkg->getTargetMac().to_string() << endl;
             cout << "                    EtherType: 0x" << std::hex << pkg->getEtherType() << " ("<< ether_type_decode(pkg->getEtherType()) << ")" << endl;
             cout << endl;
 
@@ -71,7 +72,7 @@ int main(int argc, char **argv) {
 
                 } else {
 
-                    cout << "                    " << ((ARPpacket*)pkg)->getSenderIp().to_string() << " is at "<< pkg->getSenderMac().print() << endl;
+                    cout << "                    " << ((ARPpacket*)pkg)->getSenderIp().to_string() << " is at "<< pkg->getSenderMac().to_string() << endl;
                     cout << endl;
 
                 }
@@ -79,11 +80,27 @@ int main(int argc, char **argv) {
             } else if (pkg->isIPv4())
             {
 
+                cout << "                    From " << ((IPv4packet*)pkg)->getSenderIp().to_string() << " to "<< ((IPv4packet*)pkg)->getTargetIp().to_string() << endl;
+                cout << "                    ProtocolType: 0x" << ((IPv4packet*)pkg)->getProtocolType() << " ("<< ipv4_type_decode(((IPv4packet*)pkg)->getProtocolType()) << ")" << endl;
+                cout << endl;
 
+                if (((IPv4packet*)pkg)->isTCP())
+                {
+
+                    cout << "                    From port " << std::dec << ((TCPv4packet*)pkg)->getSenderPort() << " to port " << ((TCPv4packet*)pkg)->getTargetPort() << endl;
+		    cout << endl;
+
+                } else if (((IPv4packet*)pkg)->isUDP())
+                {
+
+                } else if (((IPv4packet*)pkg)->isICMP())
+                {
+
+                } else {
+
+                }
 
             } else {
-
-
 
             }
 
