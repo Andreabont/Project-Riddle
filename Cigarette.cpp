@@ -93,6 +93,9 @@ int main(int argc, char **argv) {
                 } else if (((IPv4packet*)pkg)->isUDP())
                 {
 
+                    cout << "                    From port " << std::dec << ((UDPv4packet*)pkg)->getSenderPort() << " to port " << ((UDPv4packet*)pkg)->getTargetPort() << endl;
+		    cout << endl;
+		  
                 } else if (((IPv4packet*)pkg)->isICMP())
                 {
 

@@ -36,6 +36,10 @@
 
 #define TCP_OFFSET		34
 
+/* UDP */
+
+#define UDP_OFFSET		34
+
 /* INCLUDE */
 
 #include <string>

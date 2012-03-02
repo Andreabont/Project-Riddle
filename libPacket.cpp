@@ -288,20 +288,16 @@ packet* TCPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawD
 int TCPv4packet::getSenderPort()
 {
     int port;
-
     std::stringstream convert (this->getHexString(TCP_OFFSET+0, 2));
     convert>>std::hex>>port;
-
     return port;
 }
 
 int TCPv4packet::getTargetPort()
 {
     int port;
-
     std::stringstream convert (this->getHexString(TCP_OFFSET+2, 2));
     convert>>std::hex>>port;
-
     return port;
 }
 
@@ -311,6 +307,22 @@ packet* UDPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawD
 {
 //TODO
     return new UnknownUDP(timeEpoch_i,  timeMillis_i,  rawData_i);
+}
+
+int UDPv4packet::getSenderPort()
+{
+    int port;
+    std::stringstream convert (this->getHexString(UDP_OFFSET+0, 2));
+    convert>>std::hex>>port;
+    return port;
+}
+
+int UDPv4packet::getTargetPort()
+{
+    int port;
+    std::stringstream convert (this->getHexString(UDP_OFFSET+2, 2));
+    convert>>std::hex>>port;
+    return port;
 }
 
 /* UNKNOWN */
