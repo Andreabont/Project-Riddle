@@ -301,6 +301,38 @@ int TCPv4packet::getTargetPort()
     return port;
 }
 
+int TCPv4packet::getSequenceNumber()
+{
+    int sn;
+    std::stringstream convert (this->getHexString(TCP_OFFSET+4, 4));
+    convert>>std::hex>>sn;
+    return sn;
+}
+
+int TCPv4packet::getAcknowledgmentNumber()
+{
+    int an;
+    std::stringstream convert (this->getHexString(TCP_OFFSET+8, 4));
+    convert>>std::hex>>an;
+    return an;
+}
+
+int TCPv4packet::getFlags()
+{
+    int flag;
+    std::stringstream convert (this->getHexString(TCP_OFFSET+13, 1));
+    convert>>std::hex>>flag;
+    return flag;
+}
+
+int TCPv4packet::getWindowSize()
+{
+    int ws;
+    std::stringstream convert (this->getHexString(TCP_OFFSET+14, 2));
+    convert>>std::hex>>ws;
+    return ws;
+}
+
 /* UDP */
 
 packet* UDPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)

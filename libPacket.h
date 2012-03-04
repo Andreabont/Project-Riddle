@@ -138,6 +138,10 @@ public:
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     int getSenderPort();
     int getTargetPort();
+    int getSequenceNumber();
+    int getAcknowledgmentNumber();
+    int getFlags();
+    int getWindowSize();
 };
 
 /*Class for managing UDPv4 packets*/

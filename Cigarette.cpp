@@ -88,6 +88,8 @@ int main(int argc, char **argv) {
                 {
 
                     cout << "                    From port " << std::dec << ((TCPv4packet*)pkg)->getSenderPort() << " to port " << ((TCPv4packet*)pkg)->getTargetPort() << endl;
+		    cout << "                    Sequence Number        " << ((TCPv4packet*)pkg)->getSequenceNumber() << endl;
+		    cout << "                    Acknowledgment Number  " << ((TCPv4packet*)pkg)->getAcknowledgmentNumber() << endl;
 		    cout << endl;
 
                 } else if (((IPv4packet*)pkg)->isUDP())
