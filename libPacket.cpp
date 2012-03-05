@@ -301,17 +301,17 @@ int TCPv4packet::getTargetPort()
     return port;
 }
 
-int TCPv4packet::getSequenceNumber()
+long int TCPv4packet::getSequenceNumber()
 {
-    int sn;
+    long int sn;
     std::stringstream convert (this->getHexString(TCP_OFFSET+4, 4));
     convert>>std::hex>>sn;
     return sn;
 }
 
-int TCPv4packet::getAcknowledgmentNumber()
+long int TCPv4packet::getAcknowledgmentNumber()
 {
-    int an;
+    long int an;
     std::stringstream convert (this->getHexString(TCP_OFFSET+8, 4));
     convert>>std::hex>>an;
     return an;

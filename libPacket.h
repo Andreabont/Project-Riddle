@@ -138,8 +138,8 @@ public:
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     int getSenderPort();
     int getTargetPort();
-    int getSequenceNumber();
-    int getAcknowledgmentNumber();
+    long int getSequenceNumber();
+    long int getAcknowledgmentNumber();
     int getFlags();
     int getWindowSize();
 };

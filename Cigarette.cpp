@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     options_description desc("Cigarette - Network Packet Parser");
     desc.add_options()
     ("help", "prints this")
-    ("verbose", "enable verbose mode") // TODO
+    ("tcp", "expand TCP info")
     ;
 
     variables_map vm;
@@ -88,8 +88,13 @@ int main(int argc, char **argv) {
                 {
 
                     cout << "                    From port " << std::dec << ((TCPv4packet*)pkg)->getSenderPort() << " to port " << ((TCPv4packet*)pkg)->getTargetPort() << endl;
-		    cout << "                    Sequence Number        " << ((TCPv4packet*)pkg)->getSequenceNumber() << endl;
-		    cout << "                    Acknowledgment Number  " << ((TCPv4packet*)pkg)->getAcknowledgmentNumber() << endl;
+		    
+		    if (vm.count("tcp"))
+		    {
+			cout << "                    + Sequence Number        " << ((TCPv4packet*)pkg)->getSequenceNumber() << endl;
+			cout << "                    + Acknowledgment Number  " << ((TCPv4packet*)pkg)->getAcknowledgmentNumber() << endl;
+		    }
+		    
 		    cout << endl;
 
                 } else if (((IPv4packet*)pkg)->isUDP())
