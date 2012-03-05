@@ -142,6 +142,14 @@ public:
     long int getAcknowledgmentNumber();
     int getFlags();
     int getWindowSize();
+    bool isACK();
+    bool isSYN();
+    bool isFIN();
+    bool isRST();
+    bool isPSH();
+    bool isURG();
+    bool isECE();
+    bool isCWR();
 };
 
 /*Class for managing UDPv4 packets*/

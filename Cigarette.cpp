@@ -93,6 +93,17 @@ int main(int argc, char **argv) {
 		    {
 			cout << "                    + Sequence Number        " << ((TCPv4packet*)pkg)->getSequenceNumber() << endl;
 			cout << "                    + Acknowledgment Number  " << ((TCPv4packet*)pkg)->getAcknowledgmentNumber() << endl;
+			cout << "                    + Window Size            " << ((TCPv4packet*)pkg)->getWindowSize() << " byte" <<endl;
+			cout << "                    + Flags                  ";
+			if(((TCPv4packet*)pkg)->isSYN()) cout << "SYN ";
+			if(((TCPv4packet*)pkg)->isFIN()) cout << "FIN ";
+			if(((TCPv4packet*)pkg)->isRST()) cout << "RST ";
+			if(((TCPv4packet*)pkg)->isACK()) cout << "ACK ";
+			if(((TCPv4packet*)pkg)->isPSH()) cout << "PSH ";
+			if(((TCPv4packet*)pkg)->isURG()) cout << "URG ";
+			if(((TCPv4packet*)pkg)->isECE()) cout << "ECE ";
+			if(((TCPv4packet*)pkg)->isCWR()) cout << "CWR ";
+			cout << endl;
 		    }
 		    
 		    cout << endl;

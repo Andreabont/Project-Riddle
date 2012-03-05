@@ -333,6 +333,54 @@ int TCPv4packet::getWindowSize()
     return ws;
 }
 
+bool TCPv4packet::isCWR()
+{
+    int flag = this->getFlags();
+    return (flag & 128);
+}
+
+bool TCPv4packet::isECE()
+{
+    int flag = this->getFlags();
+    return (flag & 64);
+}
+
+bool TCPv4packet::isURG()
+{
+    int flag = this->getFlags();
+    return (flag & 32);
+}
+
+bool TCPv4packet::isACK()
+{
+    int flag = this->getFlags();
+    return (flag & 16);
+}
+
+bool TCPv4packet::isPSH()
+{
+    int flag = this->getFlags();
+    return (flag & 8);
+}
+
+bool TCPv4packet::isRST()
+{
+    int flag = this->getFlags();
+    return (flag & 4);
+}
+
+bool TCPv4packet::isSYN()
+{
+    int flag = this->getFlags();
+    return (flag & 2);
+}
+
+bool TCPv4packet::isFIN()
+{
+    int flag = this->getFlags();
+    return (flag & 1);
+}
+
 /* UDP */
 
 packet* UDPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
