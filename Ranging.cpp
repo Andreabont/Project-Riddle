@@ -62,6 +62,8 @@ int main(int argc, char **argv) {
                 cout << ((ARPpacket*)pkg)->getSenderMac().to_string() << " is at "<< ((ARPpacket*)pkg)->getSenderIp().to_string() << endl;	      
 	    }
 
+	    delete pkg;
+	    
         }
         catch (packet::Overflow)
         {

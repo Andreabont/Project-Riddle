@@ -125,6 +125,7 @@ int main(int argc, char **argv) {
 
             }
 
+            delete pkg;
         }
         catch (packet::Overflow)
         {
