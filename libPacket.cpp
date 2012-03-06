@@ -59,6 +59,7 @@ packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i
     return p;
 }
 
+
 int packet::getLength()
 {
     return pkgLength;
@@ -197,7 +198,7 @@ packet* IPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawDa
     std::string temp;
     temp.reserve(2);
 
-    for (int i = 47; i <= 48; i++)
+    for (int i = 46; i <= 47; i++)
     {
         temp += rawData_i[i];
     }
@@ -208,12 +209,12 @@ packet* IPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawDa
     if (protocol_type == IPV4_TYPE_TCP)
     {
 
-        p = TCPv4packet::factory(timeEpoch_i, timeMillis_i, rawData_i);
+        p = new TCPv4packet(timeEpoch_i, timeMillis_i, rawData_i);
 
     } else if (protocol_type == IPV4_TYPE_UDP)
     {
 
-        p = UDPv4packet::factory(timeEpoch_i, timeMillis_i, rawData_i);
+        p = new UDPv4packet(timeEpoch_i, timeMillis_i, rawData_i);
 
     } else if (protocol_type == IPV4_TYPE_ICMP)
     {
@@ -279,10 +280,13 @@ ICMPv4packet::ICMPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawDat
 
 /* TCP */
 
-packet* TCPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+TCPv4packet::TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
-//TODO
-    return new UnknownTCP(timeEpoch_i,timeMillis_i,rawData_i);
+    timeEpoch = timeEpoch_i;
+    timeMillis = timeMillis_i;
+    rawData = rawData_i;
+    pkgLength = rawData_i.length() / 2;
+    return;
 }
 
 int TCPv4packet::getSenderPort()
@@ -383,10 +387,13 @@ bool TCPv4packet::isFIN()
 
 /* UDP */
 
-packet* UDPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+UDPv4packet::UDPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
-//TODO
-    return new UnknownUDP(timeEpoch_i,  timeMillis_i,  rawData_i);
+    timeEpoch = timeEpoch_i;
+    timeMillis = timeMillis_i;
+    rawData = rawData_i;
+    pkgLength = rawData_i.length() / 2;
+    return;
 }
 
 int UDPv4packet::getSenderPort()
@@ -408,28 +415,6 @@ int UDPv4packet::getTargetPort()
 /* UNKNOWN */
 
 UnknownPacket::UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
-{
-    timeEpoch = timeEpoch_i;
-    timeMillis = timeMillis_i;
-    rawData = rawData_i;
-    pkgLength = rawData_i.length() / 2;
-    return;
-}
-
-/* UNKNOWN TCP */
-
-UnknownTCP::UnknownTCP(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
-{
-    timeEpoch = timeEpoch_i;
-    timeMillis = timeMillis_i;
-    rawData = rawData_i;
-    pkgLength = rawData_i.length() / 2;
-    return;
-}
-
-/* UNKNOWN UDP */
-
-UnknownUDP::UnknownUDP(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;

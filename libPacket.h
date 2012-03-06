@@ -62,6 +62,9 @@ public:
 
     /* Costruttore Pacchetto */
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    
+    /* Distruttore virtuale */
+    virtual ~packet() {}
 
     /* GENERAL FUNCTIONS */
 
@@ -135,7 +138,7 @@ public:
 class TCPv4packet : public IPv4packet
 {
 public:
-    static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     int getSenderPort();
     int getTargetPort();
     unsigned int getSequenceNumber();
@@ -156,7 +159,7 @@ public:
 class UDPv4packet : public IPv4packet
 {
 public:
-    static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    UDPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     int getSenderPort();
     int getTargetPort();
 };
@@ -173,20 +176,6 @@ class UnknownPacket : public packet
 {
 public:
     UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-};
-
-/*Class for managing unknown TCPv4 packets*/
-class UnknownTCP : public TCPv4packet
-{
-public:
-    UnknownTCP(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-};
-
-/*Class for managing unknown UDPv4 packets*/
-class UnknownUDP : public TCPv4packet
-{
-public:
-    UnknownUDP(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 };
 
 #endif //LIBHEADER_H

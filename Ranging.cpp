@@ -59,7 +59,8 @@ int main(int argc, char **argv) {
 	    
 	    if(pkg->isArp())
 	    {
-                cout << ((ARPpacket*)pkg)->getSenderMac().to_string() << " is at "<< ((ARPpacket*)pkg)->getSenderIp().to_string() << endl;	      
+		ARPpacket *pkg_arp = dynamic_cast<ARPpacket*>(pkg);
+                cout << pkg_arp->getSenderMac().to_string() << " is at "<< pkg_arp->getSenderIp().to_string() << endl;	      
 	    }
 
 	    delete pkg;
