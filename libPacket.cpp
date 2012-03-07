@@ -143,9 +143,9 @@ mac_address packet::getTargetMac()
     return this->getMacAddress(0);
 }
 
-int packet::getEtherType()
+unsigned int packet::getEtherType()
 {
-    int protocol_type;
+    unsigned int protocol_type;
 
     std::stringstream convert (this->getHexString(12, 2));
     convert>>std::hex>>protocol_type;
@@ -166,9 +166,9 @@ ARPpacket::ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
     return;
 }
 
-int ARPpacket::getOpCode()
+unsigned int ARPpacket::getOpCode()
 {
-    int opcode;
+    unsigned int opcode;
 
     std::stringstream convert (this->getHexString(ARP_OFFSET+6, 2));
     convert>>std::hex>>opcode;
@@ -242,9 +242,9 @@ asio::ip::address IPv4packet::getTargetIp()
     return newaddr;
 }
 
-int IPv4packet::getProtocolType()
+unsigned int IPv4packet::getProtocolType()
 {
-    int protocol_type;
+    unsigned int protocol_type;
 
     std::stringstream convert (this->getHexString(IPv4_OFFSET+9, 1));
     convert>>std::hex>>protocol_type;
@@ -278,6 +278,26 @@ ICMPv4packet::ICMPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawDat
     return;
 }
 
+unsigned int ICMPv4packet::getMessageType()
+{
+    unsigned int message_type;
+
+    std::stringstream convert (this->getHexString(ICMPV4_OFFSET+0, 1));
+    convert>>std::hex>>message_type;
+
+    return message_type;
+}
+
+unsigned int ICMPv4packet::getMessageCode()
+{
+    unsigned int message_code;
+
+    std::stringstream convert (this->getHexString(ICMPV4_OFFSET+1, 1));
+    convert>>std::hex>>message_code;
+
+    return message_code;
+}
+
 /* TCP */
 
 TCPv4packet::TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
@@ -289,17 +309,17 @@ TCPv4packet::TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_
     return;
 }
 
-int TCPv4packet::getSenderPort()
+unsigned int TCPv4packet::getSenderPort()
 {
-    int port;
+    unsigned int port;
     std::stringstream convert (this->getHexString(TCP_OFFSET+0, 2));
     convert>>std::hex>>port;
     return port;
 }
 
-int TCPv4packet::getTargetPort()
+unsigned int TCPv4packet::getTargetPort()
 {
-    int port;
+    unsigned int port;
     std::stringstream convert (this->getHexString(TCP_OFFSET+2, 2));
     convert>>std::hex>>port;
     return port;
@@ -329,9 +349,9 @@ int TCPv4packet::getFlags()
     return flag;
 }
 
-int TCPv4packet::getWindowSize()
+unsigned int TCPv4packet::getWindowSize()
 {
-    int ws;
+    unsigned int ws;
     std::stringstream convert (this->getHexString(TCP_OFFSET+14, 2));
     convert>>std::hex>>ws;
     return ws;
@@ -396,17 +416,17 @@ UDPv4packet::UDPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_
     return;
 }
 
-int UDPv4packet::getSenderPort()
+unsigned int UDPv4packet::getSenderPort()
 {
-    int port;
+    unsigned int port;
     std::stringstream convert (this->getHexString(UDP_OFFSET+0, 2));
     convert>>std::hex>>port;
     return port;
 }
 
-int UDPv4packet::getTargetPort()
+unsigned int UDPv4packet::getTargetPort()
 {
-    int port;
+    unsigned int port;
     std::stringstream convert (this->getHexString(UDP_OFFSET+2, 2));
     convert>>std::hex>>port;
     return port;

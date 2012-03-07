@@ -64,8 +64,8 @@ int main(int argc, char **argv) {
 
             if (pkg->isArp())
             {
-	      
-	      ARPpacket *pkg_arp = dynamic_cast<ARPpacket*>(pkg);
+
+                ARPpacket *pkg_arp = dynamic_cast<ARPpacket*>(pkg);
 
                 if (pkg_arp->getOpCode() == 1)
                 {
@@ -81,8 +81,8 @@ int main(int argc, char **argv) {
 
             } else if (pkg->isIPv4())
             {
-	      
-	      IPv4packet *pkg_ipv4 = dynamic_cast<IPv4packet*>(pkg);
+
+                IPv4packet *pkg_ipv4 = dynamic_cast<IPv4packet*>(pkg);
 
                 cout << "                    From " << pkg_ipv4->getSenderIp().to_string() << " to "<< pkg_ipv4->getTargetIp().to_string() << endl;
                 cout << "                    ProtocolType: 0x" << pkg_ipv4->getProtocolType() << " ("<< ipv4_type_decode(pkg_ipv4->getProtocolType()) << ")" << endl;
@@ -90,47 +90,55 @@ int main(int argc, char **argv) {
 
                 if (pkg_ipv4->isTCP())
                 {
-		  
-		  TCPv4packet* pkg_tcpv4 = dynamic_cast<TCPv4packet*>(pkg);
+
+                    TCPv4packet* pkg_tcpv4 = dynamic_cast<TCPv4packet*>(pkg);
 
                     cout << "                    From port " << std::dec << pkg_tcpv4->getSenderPort() << " to port " << pkg_tcpv4->getTargetPort() << endl;
-		    
-		    if (vm.count("tcp"))
-		    {
-			cout << "                    + Sequence Number        " << pkg_tcpv4->getSequenceNumber() << endl;
-			cout << "                    + Acknowledgment Number  " << pkg_tcpv4->getAcknowledgmentNumber() << endl;
-			cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" <<endl;
-			cout << "                    + Flags                  ";
-			if(pkg_tcpv4->isSYN()) cout << "SYN ";
-			if(pkg_tcpv4->isFIN()) cout << "FIN ";
-			if(pkg_tcpv4->isRST()) cout << "RST ";
-			if(pkg_tcpv4->isACK()) cout << "ACK ";
-			if(pkg_tcpv4->isPSH()) cout << "PSH ";
-			if(pkg_tcpv4->isURG()) cout << "URG ";
-			if(pkg_tcpv4->isECE()) cout << "ECE ";
-			if(pkg_tcpv4->isCWR()) cout << "CWR ";
-			cout << endl;
-		    }
-		    
-		    cout << endl;
+
+                    if (vm.count("tcp"))
+                    {
+                        cout << "                    + Sequence Number        " << pkg_tcpv4->getSequenceNumber() << endl;
+                        cout << "                    + Acknowledgment Number  " << pkg_tcpv4->getAcknowledgmentNumber() << endl;
+                        cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" <<endl;
+                        cout << "                    + Flags                  ";
+                        if(pkg_tcpv4->isSYN()) cout << "SYN ";
+                        if(pkg_tcpv4->isFIN()) cout << "FIN ";
+                        if(pkg_tcpv4->isRST()) cout << "RST ";
+                        if(pkg_tcpv4->isACK()) cout << "ACK ";
+                        if(pkg_tcpv4->isPSH()) cout << "PSH ";
+                        if(pkg_tcpv4->isURG()) cout << "URG ";
+                        if(pkg_tcpv4->isECE()) cout << "ECE ";
+                        if(pkg_tcpv4->isCWR()) cout << "CWR ";
+                        cout << endl;
+                    }
+
+                    cout << endl;
 
                 } else if (pkg_ipv4->isUDP())
                 {
-		  
-		  UDPv4packet* pkg_udpv4 = dynamic_cast<UDPv4packet*>(pkg);
+
+                    UDPv4packet* pkg_udpv4 = dynamic_cast<UDPv4packet*>(pkg);
 
                     cout << "                    From port " << std::dec << pkg_udpv4->getSenderPort() << " to port " << pkg_udpv4->getTargetPort() << endl;
-		    cout << endl;
-		  
+                    cout << endl;
+
                 } else if (pkg_ipv4->isICMP())
                 {
 
-                } else {
+                    ICMPv4packet* pkg_icmpv4 = dynamic_cast<ICMPv4packet*>(pkg);
 
+                    cout << "                    Message Type: " << pkg_icmpv4->getMessageType() << " (" << icmpv4_type_decode(pkg_icmpv4->getMessageType()) << ")" << endl;
+                    cout << "                    Message Code: " << pkg_icmpv4->getMessageCode() << endl;
+                    cout << endl;
+
+                } else {
+                    cout << "                    Unknown Packet" << endl;
+                    cout << endl;
                 }
 
             } else {
-
+                cout << "                    Unknown Packet" << endl;
+                cout << endl;
             }
 
             delete pkg;

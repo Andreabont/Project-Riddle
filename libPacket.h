@@ -40,6 +40,15 @@
 
 #define UDP_OFFSET		34
 
+/* ICMP */
+
+#define ICMPV4_OFFSET		34
+#define ICMPV4_ECHO_REP		0
+#define ICMPV4_UNREACH		3
+#define ICMPV4_REDIRECT		5
+#define ICMPV4_ECHO_REQ		8
+#define ICMPV4_TRACERT		30
+
 /* INCLUDE */
 
 #include <string>
@@ -107,7 +116,7 @@ public:
     mac_address getTargetMac();
 
     /*Restituisce ethertype*/
-    int getEtherType();
+    unsigned int getEtherType();
 
 };
 
@@ -116,7 +125,7 @@ class ARPpacket : public packet
 {
 public:
     ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-    int getOpCode();
+    unsigned int getOpCode();
     boost::asio::ip::address getSenderIp();
     boost::asio::ip::address getTargetIp();
 };
@@ -128,7 +137,7 @@ public:
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     boost::asio::ip::address getSenderIp();
     boost::asio::ip::address getTargetIp();
-    int getProtocolType();
+    unsigned int getProtocolType();
     bool isTCP();
     bool isUDP();
     bool isICMP();
@@ -139,12 +148,12 @@ class TCPv4packet : public IPv4packet
 {
 public:
     TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-    int getSenderPort();
-    int getTargetPort();
+    unsigned int getSenderPort();
+    unsigned int getTargetPort();
     unsigned int getSequenceNumber();
     unsigned int getAcknowledgmentNumber();
     int getFlags();
-    int getWindowSize();
+    unsigned int getWindowSize();
     bool isACK();
     bool isSYN();
     bool isFIN();
@@ -160,8 +169,8 @@ class UDPv4packet : public IPv4packet
 {
 public:
     UDPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-    int getSenderPort();
-    int getTargetPort();
+    unsigned int getSenderPort();
+    unsigned int getTargetPort();
 };
 
 /*Class for managing ICMPv4 packets*/
@@ -169,6 +178,8 @@ class ICMPv4packet : public IPv4packet
 {
 public:
     ICMPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    unsigned int getMessageType();
+    unsigned int getMessageCode();
 };
 
 /*Class for managing unknown packets*/
