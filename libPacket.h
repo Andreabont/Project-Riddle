@@ -67,23 +67,24 @@ protected:
 
 public:
 
-    class Overflow {}; // Gestore overflow.
+    /* Overflow management */
+    class Overflow {};
 
-    /* Costruttore Pacchetto */
+    /* Class constructor with delayed instantiation*/
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     
-    /* Distruttore virtuale */
+    /* Virtual destructor */
     virtual ~packet() {}
 
-    /* GENERAL FUNCTIONS */
+/* GENERAL FUNCTIONS */
 
-    /* Ottieni lunghezza in byte */
+    /* Returns the packet length in bytes. */
     int getLength();
 
-    /* Ottieni epoch */
+    /* Returns packet epoch */
     long int getEpoch();
 
-    /* Ottienti millisecondi passati dopo epoch */
+    /* Returns milliseconds passed from epoch */
     int getMillis();
 
     /* Legge n byte a partire dal byte voluto e li restituisce in stringa. */

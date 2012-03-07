@@ -32,6 +32,7 @@ int main(int argc, char **argv) {
     desc.add_options()
     ("help", "prints this")
     ("tcp", "expand TCP info")
+    ("icmp", "expand ICMP info")
     ;
 
     variables_map vm;
@@ -128,7 +129,12 @@ int main(int argc, char **argv) {
                     ICMPv4packet* pkg_icmpv4 = dynamic_cast<ICMPv4packet*>(pkg);
 
                     cout << "                    Message Type: " << pkg_icmpv4->getMessageType() << " (" << icmpv4_type_decode(pkg_icmpv4->getMessageType()) << ")" << endl;
-                    cout << "                    Message Code: " << pkg_icmpv4->getMessageCode() << endl;
+                    
+		    if (vm.count("icmp"))
+		    {
+			cout << "                    Message Code: " << pkg_icmpv4->getMessageCode() << endl;  
+		    }
+		    
                     cout << endl;
 
                 } else {

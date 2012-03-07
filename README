@@ -30,12 +30,27 @@ Cigarette
 
 Legge output di Riddle e restituisce a video informazioni in tempo reale sui pacchetti ricevuti. (Solo Ethernet)
 
+Accetta i seguenti parametri:
+
+--help		Scrive un messaggio di help.
+--tcp		Espande opzioni TCP
+--icmp		Espande opzioni ICMP
+
+-------
+Ranging
+-------
+
+Analizza pacchetti ARP per elencare le macchine connesse (scanner passivo).
+
+TODO --> Aggiungere analisi DHCP
+
 -------------
 Esempio d'uso
 -------------
 
 sudo ./riddle --iface eth0 --filter arp --dump 	--> Visualizza i pacchetti ARP di eth0.
 sudo ./riddle --iface wlan0 | ./cigarette	--> Stampa a schermo informazioni sui pacchetti di wlan0.
+sudo ./riddle --iface wlan0 | ./ranging		--> Visualizza macchine (MAC + IP) connesse alla rete.
 
 ----
 TODO
@@ -43,4 +58,3 @@ TODO
 
 - Filtro pacchetti avanzato (piu' potente del filtro pcap) con anche filtro livello applicativo.
 - Follower TCP con ricostruzione file.
-- Scanner IP passivo (ARP + DHCP)
