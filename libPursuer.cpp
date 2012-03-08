@@ -50,7 +50,17 @@ bool stream::addPacket(TCPv4packet newPacket)
 	
 	return true;
 	
-    } 
+	// TODO overloading '==' for MAC
+	
+    } if(first_port == newPacket.getSenderPort() && first_ip == newPacket.getSenderIp() && first_mac == newPacket.getSenderMac())
+    {
+      
+      
+    } if(second_port == newPacket.getSenderPort() && second_ip == newPacket.getSenderIp() && second_mac == newPacket.getSenderMac())
+    {
+      
+      
+    }
   
 }
 
