@@ -44,6 +44,12 @@ Analizza pacchetti ARP per elencare le macchine connesse (scanner passivo).
 
 TODO --> Aggiungere analisi DHCP
 
+-------
+Pursuer
+-------
+
+Segue i flussi TCP e li restituisce in standard output.
+
 -------------
 Esempio d'uso
 -------------
