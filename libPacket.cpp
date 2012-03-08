@@ -375,7 +375,7 @@ unsigned int TCPv4packet::getOptionLength()
 
 std::string TCPv4packet::getPayLoad()
 {
-    int start = TCP_OFFSET + TCP_OFFSET_OP + this->getOptionLength();
+    int start = TCP_OFFSET + TCP_OFFSET_OP + 2 + this->getOptionLength();
     return this->getHexString(start, this->getLength() - start);
 }
 

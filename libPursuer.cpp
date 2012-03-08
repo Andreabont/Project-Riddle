@@ -27,40 +27,41 @@ stream::stream(long int timeEpoch_i, int timeMillis_i)
     timeMillis = timeMillis_i;
     first_port = 0;
     second_port = 0;
+    flagFull = false;
     return;
 }
 
-bool stream::addPacket(TCPv4packet newPacket)
+bool stream::addPacket(TCPv4packet *newPacket)
 {
 
     if(first_port == 0 && second_port == 0)
     {
         // First time
 
-        first_mac = newPacket.getSenderMac();
-        second_mac = newPacket.getTargetMac();
+        first_mac = newPacket->getSenderMac();
+        second_mac = newPacket->getTargetMac();
 
-        first_ip = newPacket.getSenderIp();
-        second_ip = newPacket.getTargetIp();
+        first_ip = newPacket->getSenderIp();
+        second_ip = newPacket->getTargetIp();
 
-        first_port = newPacket.getSenderPort();
-        second_port = newPacket.getTargetPort();
+        first_port = newPacket->getSenderPort();
+        second_port = newPacket->getTargetPort();
 
-        first_flow += newPacket.getPayLoad();
+        first_flow += newPacket->getPayLoad();
 
         return true;
 
     }
-    if(first_port == newPacket.getSenderPort() && first_ip == newPacket.getSenderIp() && first_mac == newPacket.getSenderMac())
+    if(first_port == newPacket->getSenderPort() && first_ip == newPacket->getSenderIp() && first_mac == newPacket->getSenderMac())
     {
 
-        first_flow += newPacket.getPayLoad();
+        first_flow += newPacket->getPayLoad();
 
     }
-    if(second_port == newPacket.getSenderPort() && second_ip == newPacket.getSenderIp() && second_mac == newPacket.getSenderMac())
+    if(second_port == newPacket->getSenderPort() && second_ip == newPacket->getSenderIp() && second_mac == newPacket->getSenderMac())
     {
 
-        second_flow += newPacket.getPayLoad();
+        second_flow += newPacket->getPayLoad();
 
     } else {
         return false;
@@ -105,4 +106,9 @@ unsigned int stream::getFirstPort()
 unsigned int stream::getSecondPort()
 {
     return second_port;
+}
+
+bool stream::isFull()
+{
+    return flagFull;
 }

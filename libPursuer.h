@@ -23,6 +23,8 @@ private:
     long int timeEpoch;
     int timeMillis;
     
+    bool flagFull;
+    
     mac_address first_mac;
     boost::asio::ip::address first_ip;
     unsigned int first_port;
@@ -32,12 +34,12 @@ private:
     boost::asio::ip::address second_ip;
     unsigned int second_port;
     std::string second_flow;
-
+   
 public:
   
     stream(long int timeEpoch_i, int timeMillis_i);
     
-    bool addPacket(TCPv4packet newPacket);
+    bool addPacket(TCPv4packet *newPacket);
   
     long int getTimeEpoch();
     int getTimeMillis();
@@ -47,6 +49,7 @@ public:
     boost::asio::ip::address getSecondIpAddress();
     unsigned int getFirstPort();
     unsigned int getSecondPort();
+    bool isFull();
 };
 
 #endif //LIBPURSUER_H

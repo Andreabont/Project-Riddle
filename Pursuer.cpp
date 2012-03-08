@@ -43,32 +43,48 @@ int main(int argc, char **argv) {
         cout<<desc<<"\n";
         return 1;
     }
-    
+
+    string r_packet;
+    getline(cin,r_packet);
+    if (cin.eof()) return EXIT_SUCCESS;
+
+
+    std::vector< std::string > line;
+    boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
+
+    stream flusso1(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]));
+
     while (1)
     {
         try
         {
-            string r_packet;
-            getline(cin,r_packet);
-            if (cin.eof()) break;
 
             std::vector< std::string > line;
             boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
 
             packet* pkg = packet::factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
-	    
-	    if(pkg->isIPv4())
-	    {
-		IPv4packet *pkg_ipv4 = dynamic_cast<IPv4packet*>(pkg);
-		
-		if(pkg_ipv4->isTCP())
-		{
-		    //TODO
-		}	      
-	    }
 
-	    delete pkg;
-	    
+            if(pkg->isIPv4())
+            {
+                IPv4packet *pkg_ipv4 = dynamic_cast<IPv4packet*>(pkg);
+
+                if(pkg_ipv4->isTCP())
+                {
+
+		    TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*>(pkg);
+		  
+		    flusso1.addPacket(pkg_tcpv4);
+
+                }
+            }
+
+            delete pkg;
+
+            r_packet == "";
+
+            getline(cin,r_packet);
+            if (cin.eof()) break;
+
         }
         catch (packet::Overflow)
         {
