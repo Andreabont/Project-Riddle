@@ -23,7 +23,9 @@
 
 stream::stream(long int timeEpoch_i, int timeMillis_i)
 {
-
+    timeEpoch = timeEpoch_i;
+    timeMillis = timeMillis_i;
+    return;
 }
 
 long int stream::getTimeEpoch()
