@@ -15,6 +15,7 @@
 #include <string>
 #include <boost/asio.hpp>
 #include "libAddress.h"
+#include "libPacket.h"
 
 class stream
 {
@@ -35,6 +36,8 @@ private:
 public:
   
     stream(long int timeEpoch_i, int timeMillis_i);
+    
+    bool addPacket(TCPv4packet newPacket);
   
     long int getTimeEpoch();
     int getTimeMillis();

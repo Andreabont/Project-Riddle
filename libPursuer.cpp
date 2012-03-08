@@ -25,45 +25,71 @@ stream::stream(long int timeEpoch_i, int timeMillis_i)
 {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;
+    first_port = 0;
+    second_port = 0;
     return;
+}
+
+bool stream::addPacket(TCPv4packet newPacket)
+{
+
+    if(first_port == 0 && second_port == 0)
+    {
+	// First time
+	
+	first_mac = newPacket.getSenderMac();
+	second_mac = newPacket.getTargetMac();
+	
+	first_ip = newPacket.getSenderIp();
+	second_ip = newPacket.getTargetIp();
+	
+	first_port = newPacket.getSenderPort();
+	second_port = newPacket.getTargetPort();
+	
+	// TODO flow!
+	
+	return true;
+	
+    } 
+  
 }
 
 long int stream::getTimeEpoch()
 {
-
+    return timeEpoch;
 }
 
 int stream::getTimeMillis()
 {
-
+    return timeMillis;
 }
 
 mac_address stream::getFirstMacAddress()
 {
-
+    return first_mac;
 }
 
 mac_address stream::getSecondMacAddress()
 {
-
+    return second_mac;
 }
 
 boost::asio::ip::address stream::getFirstIpAddress()
 {
-
+    return first_ip;
 }
 
 boost::asio::ip::address stream::getSecondIpAddress()
 {
-
+    return second_ip;
 }
 
 unsigned int stream::getFirstPort()
 {
-
+    return first_port;
 }
 
 unsigned int stream::getSecondPort()
 {
-
+    return second_port;
 }
