@@ -25,6 +25,8 @@ public:
         std::memset(byte,0,6);
     }
     mac_address(const std::string&);
+    
+    bool operator==(const mac_address& otherMac);
 
     /* Restituisce stringa stampabile a schermo. */
     std::string to_string();

@@ -357,6 +357,28 @@ unsigned int TCPv4packet::getWindowSize()
     return ws;
 }
 
+unsigned int TCPv4packet::getOptionType()
+{
+    unsigned int ot;
+    std::stringstream convert (this->getHexString(TCP_OFFSET+22, 1));
+    convert>>std::hex>>ot;
+    return ot;
+}
+
+unsigned int TCPv4packet::getOptionLength()
+{
+    unsigned int ot;
+    std::stringstream convert (this->getHexString(TCP_OFFSET+23, 1));
+    convert>>std::hex>>ot;
+    return ot;
+}
+
+std::string TCPv4packet::getPayLoad()
+{
+    int start = TCP_OFFSET + TCP_OFFSET_OP + this->getOptionLength();
+    return this->getHexString(start, this->getLength() - start);
+}
+
 bool TCPv4packet::isCWR()
 {
     int flag = this->getFlags();

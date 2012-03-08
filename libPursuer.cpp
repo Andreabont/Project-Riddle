@@ -35,33 +35,36 @@ bool stream::addPacket(TCPv4packet newPacket)
 
     if(first_port == 0 && second_port == 0)
     {
-	// First time
-	
-	first_mac = newPacket.getSenderMac();
-	second_mac = newPacket.getTargetMac();
-	
-	first_ip = newPacket.getSenderIp();
-	second_ip = newPacket.getTargetIp();
-	
-	first_port = newPacket.getSenderPort();
-	second_port = newPacket.getTargetPort();
-	
-	// TODO flow!
-	
-	return true;
-	
-	// TODO overloading '==' for MAC
-	
-    } if(first_port == newPacket.getSenderPort() && first_ip == newPacket.getSenderIp() && first_mac == newPacket.getSenderMac())
-    {
-      
-      
-    } if(second_port == newPacket.getSenderPort() && second_ip == newPacket.getSenderIp() && second_mac == newPacket.getSenderMac())
-    {
-      
-      
+        // First time
+
+        first_mac = newPacket.getSenderMac();
+        second_mac = newPacket.getTargetMac();
+
+        first_ip = newPacket.getSenderIp();
+        second_ip = newPacket.getTargetIp();
+
+        first_port = newPacket.getSenderPort();
+        second_port = newPacket.getTargetPort();
+
+        first_flow += newPacket.getPayLoad();
+
+        return true;
+
     }
-  
+    if(first_port == newPacket.getSenderPort() && first_ip == newPacket.getSenderIp() && first_mac == newPacket.getSenderMac())
+    {
+
+        first_flow += newPacket.getPayLoad();
+
+    }
+    if(second_port == newPacket.getSenderPort() && second_ip == newPacket.getSenderIp() && second_mac == newPacket.getSenderMac())
+    {
+
+        second_flow += newPacket.getPayLoad();
+
+    } else {
+        return false;
+    }
 }
 
 long int stream::getTimeEpoch()

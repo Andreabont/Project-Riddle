@@ -20,7 +20,7 @@ mac_address::mac_address(const std::string& rawData)
     std::string temp;
     temp.reserve(2);
 
-    for (int i=0;i<=11;i++)
+    for (int i=0; i<=11; i++)
     {
         temp += rawData[i];
         if (i%2 != 0)
@@ -40,7 +40,7 @@ std::string mac_address::to_string()
     std::string stamp;
     std::stringstream temp;
 
-    for (int i=0;i<=5;i++)
+    for (int i=0; i<=5; i++)
     {
         temp<<std::setfill('0')<<std::setw(2)<<std::hex<<(int) byte[i];
         stamp += temp.str();
@@ -49,4 +49,17 @@ std::string mac_address::to_string()
     }
 
     return stamp;
+}
+
+bool mac_address::operator==(const mac_address& otherMac)
+{
+    for(int i=0; i<=5; i++)
+    {
+        if(byte[i] != otherMac.byte[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
 }

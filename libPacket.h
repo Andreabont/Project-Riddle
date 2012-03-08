@@ -35,6 +35,7 @@
 /* TCP */
 
 #define TCP_OFFSET		34
+#define TCP_OFFSET_OP		20
 
 /* UDP */
 
@@ -153,8 +154,11 @@ public:
     unsigned int getTargetPort();
     unsigned int getSequenceNumber();
     unsigned int getAcknowledgmentNumber();
+    unsigned int getOptionType();
+    unsigned int getOptionLength();
     int getFlags();
     unsigned int getWindowSize();
+    std::string getPayLoad();
     bool isACK();
     bool isSYN();
     bool isFIN();
