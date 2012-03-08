@@ -33,6 +33,7 @@ int main(int argc, char **argv) {
     ("help", "prints this")
     ("tcp", "expand TCP info")
     ("icmp", "expand ICMP info")
+    ("payload", "print payload dump")
     ;
 
     variables_map vm;
@@ -100,7 +101,7 @@ int main(int argc, char **argv) {
                     {
                         cout << "                    + Sequence Number        " << pkg_tcpv4->getSequenceNumber() << endl;
                         cout << "                    + Acknowledgment Number  " << pkg_tcpv4->getAcknowledgmentNumber() << endl;
-                        cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" <<endl;
+                        cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
                         cout << "                    + Flags                  ";
                         if(pkg_tcpv4->isSYN()) cout << "SYN ";
                         if(pkg_tcpv4->isFIN()) cout << "FIN ";
@@ -110,8 +111,16 @@ int main(int argc, char **argv) {
                         if(pkg_tcpv4->isURG()) cout << "URG ";
                         if(pkg_tcpv4->isECE()) cout << "ECE ";
                         if(pkg_tcpv4->isCWR()) cout << "CWR ";
+			cout << endl;
+			cout << "                    + Option Type            " << pkg_tcpv4->getOptionType() << endl;
+			cout << "                    + Option Length          " << pkg_tcpv4->getOptionLength() << endl;
                         cout << endl;
                     }
+                    
+                    if (vm.count("payload"))
+		    {
+			cout << pkg_tcpv4->getPayLoad() << endl;
+		    }
 
                     cout << endl;
 
