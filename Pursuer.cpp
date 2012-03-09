@@ -48,16 +48,15 @@ int main(int argc, char **argv) {
     getline(cin,r_packet);
     if (cin.eof()) return EXIT_SUCCESS;
 
-
-    std::vector< std::string > line;
-    boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
-
-    stream flusso1(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]));
+    std::list<stream*> packet_flow;
 
     while (1)
     {
         try
         {
+
+            getline(cin,r_packet);
+            if (cin.eof()) break;
 
             std::vector< std::string > line;
             boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
@@ -71,19 +70,16 @@ int main(int argc, char **argv) {
                 if(pkg_ipv4->isTCP())
                 {
 
-		    TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*>(pkg);
-		  
-		    flusso1.addPacket(pkg_tcpv4);
+                    TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*>(pkg);
+
+                    list<stream*>::iterator p = packet_flow.begin();
+                    while(p != packet_flow.end()) {
+                        cout << *p << " ";
+                        p++;
+                    }
 
                 }
             }
-
-            delete pkg;
-
-            r_packet == "";
-
-            getline(cin,r_packet);
-            if (cin.eof()) break;
 
         }
         catch (packet::Overflow)

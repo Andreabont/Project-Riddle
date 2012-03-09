@@ -49,6 +49,10 @@ bool stream::addPacket(TCPv4packet *newPacket)
 
         first_flow += newPacket->getPayLoad();
 
+        if(newPacket->isFIN() || newPacket->isRST()) {
+            flagFull = true;
+        }
+
         return true;
 
     }
@@ -57,11 +61,19 @@ bool stream::addPacket(TCPv4packet *newPacket)
 
         first_flow += newPacket->getPayLoad();
 
+        if(newPacket->isFIN() || newPacket->isRST()) {
+            flagFull = true;
+        }
+
     }
     if(second_port == newPacket->getSenderPort() && second_ip == newPacket->getSenderIp() && second_mac == newPacket->getSenderMac())
     {
 
         second_flow += newPacket->getPayLoad();
+
+        if(newPacket->isFIN() || newPacket->isRST()) {
+            flagFull = true;
+        }
 
     } else {
         return false;
