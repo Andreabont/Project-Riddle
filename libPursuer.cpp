@@ -17,6 +17,7 @@
 #include <string>
 #include <ios>
 #include <boost/asio.hpp>
+#include <vector>
 #include "libPacket.h"
 #include "libAddress.h"
 #include "libPursuer.h"
@@ -47,7 +48,7 @@ bool stream::addPacket(TCPv4packet *newPacket)
         first_port = newPacket->getSenderPort();
         second_port = newPacket->getTargetPort();
 
-        first_flow += newPacket->getPayLoad();
+        first_flow.push_back(newPacket);
 
         if(newPacket->isFIN() || newPacket->isRST()) {
             flagFull = true;
@@ -59,7 +60,7 @@ bool stream::addPacket(TCPv4packet *newPacket)
     if(first_port == newPacket->getSenderPort() && first_ip == newPacket->getSenderIp() && first_mac == newPacket->getSenderMac())
     {
 
-        first_flow += newPacket->getPayLoad();
+        first_flow.push_back(newPacket);
 
         if(newPacket->isFIN() || newPacket->isRST()) {
             flagFull = true;
@@ -69,8 +70,8 @@ bool stream::addPacket(TCPv4packet *newPacket)
     if(second_port == newPacket->getSenderPort() && second_ip == newPacket->getSenderIp() && second_mac == newPacket->getSenderMac())
     {
 
-        second_flow += newPacket->getPayLoad();
-
+        second_flow.push_back(newPacket);
+	
         if(newPacket->isFIN() || newPacket->isRST()) {
             flagFull = true;
         }

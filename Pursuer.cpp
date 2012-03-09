@@ -10,6 +10,7 @@
 //============================================================================
 
 #include <iostream>
+#include <vector>
 #include <cstdio>
 #include <cstdlib>
 #include <string>
@@ -48,7 +49,7 @@ int main(int argc, char **argv) {
     getline(cin,r_packet);
     if (cin.eof()) return EXIT_SUCCESS;
 
-    std::list<stream*> packet_flow;
+    std::vector<stream*> packet_flow;
 
     while (1)
     {
@@ -72,15 +73,10 @@ int main(int argc, char **argv) {
 
                     TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*>(pkg);
 
-                    list<stream*>::iterator p = packet_flow.begin();
-                    while(p != packet_flow.end()) {
-                        cout << *p << " ";
-                        p++;
-                    }
-
+                    //TODO
                 }
-            }
 
+            }
         }
         catch (packet::Overflow)
         {
