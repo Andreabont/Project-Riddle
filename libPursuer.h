@@ -12,7 +12,6 @@
 #ifndef LIBPURSUER_H
 #define LIBPURSUER_H
 
-#include <vector>
 #include <list>
 #include <boost/asio.hpp>
 #include "libAddress.h"
@@ -29,12 +28,12 @@ private:
     mac_address first_mac;
     boost::asio::ip::address first_ip;
     unsigned int first_port;
-    std::vector<TCPv4packet*> first_flow;
+    std::list<TCPv4packet*> first_flow;
 
     mac_address second_mac;
     boost::asio::ip::address second_ip;
     unsigned int second_port;
-    std::vector<TCPv4packet*> second_flow;
+    std::list<TCPv4packet*> second_flow;
    
 public:
   

@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
     getline(cin,r_packet);
     if (cin.eof()) return EXIT_SUCCESS;
 
-    std::vector<stream*> packet_flow;
+    //std::map<stream*> packet_flow;
 
     while (1)
     {
@@ -73,7 +73,8 @@ int main(int argc, char **argv) {
 
                     TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*>(pkg);
 
-                    //TODO
+                    
+		    
                 }
 
             }
