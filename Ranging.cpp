@@ -34,7 +34,7 @@ using namespace boost;
 using namespace boost::program_options;
 
 void setHead();
-void printLine(int countLine, string mac, string ip);
+void printLine(int countLine, string mac, string ip, int epoch);
 
 int main(int argc, char **argv) {
 
@@ -95,7 +95,8 @@ int main(int argc, char **argv) {
 
                 bool isFound = false;
 
-                while(p != found.end()) {
+                while(p != found.end())
+                {
 
                     if(p->getMacAddress() == pkg_arp->getSenderMac() && p->getIpAddress() == pkg_arp->getSenderIp())
                     {
@@ -112,7 +113,7 @@ int main(int argc, char **argv) {
                     device newDevice(pkg_arp->getSenderMac(), pkg_arp->getSenderIp(), pkg_arp->getEpoch());
                     found.push_back(newDevice);
                 }
-            }
+            } 
 
             delete pkg;
 
@@ -124,7 +125,7 @@ int main(int argc, char **argv) {
             return EXIT_FAILURE;
         }
 
-
+        clear();
         setHead();
 
         int countLine = 1;
@@ -132,7 +133,7 @@ int main(int argc, char **argv) {
         list<device>::iterator q = found.begin();
         while(q != found.end()) {
 
-            printLine(countLine, q->getMacAddress().to_string(), q->getIpAddress().to_string());
+            printLine(countLine, q->getMacAddress().to_string(), q->getIpAddress().to_string(), q->getEpoch());
 
             countLine++;
             q++;
@@ -153,7 +154,8 @@ void setHead()
 
     if(head = (char*)malloc(cols * sizeof(char)))
     {
-        snprintf(head, cols, "Ranging - I found these devices:");
+
+        snprintf(head, cols, " Mac address       | IP address      | Epoch");
 
         ind2 = strlen(head);
 
@@ -172,7 +174,7 @@ void setHead()
 
     move(0, 0);
 
-    init_pair(1, COLOR_WHITE, COLOR_RED);
+    init_pair(1, COLOR_BLACK, COLOR_GREEN);
 
     attron(COLOR_PAIR(1));	// set color for title
 
@@ -185,8 +187,20 @@ void setHead()
     return;
 }
 
-void printLine(int countLine, string mac, string ip)
+void printLine(int countLine, string mac, string ip, int epoch)
 {
+
+    int ip_length = ip.length();
+
+    if(ip_length < 15)
+    {
+
+        for(int ip_filler = 15 - ip_length; ip_filler > 0; ip_filler--)
+        {
+            ip += ' ';
+        }
+
+    }
 
     char *head;
     int ind1;
@@ -194,7 +208,7 @@ void printLine(int countLine, string mac, string ip)
 
     if(head = (char*)malloc(cols * sizeof(char)))
     {
-        snprintf(head, cols, "%s is at %s", mac.c_str(), ip.c_str());
+        snprintf(head, cols, " %s | %s | %d", mac.c_str(), ip.c_str(), epoch);
 
         ind2 = strlen(head);
 
