@@ -103,6 +103,11 @@ int main(int argc, char **argv) {
                         p->setEpoch(pkg_arp->getEpoch());
                         isFound = true;
                         break;
+                    } else {
+                        if(pkg_arp->getEpoch() >= p->getEpoch() + 12)
+                        {
+                            found.erase(p); // FIXME
+                        }
                     }
 
                     p++;
@@ -113,7 +118,7 @@ int main(int argc, char **argv) {
                     device newDevice(pkg_arp->getSenderMac(), pkg_arp->getSenderIp(), pkg_arp->getEpoch());
                     found.push_back(newDevice);
                 }
-            } 
+            }
 
             delete pkg;
 
