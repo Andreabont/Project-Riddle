@@ -385,21 +385,11 @@ unsigned int TCPv4packet::getUrgentPointer()
     return up;
 }
 
-unsigned int TCPv4packet::getOptionType()
+std::string TCPv4packet::getTcpOption()
 {
-    unsigned int ot;
-    std::stringstream convert (this->getHexString(TCP_OFFSET+22, 1));
-    convert>>std::hex>>ot;
-    return ot;
+  // TODO
 }
 
-unsigned int TCPv4packet::getOptionLength()
-{
-    unsigned int ot;
-    std::stringstream convert (this->getHexString(TCP_OFFSET+23, 1));
-    convert>>std::hex>>ot;
-    return ot;
-}
 
 std::string TCPv4packet::getPayLoad()
 {

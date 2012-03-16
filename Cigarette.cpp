@@ -115,11 +115,7 @@ int main(int argc, char **argv) {
                         cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
 			cout << "                    + Checksum               0x" << std::hex << pkg_tcpv4->getChecksum() << endl;
 			cout << "                    + Urgent Pointer         0x" << std::hex <<pkg_tcpv4->getUrgentPointer() << endl;
-			cout << "                    + Option Type            0x" << std::hex << pkg_tcpv4->getOptionType() << endl;
-			cout << "                    + Option Length          " << std::dec << pkg_tcpv4->getOptionLength() << endl;
                         cout << endl;
-			cout << pkg_tcpv4->getPayLoad() << endl;
-			cout << endl;
                     }
                     
                     if (vm.count("payload"))

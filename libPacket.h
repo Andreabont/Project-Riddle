@@ -159,8 +159,7 @@ public:
     unsigned int getWindowSize();
     unsigned int getChecksum();
     unsigned int getUrgentPointer();
-    unsigned int getOptionType();
-    unsigned int getOptionLength();
+    std::string getTcpOption();
     std::string getPayLoad();
     bool isACK();
     bool isSYN();
