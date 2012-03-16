@@ -169,6 +169,7 @@ public:
     bool isURG();
     bool isECE();
     bool isCWR();
+    bool isOption();
 };
 
 /*Class for managing UDPv4 packets*/

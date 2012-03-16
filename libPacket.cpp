@@ -387,7 +387,7 @@ unsigned int TCPv4packet::getUrgentPointer()
 
 std::string TCPv4packet::getTcpOption()
 {
-  // TODO
+    return this->getHexString(TCP_OFFSET + TCP_STANDARD, this->getHeaderLength() - TCP_STANDARD);
 }
 
 
@@ -443,6 +443,11 @@ bool TCPv4packet::isFIN()
 {
     int flag = this->getFlags();
     return (flag & 1);
+}
+
+bool TCPv4packet::isOption()
+{
+    return (this->getHeaderLength() > TCP_STANDARD);
 }
 
 /* UDP */
