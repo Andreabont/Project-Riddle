@@ -35,7 +35,7 @@
 /* TCP */
 
 #define TCP_OFFSET		34
-#define TCP_OFFSET_OP		20
+#define TCP_STANDARD		20 	// Standard header lenght (byte)
 
 /* UDP */
 
@@ -154,10 +154,13 @@ public:
     unsigned int getTargetPort();
     unsigned int getSequenceNumber();
     unsigned int getAcknowledgmentNumber();
-    unsigned int getOptionType();
-    unsigned int getOptionLength();
+    unsigned int getHeaderLength();
     int getFlags();
     unsigned int getWindowSize();
+    unsigned int getChecksum();
+    unsigned int getUrgentPointer();
+    unsigned int getOptionType();
+    unsigned int getOptionLength();
     std::string getPayLoad();
     bool isACK();
     bool isSYN();

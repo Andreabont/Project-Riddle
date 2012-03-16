@@ -341,6 +341,18 @@ unsigned int TCPv4packet::getAcknowledgmentNumber()
     return an;
 }
 
+unsigned int TCPv4packet::getHeaderLength()
+{
+    // NB: utilizzati solo i primi 8 bit del byte, necessita traslazione.
+    // NB: Indica i gruppi da 32 bit contenuti, necessita conversione.
+    unsigned int hl;
+    std::stringstream convert (this->getHexString(TCP_OFFSET+12, 1));
+    convert>>std::hex>>hl;
+    hl >>= 4;
+    hl = (hl * 32) / 8;
+    return hl;
+}
+
 int TCPv4packet::getFlags()
 {
     int flag;
@@ -355,6 +367,22 @@ unsigned int TCPv4packet::getWindowSize()
     std::stringstream convert (this->getHexString(TCP_OFFSET+14, 2));
     convert>>std::hex>>ws;
     return ws;
+}
+
+unsigned int TCPv4packet::getChecksum()
+{
+    unsigned int cs;
+    std::stringstream convert (this->getHexString(TCP_OFFSET+16, 2));
+    convert>>std::hex>>cs;
+    return cs;
+}
+
+unsigned int TCPv4packet::getUrgentPointer()
+{
+    unsigned int up;
+    std::stringstream convert (this->getHexString(TCP_OFFSET+18, 2));
+    convert>>std::hex>>up;
+    return up;
 }
 
 unsigned int TCPv4packet::getOptionType()
@@ -375,7 +403,7 @@ unsigned int TCPv4packet::getOptionLength()
 
 std::string TCPv4packet::getPayLoad()
 {
-    int start = TCP_OFFSET + TCP_OFFSET_OP + 2 + this->getOptionLength();
+    int start = TCP_OFFSET + this->getHeaderLength();
     return this->getHexString(start, this->getLength() - start);
 }
 

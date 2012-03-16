@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
                     {
                         cout << "                    + Sequence Number        " << pkg_tcpv4->getSequenceNumber() << endl;
                         cout << "                    + Acknowledgment Number  " << pkg_tcpv4->getAcknowledgmentNumber() << endl;
-                        cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
+			cout << "                    + Header Length          " << pkg_tcpv4->getHeaderLength() << " byte" << endl;
                         cout << "                    + Flags                  ";
                         if(pkg_tcpv4->isSYN()) cout << "SYN ";
                         if(pkg_tcpv4->isFIN()) cout << "FIN ";
@@ -112,9 +112,14 @@ int main(int argc, char **argv) {
                         if(pkg_tcpv4->isECE()) cout << "ECE ";
                         if(pkg_tcpv4->isCWR()) cout << "CWR ";
 			cout << endl;
-			cout << "                    + Option Type            " << pkg_tcpv4->getOptionType() << endl;
-			cout << "                    + Option Length          " << pkg_tcpv4->getOptionLength() << endl;
+                        cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
+			cout << "                    + Checksum               0x" << std::hex << pkg_tcpv4->getChecksum() << endl;
+			cout << "                    + Urgent Pointer         0x" << std::hex <<pkg_tcpv4->getUrgentPointer() << endl;
+			cout << "                    + Option Type            0x" << std::hex << pkg_tcpv4->getOptionType() << endl;
+			cout << "                    + Option Length          " << std::dec << pkg_tcpv4->getOptionLength() << endl;
                         cout << endl;
+			cout << pkg_tcpv4->getPayLoad() << endl;
+			cout << endl;
                     }
                     
                     if (vm.count("payload"))
