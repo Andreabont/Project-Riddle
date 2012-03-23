@@ -170,6 +170,7 @@ public:
     bool isECE();
     bool isCWR();
     bool isOption();
+    std::map<int, std::string> getOption();
 };
 
 /*Class for managing UDPv4 packets*/

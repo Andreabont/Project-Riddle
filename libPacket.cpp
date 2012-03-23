@@ -218,9 +218,9 @@ packet* IPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawDa
 
     } else if (protocol_type == IPV4_TYPE_ICMP)
     {
-      
-	p = new ICMPv4packet(timeEpoch_i, timeMillis_i, rawData_i);
-      
+
+        p = new ICMPv4packet(timeEpoch_i, timeMillis_i, rawData_i);
+
     } else {
 
         p = new UnknownPacket(timeEpoch_i, timeMillis_i, rawData_i);
@@ -448,6 +448,34 @@ bool TCPv4packet::isFIN()
 bool TCPv4packet::isOption()
 {
     return (this->getHeaderLength() > TCP_STANDARD);
+}
+
+std::map< int, std::string > TCPv4packet::getOption()
+{
+    std::map<int, std::string> tempMap;
+    if(this->isOption())
+    {
+        std::string tempOption = this->getHexString(TCP_OFFSET + TCP_STANDARD, this->getHeaderLength() - TCP_STANDARD);
+        for(int i = 0; i < tempOption.length(); i+=2)
+        {
+            std::stringstream convert (tempOption[i] + tempOption[i+1]);
+            int read;
+            convert >> std::hex >> read;
+            switch(read)
+            {
+            case 1:
+                break;
+            case 8:
+            default:
+                std::stringstream convert2 (tempOption[i+2] + tempOption[i+3]);
+                int optionLength;
+                convert >> std::hex >> optionLength;
+                i += (optionLength - 4) * 2;
+		break;
+            }
+        }
+    }
+    return tempMap;
 }
 
 /* UDP */

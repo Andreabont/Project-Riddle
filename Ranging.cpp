@@ -20,11 +20,14 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include "boost/date_time/local_time/local_time.hpp"
 
 #include <curses.h>
 #include "libAddress.h"
 #include "libPacket.h"
 #include "libRanging.h"
+
+#define TIMETOLIVE 10
 
 int rows; // number of rows in window
 int cols; // number of columns in window
@@ -32,6 +35,9 @@ int cols; // number of columns in window
 using namespace std;
 using namespace boost;
 using namespace boost::program_options;
+using namespace boost::gregorian;
+using namespace boost::local_time;
+using namespace boost::posix_time;
 
 void setHead();
 void printLine(int countLine, string mac, string ip, int epoch);
@@ -104,9 +110,9 @@ int main(int argc, char **argv) {
                         isFound = true;
                         break;
                     } else {
-                        if(pkg_arp->getEpoch() >= p->getEpoch() + 12)
+                        if(pkg_arp->getEpoch() >= p->getEpoch() + TIMETOLIVE)
                         {
-                            found.erase(p); // FIXME
+                            p = found.erase(p);
                         }
                     }
 
@@ -160,7 +166,7 @@ void setHead()
     if(head = (char*)malloc(cols * sizeof(char)))
     {
 
-        snprintf(head, cols, " Mac address       | IP address      | Epoch");
+        snprintf(head, cols, " Mac address       | IP address      | Epoch      | TTL");
 
         ind2 = strlen(head);
 
@@ -213,7 +219,9 @@ void printLine(int countLine, string mac, string ip, int epoch)
 
     if(head = (char*)malloc(cols * sizeof(char)))
     {
-        snprintf(head, cols, " %s | %s | %d", mac.c_str(), ip.c_str(), epoch);
+	ptime time_t_epoch(date(1970,1,1));
+	int ttl = TIMETOLIVE - (epoch - 0);
+        snprintf(head, cols, " %s | %s | %d | %d", mac.c_str(), ip.c_str(), epoch, ttl );
 
         ind2 = strlen(head);
 
