@@ -16,6 +16,7 @@
 #include <stdexcept>
 #include <string>
 #include <ios>
+#include <map>
 #include <boost/lexical_cast.hpp>
 #include "libPacket.h"
 #include "libAddress.h"
@@ -453,25 +454,21 @@ bool TCPv4packet::isOption()
 std::map< int, std::string > TCPv4packet::getOption()
 {
     std::map<int, std::string> tempMap;
-    if(this->isOption())
+    if(this->isOption() && !this->isSYN()) // FIXME - SYN usa altro protocollo???
     {
-        std::string tempOption = this->getHexString(TCP_OFFSET + TCP_STANDARD, this->getHeaderLength() - TCP_STANDARD);
-        for(int i = 0; i < tempOption.length(); i+=2)
+        for(int i=0; i < (this->getHeaderLength() - TCP_STANDARD); i++)
         {
-            std::stringstream convert (tempOption[i] + tempOption[i+1]);
             int read;
+            std::stringstream convert ( this->getHexString(TCP_OFFSET+TCP_STANDARD+i, 1) );
             convert >> std::hex >> read;
-            switch(read)
+	    
+            if(read != 1)
             {
-            case 1:
-                break;
-            case 8:
-            default:
-                std::stringstream convert2 (tempOption[i+2] + tempOption[i+3]);
+                std::stringstream convert2 ( this->getHexString(TCP_OFFSET+TCP_STANDARD+i+1, 1) );
                 int optionLength;
-                convert >> std::hex >> optionLength;
-                i += (optionLength - 4) * 2;
-		break;
+                convert2 >> std::hex >> optionLength;
+                tempMap[read] = this->getHexString(TCP_OFFSET+TCP_STANDARD+i+2, optionLength-2);
+                i += optionLength;
             }
         }
     }

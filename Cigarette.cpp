@@ -101,7 +101,7 @@ int main(int argc, char **argv) {
                     {
                         cout << "                    + Sequence Number        " << pkg_tcpv4->getSequenceNumber() << endl;
                         cout << "                    + Acknowledgment Number  " << pkg_tcpv4->getAcknowledgmentNumber() << endl;
-			cout << "                    + Header Length          " << pkg_tcpv4->getHeaderLength() << " byte" << endl;
+                        cout << "                    + Header Length          " << pkg_tcpv4->getHeaderLength() << " byte" << endl;
                         cout << "                    + Flags                  ";
                         if(pkg_tcpv4->isSYN()) cout << "SYN ";
                         if(pkg_tcpv4->isFIN()) cout << "FIN ";
@@ -111,18 +111,27 @@ int main(int argc, char **argv) {
                         if(pkg_tcpv4->isURG()) cout << "URG ";
                         if(pkg_tcpv4->isECE()) cout << "ECE ";
                         if(pkg_tcpv4->isCWR()) cout << "CWR ";
-			cout << endl;
+                        cout << endl;
                         cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
-			cout << "                    + Checksum               0x" << std::hex << pkg_tcpv4->getChecksum() << endl;
-			cout << "                    + Urgent Pointer         0x" << std::hex <<pkg_tcpv4->getUrgentPointer() << endl;
-		        cout << endl;
+                        cout << "                    + Checksum               0x" << std::hex << pkg_tcpv4->getChecksum() << endl;
+                        cout << "                    + Urgent Pointer         0x" << std::hex << pkg_tcpv4->getUrgentPointer() << endl;
+                        std::map<int, std::string> options = pkg_tcpv4->getOption();
+
+                        if(pkg_tcpv4->isOption())
+                        {
+                            std::map<int, std::string>::const_iterator itr;
+
+                            for(itr = options.begin(); itr != options.end(); ++itr) {
+                                cout << "                    + Option                 " << (*itr).first << " -> " << (*itr).second << endl;
+                            }
+                        }
                     }
-                    
+
                     if (vm.count("payload"))
-		    {
-			//TODO
-			cout << pkg_tcpv4->getPayLoad() << endl;
-		    }
+                    {
+                        //TODO - Visualizzare meglio
+                        cout << pkg_tcpv4->getPayLoad() << endl;
+                    }
 
                     cout << endl;
 
@@ -140,12 +149,12 @@ int main(int argc, char **argv) {
                     ICMPv4packet* pkg_icmpv4 = dynamic_cast<ICMPv4packet*>(pkg);
 
                     cout << "                    Message Type: " << pkg_icmpv4->getMessageType() << " (" << icmpv4_type_decode(pkg_icmpv4->getMessageType()) << ")" << endl;
-                    
-		    if (vm.count("icmp"))
-		    {
-			cout << "                    Message Code: " << pkg_icmpv4->getMessageCode() << endl;  
-		    }
-		    
+
+                    if (vm.count("icmp"))
+                    {
+                        cout << "                    Message Code: " << pkg_icmpv4->getMessageCode() << endl;
+                    }
+
                     cout << endl;
 
                 } else {
