@@ -482,7 +482,7 @@ UDPv4packet::UDPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_
 unsigned int UDPv4packet::getSenderPort()
 {
     unsigned int port;
-    std::stringstream convert (this->getHexString(UDP_OFFSET+0, 2));
+    std::stringstream convert (this->getHexString(UDP_OFFSET, 2));
     convert>>std::hex>>port;
     return port;
 }
