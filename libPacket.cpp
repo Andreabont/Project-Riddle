@@ -425,50 +425,42 @@ std::string TCPv4packet::getPayLoad()
 
 bool TCPv4packet::isCWR()
 {
-    int flag = this->getFlags();
-    return (flag & 128);
+    return (this->getFlags() & 128);
 }
 
 bool TCPv4packet::isECE()
 {
-    int flag = this->getFlags();
-    return (flag & 64);
+    return (this->getFlags() & 64);
 }
 
 bool TCPv4packet::isURG()
 {
-    int flag = this->getFlags();
-    return (flag & 32);
+    return (this->getFlags() & 32);
 }
 
 bool TCPv4packet::isACK()
 {
-    int flag = this->getFlags();
-    return (flag & 16);
+    return (this->getFlags() & 16);
 }
 
 bool TCPv4packet::isPSH()
 {
-    int flag = this->getFlags();
-    return (flag & 8);
+    return (this->getFlags() & 8);
 }
 
 bool TCPv4packet::isRST()
 {
-    int flag = this->getFlags();
-    return (flag & 4);
+    return (this->getFlags() & 4);
 }
 
 bool TCPv4packet::isSYN()
 {
-    int flag = this->getFlags();
-    return (flag & 2);
+    return (this->getFlags() & 2);
 }
 
 bool TCPv4packet::isFIN()
 {
-    int flag = this->getFlags();
-    return (flag & 1);
+    return (this->getFlags() & 1);
 }
 
 bool TCPv4packet::isOption()
