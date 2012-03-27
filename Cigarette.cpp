@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 
             packet* pkg = packet::factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
 
-            cout << "[" << std::dec << pkg->getEpoch() << " " << setfill('0') << std::setw(6) << pkg->getMillis() << "] Size: " << pkg->getLength() << " byte" << endl;
+            cout << "[" << std::dec << pkg->getEpoch() << " " << setfill('0') << std::setw(6) << pkg->getMillis() << "] Size: " << pkg->getPacketLength() << " byte" << endl;
             cout << "                    From " << pkg->getSenderMac().to_string() << " to "<< pkg->getTargetMac().to_string() << endl;
             cout << "                    EtherType: 0x" << std::hex << pkg->getEtherType() << " ("<< ether_type_decode(pkg->getEtherType()) << ")" << endl;
             cout << endl;

@@ -61,7 +61,7 @@ packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i
 }
 
 
-int packet::getLength()
+int packet::getPacketLength()
 {
     return pkgLength;
 }
@@ -81,7 +81,7 @@ std::string packet::getHexString(int string_cursor, int read_byte)
     std::string temp;
     temp.reserve(read_byte * 2);
 
-    if (string_cursor + read_byte > this->getLength()) throw Overflow();
+    if (string_cursor + read_byte > this->getPacketLength()) throw Overflow();
 
     for (int i = string_cursor * 2; i < (string_cursor * 2) + (read_byte * 2); i++)
     {
@@ -91,7 +91,7 @@ std::string packet::getHexString(int string_cursor, int read_byte)
     return temp;
 }
 
-std::string packet::decodeIPaddress(int string_cursor)
+std::string packet::getDecimalIP(int string_cursor)
 {
     std::string temp;
     std::string stamp;
@@ -180,13 +180,13 @@ unsigned int ARPpacket::getOpCode()
 
 boost::asio::ip::address ARPpacket::getSenderIp()
 {
-    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->decodeIPaddress(ARP_OFFSET+14));
+    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->getDecimalIP(ARP_OFFSET+14));
     return newaddr;
 }
 
 boost::asio::ip::address ARPpacket::getTargetIp()
 {
-    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->decodeIPaddress(ARP_OFFSET+24));
+    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->getDecimalIP(ARP_OFFSET+24));
     return newaddr;
 }
 
@@ -233,13 +233,13 @@ packet* IPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawDa
 
 asio::ip::address IPv4packet::getSenderIp()
 {
-    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->decodeIPaddress(IPv4_OFFSET+12));
+    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->getDecimalIP(IPv4_OFFSET+12));
     return newaddr;
 }
 
 asio::ip::address IPv4packet::getTargetIp()
 {
-    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->decodeIPaddress(IPv4_OFFSET+16));
+    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string(this->getDecimalIP(IPv4_OFFSET+16));
     return newaddr;
 }
 
@@ -420,7 +420,7 @@ std::map< int, std::string > TCPv4packet::getOptionMap()
 std::string TCPv4packet::getPayLoad()
 {
     int start = TCP_OFFSET + this->getHeaderLength();
-    return this->getHexString(start, this->getLength() - start);
+    return this->getHexString(start, this->getPacketLength() - start);
 }
 
 bool TCPv4packet::isCWR()

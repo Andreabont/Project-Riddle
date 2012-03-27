@@ -80,7 +80,7 @@ public:
     /* GENERAL FUNCTIONS */
 
     /** Returns the packet length in bytes. */
-    int getLength();
+    int getPacketLength();
 
     /** Returns packet epoch */
     long int getEpoch();
@@ -92,7 +92,7 @@ public:
     std::string getHexString(int string_cursor, int read_byte);
 
     /** Legge IPv4 dal byte voluto e restituisce in formato decimale. */
-    std::string decodeIPaddress(int string_cursor);
+    std::string getDecimalIP(int string_cursor);
 
     /** Salva MAC address a partire da un punto (n° del byte) della stringa rawData */
     mac_address getMacAddress(int string_cursor);
