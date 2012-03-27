@@ -35,6 +35,8 @@ stream::stream(long int timeEpoch_i, int timeMillis_i)
 bool stream::addPacket(TCPv4packet *newPacket)
 {
 
+  // FIXME - Non funziona sempre, reimplementa il TCP :-P
+  
     if(first_port == 0 && second_port == 0)
     {
         // First time

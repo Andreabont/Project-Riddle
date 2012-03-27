@@ -197,7 +197,7 @@ public:
     /* Ritorna nel opzioni TCP in formato raw, da processare */
     std::string getOptionRaw();
 
-    /* Ritorna le opzioni TCP in una std::map  */
+    /* Ritorna le opzioni TCP in una std::map */
     std::map<int, std::string> getOptionMap();
 
     /* Ritorna i dati trasportati dal pacchetto TCP */
