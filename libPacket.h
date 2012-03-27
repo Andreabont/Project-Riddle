@@ -14,41 +14,41 @@
 
 /* EtherType */
 
-#define ETHER_V2_CODE		0x0600
-#define ETHER_TYPE_IPV4		0x0800
-#define ETHER_TYPE_ARP		0x0806
-#define ETHER_TYPE_IEEE802	0x8100
-#define ETHER_TYPE_IPV6		0x86DD
-#define ETHER_TYPE_PPP		0x880B
+#define ETHER_V2_CODE		0x0600	/** Più alto è ethertype, più basso è dimensione */
+#define ETHER_TYPE_IPV4		0x0800	/** EtherType IPv4 */
+#define ETHER_TYPE_ARP		0x0806	/** EtherType ARP */
+#define ETHER_TYPE_IEEE802	0x8100	/** EtherType IEEE 802 */
+#define ETHER_TYPE_IPV6		0x86DD	/** EtherType IPv6 */
+#define ETHER_TYPE_PPP		0x880B	/** EtherType PPP */
 
 /* ARP */
 
-#define ARP_OFFSET		14
+#define ARP_OFFSET		14	/** Punto dove inizia l'header ARP */
 
 /* IPv4 */
 
-#define IPv4_OFFSET		14
-#define IPV4_TYPE_ICMP		0x01
-#define IPV4_TYPE_TCP		0x06
-#define IPV4_TYPE_UDP		0x11
+#define IPv4_OFFSET		14	/** Punto dove inizia l'header IPv4 */
+#define IPV4_TYPE_ICMP		0x01	/** IPv4 Type ICMP */
+#define IPV4_TYPE_TCP		0x06	/** IPv4 Type TCP */
+#define IPV4_TYPE_UDP		0x11	/** IPv4 Type UDP */
 
 /* TCP */
 
-#define TCP_OFFSET		34
-#define TCP_STANDARD		20 	// Standard header lenght (byte)
+#define TCP_OFFSET		34	/** Punto dove inizia l'header TCP */
+#define TCP_STANDARD		20 	/** Standard header lenght (byte) */
 
 /* UDP */
 
-#define UDP_OFFSET		34
+#define UDP_OFFSET		34	/** Punto dove inizia l'header UDP */
 
 /* ICMP */
 
-#define ICMPV4_OFFSET		34
-#define ICMPV4_ECHO_REP		0
-#define ICMPV4_UNREACH		3
-#define ICMPV4_REDIRECT		5
-#define ICMPV4_ECHO_REQ		8
-#define ICMPV4_TRACERT		30
+#define ICMPV4_OFFSET		34	/** Punto dove inizia l'header ICMP */
+#define ICMPV4_ECHO_REP		0	/** ICMP Type - Echo Reply (PING) */
+#define ICMPV4_UNREACH		3	/** ICMP Type - Unreach */
+#define ICMPV4_REDIRECT		5	/** ICMP Type - Redirect */
+#define ICMPV4_ECHO_REQ		8	/** ICMP Type - Echo Request (PING) */
+#define ICMPV4_TRACERT		30	/** ICMP Type - Tracert */
 
 /* INCLUDE */
 
@@ -56,7 +56,7 @@
 #include <boost/asio.hpp>
 #include "libAddress.h"
 
-/* Class for managing packets*/
+/** Class for managing packets */
 class packet
 {
 
@@ -68,205 +68,213 @@ protected:
 
 public:
 
-    /* Overflow management */
+    /** Overflow management */
     class Overflow {};
 
-    /* Class constructor with delayed instantiation*/
+    /** Class constructor with delayed instantiation*/
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 
-    /* Virtual destructor */
+    /** Virtual destructor */
     virtual ~packet() {}
 
     /* GENERAL FUNCTIONS */
 
-    /* Returns the packet length in bytes. */
+    /** Returns the packet length in bytes. */
     int getLength();
 
-    /* Returns packet epoch */
+    /** Returns packet epoch */
     long int getEpoch();
 
-    /* Returns milliseconds passed from epoch */
+    /** Returns milliseconds passed from epoch */
     int getMillis();
 
-    /* Legge n byte a partire dal byte voluto e li restituisce in stringa. */
+    /** Legge n byte a partire dal byte voluto e li restituisce in stringa. */
     std::string getHexString(int string_cursor, int read_byte);
 
-    /* Legge IPv4 dal byte voluto e restituisce in formato decimale. */
+    /** Legge IPv4 dal byte voluto e restituisce in formato decimale. */
     std::string decodeIPaddress(int string_cursor);
 
-    /* Salva MAC address a partire da un punto (n° del byte) della stringa rawData */
+    /** Salva MAC address a partire da un punto (n° del byte) della stringa rawData */
     mac_address getMacAddress(int string_cursor);
 
-    /* Salva IPv4 address a partire da un punto (n° del byte) della stringa rawData */
+    /** Salva IPv4 address a partire da un punto (n° del byte) della stringa rawData */
     boost::asio::ip::address getIPv4Address(int string_cursor);
 
-    /* True se e' un pacchetto ARP */
+    /** True se e' un pacchetto ARP */
     bool isArp();
 
-    /* True se e' un pacchetto IPv4 */
+    /** True se e' un pacchetto IPv4 */
     bool isIPv4();
 
-    /* True se e' un pacchetto IPv6*/
+    /** True se e' un pacchetto IPv6*/
     bool isIPv6();
 
     /* ETHERNET FUNCTIONS */
 
-    /* Restituisce MAC della scheda di rete che ha inviato la trama*/
+    /** Restituisce MAC della scheda di rete che ha inviato la trama*/
     mac_address getSenderMac();
 
-    /* Restituisce MAC del destinatario della trama*/
+    /** Restituisce MAC del destinatario della trama*/
     mac_address getTargetMac();
 
-    /*Restituisce ethertype*/
+    /** Restituisce ethertype */
     unsigned int getEtherType();
 
 };
 
-/*Class for managing ARP packets*/
+/** Class for managing ARP packets */
 class ARPpacket : public packet
 {
 public:
+  
+    /** Costruttore finale */
     ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    
+    /** Ritorna OpCode */
     unsigned int getOpCode();
+    
+    /** Ritorna indirizzo IP del mittente */
     boost::asio::ip::address getSenderIp();
+    
+    /** Ritorna indirizzo IP del destinatario */
     boost::asio::ip::address getTargetIp();
 };
 
-/*Class for managing IPv4 packets*/
+/** Class for managing IPv4 packets */
 class IPv4packet : public packet
 {
 public:
 
-    /* Class constructor with delayed instantiation */
+    /** Class constructor with delayed instantiation */
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 
-    /* Ritorna indirizzo IP del mittente */
+    /** Ritorna indirizzo IP del mittente */
     boost::asio::ip::address getSenderIp();
 
-    /* Ritorna indirizzo IP del destinatario */
+    /** Ritorna indirizzo IP del destinatario */
     boost::asio::ip::address getTargetIp();
 
-    /* Ritorna il tipo di protocollo incapsulato */
+    /** Ritorna il tipo di protocollo incapsulato */
     unsigned int getProtocolType();
 
-    /* True se incapsula un pacchetto TCP */
+    /** True se incapsula un pacchetto TCP */
     bool isTCP();
 
-    /* True se incapsula un pacchetto UDP */
+    /** True se incapsula un pacchetto UDP */
     bool isUDP();
 
-    /* True se incapsula un pacchetto ICMP */
+    /** True se incapsula un pacchetto ICMP */
     bool isICMP();
 };
 
-/*Class for managing TCPv4 packets*/
+/** Class for managing TCPv4 packets */
 class TCPv4packet : public IPv4packet
 {
 public:
 
-    /* Costruttore finale */
+    /** Costruttore finale */
     TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 
-    /* Restituisce porta TCP del mittente */
+    /** Restituisce porta TCP del mittente */
     unsigned int getSenderPort();
 
-    /* Restituisce porta TCP del destinatario */
+    /** Restituisce porta TCP del destinatario */
     unsigned int getTargetPort();
 
-    /* Restituisce il numero di sequenza */
+    /** Restituisce il numero di sequenza */
     unsigned int getSequenceNumber();
 
-    /*Restituisce il numero di acknowledgment */
+    /** Restituisce il numero di acknowledgment */
     unsigned int getAcknowledgmentNumber();
 
-    /* Ritorna dimensione dell'header TCP in byte */
+    /** Ritorna dimensione dell'header TCP in byte */
     unsigned int getHeaderLength();
 
-    /* Ritorna i flag TCP in formato raw, da processare */
+    /** Ritorna i flag TCP in formato raw, da processare */
     int getFlags();
 
-    /* Ritorna dimensione della finestra di ricezione */
+    /** Ritorna dimensione della finestra di ricezione */
     unsigned int getWindowSize();
 
-    /* Ritorna checksum */
+    /** Ritorna checksum */
     unsigned int getChecksum();
 
-    /* Ritorna l'urgent pointer */
+    /** Ritorna l'urgent pointer */
     unsigned int getUrgentPointer();
 
-    /* Ritorna nel opzioni TCP in formato raw, da processare */
+    /** Ritorna le opzioni TCP in formato raw, da processare */
     std::string getOptionRaw();
 
-    /* Ritorna le opzioni TCP in una std::map */
+    /** Ritorna le opzioni TCP in una std::map */
     std::map<int, std::string> getOptionMap();
 
-    /* Ritorna i dati trasportati dal pacchetto TCP */
+    /** Ritorna i dati trasportati dal pacchetto TCP */
     std::string getPayLoad();
 
-    /* True se ha flag ACK */
+    /** True se ha flag ACK */
     bool isACK();
 
-    /* True se ha flag SYN */
+    /** True se ha flag SYN */
     bool isSYN();
 
-    /* True se ha flag FIN */
+    /** True se ha flag FIN */
     bool isFIN();
 
-    /* True se ha flag RST */
+    /** True se ha flag RST */
     bool isRST();
 
-    /* True se ha flag PSH */
+    /** True se ha flag PSH */
     bool isPSH();
 
-    /* True se ha flag URG */
+    /** True se ha flag URG */
     bool isURG();
 
-    /* True se ha flag ECE */
+    /** True se ha flag ECE */
     bool isECE();
 
-    /* True se ha flag CWR */
+    /** True se ha flag CWR */
     bool isCWR();
 
-    /* True se sono presenti delle opzioni aggiuntive */
+    /** True se sono presenti delle opzioni aggiuntive */
     bool isOption();
 };
 
-/*Class for managing UDPv4 packets*/
+/** Class for managing UDPv4 packets */
 class UDPv4packet : public IPv4packet
 {
 public:
 
-    /* Costruttore finale */
+    /** Costruttore finale */
     UDPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 
-    /* Ritorna porta UDP del mittente */
+    /** Ritorna porta UDP del mittente */
     unsigned int getSenderPort();
 
-    /* Ritorna porta UDP del destinatario */
+    /** Ritorna porta UDP del destinatario */
     unsigned int getTargetPort();
 };
 
-/*Class for managing ICMPv4 packets*/
+/** Class for managing ICMPv4 packets */
 class ICMPv4packet : public IPv4packet
 {
 public:
 
-    /* Costruttore finale */
+    /** Costruttore finale */
     ICMPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 
-    /* Ritorna il tipo di messaggio ICMP */
+    /** Ritorna il tipo di messaggio ICMP */
     unsigned int getMessageType();
 
-    /* Ritorna il MessageCode */
+    /** Ritorna il MessageCode */
     unsigned int getMessageCode();
 };
 
-/*Class for managing unknown packets*/
+/** Class for managing unknown packets */
 class UnknownPacket : public packet
 {
 public:
 
-    /* Costruttore finale */
+    /** Costruttore finale */
     UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 };
 

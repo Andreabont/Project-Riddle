@@ -20,15 +20,15 @@ class mac_address
 {
 public:
 
-    /* Costruttore: riceve indirizzo in stringa codifica esadecimale. */
+    /** Costruttore: riceve indirizzo in stringa codifica esadecimale. */
     mac_address() {
         std::memset(byte,0,6);
     }
     mac_address(const std::string&);
-    
+
     bool operator==(const mac_address& otherMac);
 
-    /* Restituisce stringa stampabile a schermo. */
+    /** Restituisce stringa stampabile a schermo. */
     std::string to_string();
 
 private:
