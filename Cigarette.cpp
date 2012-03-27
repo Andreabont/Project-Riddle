@@ -115,7 +115,7 @@ int main(int argc, char **argv) {
                         cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
                         cout << "                    + Checksum               0x" << std::hex << pkg_tcpv4->getChecksum() << endl;
                         cout << "                    + Urgent Pointer         0x" << std::hex << pkg_tcpv4->getUrgentPointer() << endl;
-                        std::map<int, std::string> options = pkg_tcpv4->getOption();
+                        std::map<int, std::string> options = pkg_tcpv4->getOptionMap();
 
                         if(pkg_tcpv4->isOption())
                         {
@@ -129,7 +129,7 @@ int main(int argc, char **argv) {
 
                     if (vm.count("payload"))
                     {
-                        //TODO - Visualizzare meglio
+                        //TODO - Visualizzare meglio il payload
                         cout << pkg_tcpv4->getPayLoad() << endl;
                     }
 

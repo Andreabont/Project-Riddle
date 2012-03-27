@@ -27,7 +27,7 @@
 
 /* IPv4 */
 
-#define IPv4_OFFSET		14 
+#define IPv4_OFFSET		14
 #define IPV4_TYPE_ICMP		0x01
 #define IPV4_TYPE_TCP		0x06
 #define IPV4_TYPE_UDP		0x11
@@ -73,11 +73,11 @@ public:
 
     /* Class constructor with delayed instantiation*/
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-    
+
     /* Virtual destructor */
     virtual ~packet() {}
 
-/* GENERAL FUNCTIONS */
+    /* GENERAL FUNCTIONS */
 
     /* Returns the packet length in bytes. */
     int getLength();
@@ -136,12 +136,26 @@ public:
 class IPv4packet : public packet
 {
 public:
+
+    /* Class constructor with delayed instantiation */
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+
+    /* Ritorna indirizzo IP del mittente */
     boost::asio::ip::address getSenderIp();
+
+    /* Ritorna indirizzo IP del destinatario */
     boost::asio::ip::address getTargetIp();
+
+    /* Ritorna il tipo di protocollo incapsulato */
     unsigned int getProtocolType();
+
+    /* True se incapsula un pacchetto TCP */
     bool isTCP();
+
+    /* True se incapsula un pacchetto UDP */
     bool isUDP();
+
+    /* True se incapsula un pacchetto ICMP */
     bool isICMP();
 };
 
@@ -149,36 +163,86 @@ public:
 class TCPv4packet : public IPv4packet
 {
 public:
+
+    /* Costruttore finale */
     TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+
+    /* Restituisce porta TCP del mittente */
     unsigned int getSenderPort();
+
+    /* Restituisce porta TCP del destinatario */
     unsigned int getTargetPort();
+
+    /* Restituisce il numero di sequenza */
     unsigned int getSequenceNumber();
+
+    /*Restituisce il numero di acknowledgment */
     unsigned int getAcknowledgmentNumber();
+
+    /* Ritorna dimensione dell'header TCP in byte */
     unsigned int getHeaderLength();
+
+    /* Ritorna i flag TCP in formato raw, da processare */
     int getFlags();
+
+    /* Ritorna dimensione della finestra di ricezione */
     unsigned int getWindowSize();
+
+    /* Ritorna checksum */
     unsigned int getChecksum();
+
+    /* Ritorna l'urgent pointer */
     unsigned int getUrgentPointer();
-    std::string getTcpOption();
+
+    /* Ritorna nel opzioni TCP in formato raw, da processare */
+    std::string getOptionRaw();
+
+    /* Ritorna le opzioni TCP in una std::map  */
+    std::map<int, std::string> getOptionMap();
+
+    /* Ritorna i dati trasportati dal pacchetto TCP */
     std::string getPayLoad();
+
+    /* True se ha flag ACK */
     bool isACK();
+
+    /* True se ha flag SYN */
     bool isSYN();
+
+    /* True se ha flag FIN */
     bool isFIN();
+
+    /* True se ha flag RST */
     bool isRST();
+
+    /* True se ha flag PSH */
     bool isPSH();
+
+    /* True se ha flag URG */
     bool isURG();
+
+    /* True se ha flag ECE */
     bool isECE();
+
+    /* True se ha flag CWR */
     bool isCWR();
+
+    /* True se sono presenti delle opzioni aggiuntive */
     bool isOption();
-    std::map<int, std::string> getOption();
 };
 
 /*Class for managing UDPv4 packets*/
 class UDPv4packet : public IPv4packet
 {
 public:
+
+    /* Costruttore finale */
     UDPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+
+    /* Ritorna porta UDP del mittente */
     unsigned int getSenderPort();
+
+    /* Ritorna porta UDP del destinatario */
     unsigned int getTargetPort();
 };
 
@@ -186,8 +250,14 @@ public:
 class ICMPv4packet : public IPv4packet
 {
 public:
+
+    /* Costruttore finale */
     ICMPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+
+    /* Ritorna il tipo di messaggio ICMP */
     unsigned int getMessageType();
+
+    /* Ritorna il MessageCode */
     unsigned int getMessageCode();
 };
 
@@ -195,6 +265,8 @@ public:
 class UnknownPacket : public packet
 {
 public:
+
+    /* Costruttore finale */
     UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 };
 

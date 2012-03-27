@@ -344,8 +344,10 @@ unsigned int TCPv4packet::getAcknowledgmentNumber()
 
 unsigned int TCPv4packet::getHeaderLength()
 {
-    // NB: utilizzati solo i primi 8 bit del byte, necessita traslazione.
-    // NB: Indica i gruppi da 32 bit contenuti, necessita conversione.
+    /*
+     * Sono utilizzati solo i primi 8 bit del byte, necessita traslazione.
+     * Indica i gruppi da 32 bit contenuti, necessita conversione.
+     */
     unsigned int hl;
     std::stringstream convert (this->getHexString(TCP_OFFSET+12, 1));
     convert>>std::hex>>hl;
@@ -386,11 +388,34 @@ unsigned int TCPv4packet::getUrgentPointer()
     return up;
 }
 
-std::string TCPv4packet::getTcpOption()
+std::string TCPv4packet::getOptionRaw()
 {
     return this->getHexString(TCP_OFFSET + TCP_STANDARD, this->getHeaderLength() - TCP_STANDARD);
 }
 
+std::map< int, std::string > TCPv4packet::getOptionMap()
+{
+    std::map<int, std::string> tempMap;
+    if(this->isOption() && !this->isSYN()) // FIXME - SYN usa altro protocollo???
+    {
+        for(int i=0; i < (this->getHeaderLength() - TCP_STANDARD); i++)
+        {
+            int read;
+            std::stringstream convert ( this->getHexString(TCP_OFFSET+TCP_STANDARD+i, 1) );
+            convert >> std::hex >> read;
+
+            if(read != 1)
+            {
+                std::stringstream convert2 ( this->getHexString(TCP_OFFSET+TCP_STANDARD+i+1, 1) );
+                int optionLength;
+                convert2 >> std::hex >> optionLength;
+                tempMap[read] = this->getHexString(TCP_OFFSET+TCP_STANDARD+i+2, optionLength-2);
+                i += optionLength;
+            }
+        }
+    }
+    return tempMap;
+}
 
 std::string TCPv4packet::getPayLoad()
 {
@@ -449,30 +474,6 @@ bool TCPv4packet::isFIN()
 bool TCPv4packet::isOption()
 {
     return (this->getHeaderLength() > TCP_STANDARD);
-}
-
-std::map< int, std::string > TCPv4packet::getOption()
-{
-    std::map<int, std::string> tempMap;
-    if(this->isOption() && !this->isSYN()) // FIXME - SYN usa altro protocollo???
-    {
-        for(int i=0; i < (this->getHeaderLength() - TCP_STANDARD); i++)
-        {
-            int read;
-            std::stringstream convert ( this->getHexString(TCP_OFFSET+TCP_STANDARD+i, 1) );
-            convert >> std::hex >> read;
-	    
-            if(read != 1)
-            {
-                std::stringstream convert2 ( this->getHexString(TCP_OFFSET+TCP_STANDARD+i+1, 1) );
-                int optionLength;
-                convert2 >> std::hex >> optionLength;
-                tempMap[read] = this->getHexString(TCP_OFFSET+TCP_STANDARD+i+2, optionLength-2);
-                i += optionLength;
-            }
-        }
-    }
-    return tempMap;
 }
 
 /* UDP */
