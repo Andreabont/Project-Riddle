@@ -283,7 +283,7 @@ unsigned int ICMPv4packet::getMessageType()
 {
     unsigned int message_type;
 
-    std::stringstream convert (this->getHexString(ICMPV4_OFFSET+0, 1));
+    std::stringstream convert (this->getHexString(ICMPV4_OFFSET, 1));
     convert>>std::hex>>message_type;
 
     return message_type;
@@ -313,7 +313,7 @@ TCPv4packet::TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_
 unsigned int TCPv4packet::getSenderPort()
 {
     unsigned int port;
-    std::stringstream convert (this->getHexString(TCP_OFFSET+0, 2));
+    std::stringstream convert (this->getHexString(TCP_OFFSET, 2));
     convert>>std::hex>>port;
     return port;
 }
