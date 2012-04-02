@@ -14,6 +14,7 @@
 #include <iomanip>
 #include "libAddress.h"
 
+/** Costruttore */
 mac_address::mac_address(const std::string& rawData)
 {
     int l = 0;
@@ -35,6 +36,7 @@ mac_address::mac_address(const std::string& rawData)
     return;
 }
 
+/** Restituisce indirizzo stampabile */
 std::string mac_address::to_string()
 {
     std::string stamp;
@@ -51,6 +53,7 @@ std::string mac_address::to_string()
     return stamp;
 }
 
+/** Overload, definisco confronto tra indirizzi */
 bool mac_address::operator==(const mac_address& otherMac)
 {
     for(int i=0; i<=5; i++)

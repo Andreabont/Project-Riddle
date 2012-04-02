@@ -17,6 +17,7 @@
 #include "libAddress.h"
 #include "libPacket.h"
 
+/** Class for managing TCP flow. */
 class stream
 {
 private:
@@ -50,6 +51,9 @@ public:
     unsigned int getFirstPort();
     unsigned int getSecondPort();
     bool isFull();
+    
+    TCPv4packet getFirstPacket();
+    
 };
 
 #endif //LIBPURSUER_H

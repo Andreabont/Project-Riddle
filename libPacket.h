@@ -61,10 +61,10 @@ class packet
 {
 
 protected:
-    std::string rawData;
-    long int timeEpoch;
-    int timeMillis;
-    int pkgLength;
+    std::string rawData;		/** Raw packet recived from riddle */
+    long int timeEpoch;			/** Timestamp */
+    int timeMillis;			/** Millisecond from timestamp */
+    int pkgLength;			/** Packet length */
 
 public:
 
