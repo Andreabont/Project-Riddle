@@ -22,6 +22,7 @@ Accetta i seguenti parametri:
 --help		Scrive un messaggio di help.
 --dump		Scrive in formato umanamente comprensibile (piu' o meno)
 --limit	<x>	Impone massimo numero di pacchetti ricevibili.
+--input <x>	Legge da un file pcap al posto del device.
 --iface <x>	Impone sniffing su una interfaccia specifica (se non presente usa standard)
 --filter <x>	Visualizza solo pacchetti voluti (non filtra a livello applicativo)
 
