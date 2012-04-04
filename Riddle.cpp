@@ -50,7 +50,7 @@ int main(int argc, char **argv) {
     {
         pcap_handle = pcap_open_offline(vm["input"].as<string>().c_str(), error_buffer);
         if (pcap_handle == NULL) {
-            pcap_fatal("pcap_open_live", error_buffer);
+            pcap_fatal("pcap_open_offline", error_buffer);
         }
 
         cerr<<">> Reading packets from "<<vm["input"].as<string>()<<endl;
