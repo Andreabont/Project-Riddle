@@ -26,9 +26,10 @@ int main(int argc, char **argv) {
     desc.add_options()
     ("help", "prints this")
     ("dump", "enable dump mode")
-    ("iface", value<string>(), "interface to sniff from")
-    ("limit", value<int>(), "set max number of packet")
+    ("iface", value<string>(), "interface to sniff from (not set = default device)")
+    ("input", value<string>(), "reads packets from a pcap file (disable iface input)")
     ("filter", value<string>(), "use to filter packet with bpf")
+    ("limit", value<int>(), "set max number of packet")
     ;
 
     variables_map vm;
@@ -41,28 +42,43 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    string pcap_device;
     char error_buffer[PCAP_ERRBUF_SIZE];
-
-    if (vm.count("iface"))
-    {
-        pcap_device=vm["iface"].as<string>();
-    } else {
-        // Cerca e restituisce interfaccia
-        char *dev=pcap_lookupdev(error_buffer);
-        if (dev!=NULL) pcap_device = dev;
-        else pcap_fatal("pcap_lookupdev", error_buffer);
-    }
 
     pcap_t *pcap_handle;
 
-    // Apre il device in mod promiscua
-    pcap_handle = pcap_open_live(pcap_device.c_str(), 4096, 1, 0, error_buffer);
-    if (pcap_handle == NULL) {
-        pcap_fatal("pcap_open_live", error_buffer);
-    }
+    if(vm.count("input"))
+    {
+        pcap_handle = pcap_open_offline(vm["input"].as<string>().c_str(), error_buffer);
+        if (pcap_handle == NULL) {
+            pcap_fatal("pcap_open_live", error_buffer);
+        }
 
-    cerr<<"Sniffing on device "<<pcap_device<<endl;
+        cerr<<">> Reading packets from "<<vm["input"].as<string>()<<endl;
+    }
+    else
+    {
+
+        string pcap_device;
+
+        if (vm.count("iface"))
+        {
+            pcap_device=vm["iface"].as<string>();
+        } else {
+            // Cerca e restituisce interfaccia
+            char *dev=pcap_lookupdev(error_buffer);
+            if (dev!=NULL) pcap_device = dev;
+            else pcap_fatal("pcap_lookupdev", error_buffer);
+        }
+
+        // Apre il device in mod promiscua
+        pcap_handle = pcap_open_live(pcap_device.c_str(), 4096, 1, 0, error_buffer);
+        if (pcap_handle == NULL) {
+            pcap_fatal("pcap_open_live", error_buffer);
+        }
+
+        cerr<<">> Sniffing on device "<<pcap_device<<endl;
+
+    }
 
     if (vm.count("filter"))
     {
@@ -70,16 +86,16 @@ int main(int argc, char **argv) {
         struct bpf_program fp;
         bpf_u_int32 net;
 
-        cerr<<"Filtering with '"<<filter<<"'"<<endl;
+        cerr<<">> Filtering with '"<<filter<<"'"<<endl;
 
         if (pcap_compile(pcap_handle, &fp, filter.c_str(), 0, net) == -1)
         {
-            cerr<< "Couldn't parse filter '"<<filter<<"': "<<pcap_geterr(pcap_handle)<<endl;
+            cerr<< ">> Couldn't parse filter '"<<filter<<"': "<<pcap_geterr(pcap_handle)<<endl;
             return(2);
         }
 
         if (pcap_setfilter(pcap_handle, &fp) == -1) {
-            cerr<< "Couldn't install filter '"<<filter<<"': "<<pcap_geterr(pcap_handle)<<endl;
+            cerr<< ">> Couldn't install filter '"<<filter<<"': "<<pcap_geterr(pcap_handle)<<endl;
             return(2);
         }
     }
@@ -98,13 +114,19 @@ int main(int argc, char **argv) {
     const u_char *packet;
     pcap_pkthdr header;
 
-    for (;maxpacket > 0;)
+    for (; maxpacket > 0;)
     {
         packet = pcap_next(pcap_handle, &header);
+        if(packet == NULL)
+        {
+            cerr<<">> Flow terminated"<<endl;
+            break;
+        }
         dumper(packet, header);
         if (maxpacket!=numeric_limits<int>::max()) maxpacket--;
     }
 
+    cerr<<">> I finished the job, goodbye!"<<endl;
     pcap_close(pcap_handle);
 
     return EXIT_SUCCESS;
