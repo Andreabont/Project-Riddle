@@ -253,6 +253,19 @@ unsigned int IPv4packet::getProtocolType()
     return protocol_type;
 }
 
+unsigned int IPv4packet::getIPChecksum()
+{
+    unsigned int cs;
+    std::stringstream convert (this->getHexString(IPv4_OFFSET+10, 2));
+    convert>>std::hex>>cs;
+    return cs;
+}
+
+bool IPv4packet::verifyIPChecksum()
+{
+    // TODO
+}
+
 bool IPv4packet::isTCP()
 {
     return (this->getProtocolType() == IPV4_TYPE_TCP);
@@ -372,12 +385,17 @@ unsigned int TCPv4packet::getWindowSize()
     return ws;
 }
 
-unsigned int TCPv4packet::getChecksum()
+unsigned int TCPv4packet::getTCPChecksum()
 {
     unsigned int cs;
     std::stringstream convert (this->getHexString(TCP_OFFSET+16, 2));
     convert>>std::hex>>cs;
     return cs;
+}
+
+bool TCPv4packet::verifyTCPChecksum()
+{
+    // TODO
 }
 
 unsigned int TCPv4packet::getUrgentPointer()

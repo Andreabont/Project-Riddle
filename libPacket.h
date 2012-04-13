@@ -156,6 +156,12 @@ public:
 
     /** Ritorna il tipo di protocollo incapsulato */
     unsigned int getProtocolType();
+    
+    /** Ritorna checksum */
+    unsigned int getIPChecksum();
+    
+    /** Verify checksum **/
+    bool verifyIPChecksum();
 
     /** True se incapsula un pacchetto TCP */
     bool isTCP();
@@ -197,8 +203,11 @@ public:
     unsigned int getWindowSize();
 
     /** Ritorna checksum */
-    unsigned int getChecksum();
-
+    unsigned int getTCPChecksum();
+    
+    /** Verify checksum **/
+    bool verifyTCPChecksum();
+    
     /** Ritorna l'urgent pointer */
     unsigned int getUrgentPointer();
 

@@ -31,6 +31,7 @@ int main(int argc, char **argv) {
     options_description desc("Cigarette - Network Packet Parser");
     desc.add_options()
     ("help", "prints this")
+    ("ipv4", "expand IPv4 info")
     ("tcp", "expand TCP info")
     ("icmp", "expand ICMP info")
     ("payload", "print payload dump")
@@ -88,6 +89,12 @@ int main(int argc, char **argv) {
 
                 cout << "                    From " << pkg_ipv4->getSenderIp().to_string() << " to "<< pkg_ipv4->getTargetIp().to_string() << endl;
                 cout << "                    ProtocolType: 0x" << pkg_ipv4->getProtocolType() << " ("<< ipv4_type_decode(pkg_ipv4->getProtocolType()) << ")" << endl;
+
+                if (vm.count("ipv4"))
+                {
+                    cout << "                    + Checksum               0x" << pkg_ipv4->getIPChecksum() << endl;
+                }
+
                 cout << endl;
 
                 if (pkg_ipv4->isTCP())
@@ -113,7 +120,7 @@ int main(int argc, char **argv) {
                         if(pkg_tcpv4->isCWR()) cout << "CWR ";
                         cout << endl;
                         cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
-                        cout << "                    + Checksum               0x" << std::hex << pkg_tcpv4->getChecksum() << endl;
+                        cout << "                    + Checksum               0x" << std::hex << pkg_tcpv4->getTCPChecksum() << endl;
                         cout << "                    + Urgent Pointer         0x" << std::hex << pkg_tcpv4->getUrgentPointer() << endl;
                         std::map<int, std::string> options = pkg_tcpv4->getOptionMap();
 
