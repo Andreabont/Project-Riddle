@@ -243,6 +243,26 @@ asio::ip::address IPv4packet::getTargetIp()
     return newaddr;
 }
 
+unsigned int IPv4packet::getIdentity()
+{
+    unsigned int id;
+
+    std::stringstream convert (this->getHexString(IPv4_OFFSET+4, 2));
+    convert>>std::hex>>id;
+
+    return id;
+}
+
+unsigned int IPv4packet::getTTL()
+{
+    unsigned int ttl;
+
+    std::stringstream convert (this->getHexString(IPv4_OFFSET+8, 1));
+    convert>>std::hex>>ttl;
+
+    return ttl;
+}
+
 unsigned int IPv4packet::getProtocolType()
 {
     unsigned int protocol_type;

@@ -153,6 +153,12 @@ public:
 
     /** Ritorna indirizzo IP del destinatario */
     boost::asio::ip::address getTargetIp();
+    
+    /** Ritorna identificatore **/
+    unsigned int getIdentity();
+    
+    /** Ritorna il Time To Live **/
+    unsigned int getTTL();
 
     /** Ritorna il tipo di protocollo incapsulato */
     unsigned int getProtocolType();
