@@ -92,7 +92,16 @@ int main(int argc, char **argv) {
 
                 if (vm.count("ipv4"))
                 {
-                    cout << "                    + Checksum               0x" << pkg_ipv4->getIPChecksum() << endl;
+                    cout << "                    + Checksum               0x" << pkg_ipv4->getIPChecksum();
+		    if(pkg_ipv4->verifyIPChecksum())
+		    {
+		      cout << " (Correct) ";
+		    }
+		    else
+		    {
+		      cout << " (Invalid) ";
+		    }
+		    cout << endl;
                 }
 
                 cout << endl;

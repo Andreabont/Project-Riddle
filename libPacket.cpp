@@ -263,7 +263,20 @@ unsigned int IPv4packet::getIPChecksum()
 
 bool IPv4packet::verifyIPChecksum()
 {
-    // TODO
+
+    int sum = 0;
+    
+    for(int i = 0; i < 20; i += 2)
+    {
+      
+      short unsigned int temp;
+      std::stringstream convert (this->getHexString(IPv4_OFFSET+i,2));
+      convert >> std::hex >> temp;
+      sum += temp;
+     
+    }
+     
+    return ((sum & 0xFFFF) + (sum >>= 16) == 0xFFFF);
 }
 
 bool IPv4packet::isTCP()
@@ -395,7 +408,7 @@ unsigned int TCPv4packet::getTCPChecksum()
 
 bool TCPv4packet::verifyTCPChecksum()
 {
-    // TODO
+    // TODO - Checksum TCP non viene usato???
 }
 
 unsigned int TCPv4packet::getUrgentPointer()
