@@ -59,6 +59,10 @@ int main(int argc, char **argv) {
         return EXIT_SUCCESS;
     }
 
+    string r_packet;
+    getline(cin,r_packet);
+    if (cin.eof()) return EXIT_SUCCESS;
+
     WINDOW *wnd;
 
     wnd = initscr();	// curses call to initialize window
@@ -84,10 +88,6 @@ int main(int argc, char **argv) {
     {
         try
         {
-            string r_packet;
-            getline(cin,r_packet);
-            if (cin.eof()) break;
-
             std::vector< std::string > line;
             boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
 
@@ -127,6 +127,8 @@ int main(int argc, char **argv) {
             }
 
             delete pkg;
+            getline(cin,r_packet);
+            if (cin.eof()) break;
 
         }
         catch (packet::Overflow)
@@ -219,8 +221,8 @@ void printLine(int countLine, string mac, string ip, int epoch)
 
     if(head = (char*)malloc(cols * sizeof(char)))
     {
-	ptime time_t_epoch(date(1970,1,1));
-	int ttl = TIMETOLIVE - (epoch - 0);
+        ptime time_t_epoch(date(1970,1,1));
+        int ttl = TIMETOLIVE - (epoch - 0);
         snprintf(head, cols, " %s | %s | %d | %d", mac.c_str(), ip.c_str(), epoch, ttl );
 
         ind2 = strlen(head);
