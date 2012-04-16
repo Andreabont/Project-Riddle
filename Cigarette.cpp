@@ -92,18 +92,18 @@ int main(int argc, char **argv) {
 
                 if (vm.count("ipv4"))
                 {
-		    cout << "                    + Time To Live           " << std::dec << pkg_ipv4->getTTL() << endl;
-		    cout << "                    + Identification         0x" << std::hex << pkg_ipv4->getIdentity() << endl;;
+                    cout << "                    + Time To Live           " << std::dec << pkg_ipv4->getTTL() << endl;
+                    cout << "                    + Identification         0x" << std::hex << pkg_ipv4->getIdentity() << endl;;
                     cout << "                    + Checksum               0x" << std::hex << pkg_ipv4->getIPChecksum();
-		    if(pkg_ipv4->verifyIPChecksum())
-		    {
-		      cout << " (Correct) ";
-		    }
-		    else
-		    {
-		      cout << " (Invalid) ";
-		    }
-		    cout << endl;
+                    if(pkg_ipv4->verifyIPChecksum())
+                    {
+                        cout << " (Correct) ";
+                    }
+                    else
+                    {
+                        cout << " (Invalid) ";
+                    }
+                    cout << endl;
                 }
 
                 cout << endl;
@@ -144,12 +144,14 @@ int main(int argc, char **argv) {
                             }
                         }
                     }
-
+                    
                     if (vm.count("payload"))
                     {
                         //TODO - Visualizzare meglio il payload
-                        cout << pkg_tcpv4->getPayLoad() << endl;
+                        cout << "                    + Payload                "<< pkg_tcpv4->getPayLoad() << endl;
                     }
+
+
 
                     cout << endl;
 

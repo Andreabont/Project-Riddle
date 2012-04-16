@@ -59,7 +59,7 @@
 /** Class for managing packets */
 class packet
 {
-
+  
 protected:
     std::string rawData;		/** Raw packet recived from riddle */
     long int timeEpoch;			/** Timestamp */
@@ -147,7 +147,7 @@ public:
 
     /** Class constructor with delayed instantiation */
     static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
-
+    
     /** Ritorna indirizzo IP del mittente */
     boost::asio::ip::address getSenderIp();
 
