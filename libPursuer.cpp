@@ -17,71 +17,151 @@
 #include <string>
 #include <ios>
 #include <boost/asio.hpp>
-#include <vector>
+#include <list>
 #include "libPacket.h"
 #include "libAddress.h"
 #include "libPursuer.h"
 
-stream::stream(long int timeEpoch_i, int timeMillis_i)
+stream::stream(TCPv4packet *SYN)
 {
-    timeEpoch = timeEpoch_i;
-    timeMillis = timeMillis_i;
-    first_port = 0;
-    second_port = 0;
-    flagFull = false;
+    timeEpoch = SYN->getEpoch();
+    timeMillis = SYN->getMillis();
+    first_mac = SYN->getSenderMac();
+    second_mac = SYN->getTargetMac();
+    first_ip = SYN->getSenderIp();
+    second_ip = SYN->getTargetIp();
+    first_port = SYN->getSenderPort();
+    second_port = SYN->getTargetPort();
+    first_sn = SYN->getSequenceNumber();
+    second_sn = 0;
+    flagFirstFIN = false;
+    flagSecondFIN = false;
+
+    delete &SYN;
+
     return;
 }
+
+bool stream::streamSynAck(TCPv4packet *SYN)
+{
+
+    if(first_sn + 1 == SYN->getAcknowledgmentNumber() && SYN->isACK() && SYN->isSYN())
+    {
+        second_sn = SYN->getSequenceNumber();
+        return true;
+    }
+
+    delete SYN;
+
+    return false;
+
+}
+
 
 bool stream::addPacket(TCPv4packet *newPacket)
 {
 
-  // FIXME - Non funziona sempre, reimplementa il TCP :-P
+  using namespace std;
   
-    if(first_port == 0 && second_port == 0)
-    {
-        // First time
-
-        first_mac = newPacket->getSenderMac();
-        second_mac = newPacket->getTargetMac();
-
-        first_ip = newPacket->getSenderIp();
-        second_ip = newPacket->getTargetIp();
-
-        first_port = newPacket->getSenderPort();
-        second_port = newPacket->getTargetPort();
-
-        first_flow.push_back(newPacket);
-
-        if(newPacket->isFIN() || newPacket->isRST()) {
-            flagFull = true;
-        }
-
-        return true;
-
-    }
-    if(first_port == newPacket->getSenderPort() && first_ip == newPacket->getSenderIp() && first_mac == newPacket->getSenderMac())
+    if(!newPacket->isSYN())
     {
 
-        first_flow.push_back(newPacket);
-
-        if(newPacket->isFIN() || newPacket->isRST()) {
-            flagFull = true;
+        if(newPacket->getSenderPort() == first_port)
+        {
+            // Siamo nel first_buffer
+            first_buffer.push_back(newPacket);	    
+            for (list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
+            {
+                if( (*it)->getSequenceNumber() + 1 == newPacket->getAcknowledgmentNumber() )
+                {
+                    (*it)->public_flag == true;
+                    break;
+                }
+            }
+            return true;
         }
+        else if (newPacket->getSenderPort() == second_port)
+        {
+            second_buffer.push_back(newPacket);
+            for (list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
+            {
+                if( (*it)->getSequenceNumber() + 1 == newPacket->getAcknowledgmentNumber() )
+                {
+                    (*it)->public_flag == true;
+                    break;
+                }
+            }
+            return true;
+        } else return false;
 
     }
-    if(second_port == newPacket->getSenderPort() && second_ip == newPacket->getSenderIp() && second_mac == newPacket->getSenderMac())
-    {
 
-        second_flow.push_back(newPacket);
-	
-        if(newPacket->isFIN() || newPacket->isRST()) {
-            flagFull = true;
-        }
+    return false;
 
-    } else {
-        return false;
-    }
 }
+
+void stream::flushFirstBuffer()
+{
+    bool isFound = false;
+
+    do
+    {
+
+        for (std::list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
+        {
+
+            if(first_sn + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
+            {
+                first_flow += (*it)->getPayLoad();
+                first_sn++; // FIXME se si azzera?
+                first_buffer.remove(*it);
+                delete &(*it);
+                isFound == true;
+                break;
+            }
+            else
+            {
+                isFound == false;
+            }
+        }
+
+    } while (isFound);
+
+}
+
+void stream::flushSecondBuffer()
+{
+    bool isFound = false;
+
+    do
+    {
+
+        for (std::list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
+        {
+
+            if(second_sn + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
+            {
+                second_flow += (*it)->getPayLoad();
+                second_sn++; // FIXME se si azzera?
+                second_buffer.remove(*it);
+                delete &(*it);
+                isFound == true;
+                break;
+            }
+            else
+            {
+                isFound == false;
+            }
+        }
+
+    } while (isFound);
+}
+
+std::string stream::exportFlow()
+{
+    return first_flow + second_flow; // TODO
+}
+
 
 long int stream::getTimeEpoch()
 {
@@ -123,7 +203,17 @@ unsigned int stream::getSecondPort()
     return second_port;
 }
 
-bool stream::isFull()
+unsigned int stream::getFirstSN()
 {
-    return flagFull;
+    return first_sn;
+}
+
+unsigned int stream::getSecondSN()
+{
+    return second_sn;
+}
+
+bool stream::isFIN()
+{
+    return flagFirstFIN && flagSecondFIN;
 }

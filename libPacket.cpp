@@ -353,6 +353,7 @@ TCPv4packet::TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_
     timeMillis = timeMillis_i;
     rawData = rawData_i;
     pkgLength = rawData_i.length() / 2;
+    public_flag = false;
     return;
 }
 

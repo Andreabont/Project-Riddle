@@ -13,7 +13,9 @@
 #define LIBPURSUER_H
 
 #include <list>
+#include <string>
 #include <boost/asio.hpp>
+#include <boost/concept_check.hpp>
 #include "libAddress.h"
 #include "libPacket.h"
 
@@ -24,23 +26,33 @@ private:
     long int timeEpoch;
     int timeMillis;
     
-    bool flagFull;
+    bool flagFirstFIN;
+    bool flagSecondFIN;
     
     mac_address first_mac;
     boost::asio::ip::address first_ip;
     unsigned int first_port;
-    std::list<TCPv4packet*> first_flow;
+    unsigned int first_sn;
+    std::list<TCPv4packet*> first_buffer;
+    std::string first_flow;
 
     mac_address second_mac;
     boost::asio::ip::address second_ip;
     unsigned int second_port;
-    std::list<TCPv4packet*> second_flow;
+    unsigned int second_sn;
+    std::list<TCPv4packet*> second_buffer;
+    std::string second_flow;
    
 public:
   
-    stream(long int timeEpoch_i, int timeMillis_i);
+    stream(TCPv4packet *SYN);
+    
+    bool streamSynAck(TCPv4packet *SYN);
     
     bool addPacket(TCPv4packet *newPacket);
+    
+    void flushFirstBuffer();
+    void flushSecondBuffer();
   
     long int getTimeEpoch();
     int getTimeMillis();
@@ -50,9 +62,10 @@ public:
     boost::asio::ip::address getSecondIpAddress();
     unsigned int getFirstPort();
     unsigned int getSecondPort();
-    bool isFull();
-    
-    TCPv4packet getFirstPacket();
+    unsigned int getFirstSN();
+    unsigned int getSecondSN();
+    std::string exportFlow();
+    bool isFIN();
     
 };
 

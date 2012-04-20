@@ -45,11 +45,11 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    std::list<stream*> packet_stream;
+
     string r_packet;
     getline(cin,r_packet);
     if (cin.eof()) return EXIT_SUCCESS;
-
-    //std::map<stream*> packet_flow;
 
     while (1)
     {
@@ -73,8 +73,50 @@ int main(int argc, char **argv) {
 
                     TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*>(pkg);
 
-                    
+		     cout << "Paccketto" << endl;
 		    
+                    if(pkg_tcpv4->isSYN() && !pkg_tcpv4->isACK())
+                    {
+                        stream temp(pkg_tcpv4);
+                        packet_stream.push_back(&temp);
+			 cout << "Creo nuovo stream" << endl;
+                    }
+                    else
+                    {
+
+                        for (list<stream*>::iterator it = packet_stream.begin(); it != packet_stream.end(); it++)
+                        {
+			      cout << "sream iter" << endl;
+                            // MA LOL !!!!!
+                            if( ( ( (*it)->getFirstIpAddress() == pkg_tcpv4->getSenderIp() && (*it)->getFirstPort() == pkg_tcpv4->getSenderPort()) &&
+                                    ( (*it)->getSecondIpAddress() == pkg_tcpv4->getTargetIp() && (*it)->getSecondPort() == pkg_tcpv4->getTargetPort())) ||
+                                    ( ( (*it)->getFirstIpAddress() == pkg_tcpv4->getTargetIp() && (*it)->getFirstPort() == pkg_tcpv4->getTargetPort()) &&
+                                      ( (*it)->getSecondIpAddress() == pkg_tcpv4->getSenderIp() && (*it)->getSecondPort() == pkg_tcpv4->getSenderPort())))
+                            {
+                                if(pkg_tcpv4->isSYN() && pkg_tcpv4->isACK())
+                                {
+                                    (*it)->streamSynAck(pkg_tcpv4);
+                                }
+                                else if(pkg_tcpv4->isFIN() || pkg_tcpv4->isRST())
+                                {
+				    (*it)->flushFirstBuffer();
+				    (*it)->flushSecondBuffer();
+				    std::cout << "Read:" << (*it)->exportFlow() << std::endl;
+				    packet_stream.remove(*it);
+				    delete &(*it);
+				    break;
+				}
+				else
+				{
+                                    (*it)->addPacket(pkg_tcpv4);
+                                }
+                                break;
+                            }
+
+                        }
+
+                    }
+
                 }
 
             }

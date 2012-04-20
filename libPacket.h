@@ -184,6 +184,9 @@ class TCPv4packet : public IPv4packet
 {
 public:
 
+    /** Flag pubblica usabile per marcare uno specifico oggetto TCPv4packet **/
+    bool public_flag; 
+
     /** Costruttore finale */
     TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 
