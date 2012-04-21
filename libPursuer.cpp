@@ -36,8 +36,8 @@ stream::stream(TCPv4packet *SYN)
     second_sn = 0;
     flagFirstFIN = false;
     flagSecondFIN = false;
-
-    delete &SYN;
+    
+    delete SYN;
 
     return;
 }
@@ -109,10 +109,11 @@ void stream::flushFirstBuffer()
 
         for (std::list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
         {
-
+std::cerr << "Trovato pacchetto nel primo buffer" << std::endl;
             if(first_sn + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
             {
                 first_flow += (*it)->getPayLoad();
+		std::cerr << "Nel buffer: " << (*it)->getPayLoad() << std::endl;
                 first_sn++; // FIXME se si azzera?
                 first_buffer.remove(*it);
                 delete &(*it);
@@ -138,6 +139,7 @@ void stream::flushSecondBuffer()
 
         for (std::list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
         {
+	  std::cerr << "Trovato pacchetto nel secondo buffer" << std::endl;
 
             if(second_sn + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
             {
