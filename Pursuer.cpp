@@ -100,7 +100,6 @@ int main(int argc, char **argv) {
 				    (*it)->flushSecondBuffer();
 				    std::cout << "Read:" << (*it)->exportFlow() << std::endl;
 				    packet_stream.remove(*it);
-				    //delete &(*it);
 				    break;
 				}
 				else

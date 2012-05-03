@@ -36,7 +36,7 @@ stream::stream(TCPv4packet *SYN)
     second_sn = 0;
     flagFirstFIN = false;
     flagSecondFIN = false;
-    
+
     delete SYN;
 
     return;
@@ -61,35 +61,53 @@ bool stream::streamSynAck(TCPv4packet *SYN)
 bool stream::addPacket(TCPv4packet *newPacket)
 {
 
-  using namespace std;
-  
+    using namespace std;
+
     if(!newPacket->isSYN())
     {
 
         if(newPacket->getSenderPort() == first_port)
         {
             // Siamo nel first_buffer
-            first_buffer.push_back(newPacket);	    
-            for (list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
+            first_buffer.push_back(newPacket);
+
+            if(newPacket->isACK())
             {
-                if( (*it)->getSequenceNumber() + 1 == newPacket->getAcknowledgmentNumber() )
+
+                for (list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
                 {
-                    (*it)->public_flag == true;
-                    break;
+		  
+                    if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - 1) // FIXME
+                    {
+                        (*it)->public_flag == true;
+			std::cerr << "1 - trovato ack" << std::endl;
+                        break;
+                    }
                 }
+
             }
+
+
             return true;
         }
         else if (newPacket->getSenderPort() == second_port)
         {
             second_buffer.push_back(newPacket);
-            for (list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
+
+            if(newPacket->isACK())
             {
-                if( (*it)->getSequenceNumber() + 1 == newPacket->getAcknowledgmentNumber() )
+
+                for (list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++) 
                 {
-                    (*it)->public_flag == true;
-                    break;
+		  
+                    if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - 1) // FIXME
+                    {		      
+                        (*it)->public_flag == true;
+			                        std::cerr << "2 - trovato ack" << std::endl;
+                        break;
+                    }
                 }
+
             }
             return true;
         } else return false;
@@ -109,12 +127,12 @@ void stream::flushFirstBuffer()
 
         for (std::list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
         {
-std::cerr << "Trovato pacchetto nel primo buffer" << std::endl;
+            std::cerr << "Trovato pacchetto nel primo buffer" << std::endl;
             if(first_sn + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
             {
                 first_flow += (*it)->getPayLoad();
-		std::cerr << "Nel buffer: " << (*it)->getPayLoad() << std::endl;
-                first_sn++; // FIXME se si azzera?
+                std::cerr << "Nel buffer: " << (*it)->getPayLoad() << std::endl;
+                first_sn++; // unsigned, si azzera come avviene nel tcp.
                 first_buffer.remove(*it);
                 delete &(*it);
                 isFound == true;
@@ -139,12 +157,12 @@ void stream::flushSecondBuffer()
 
         for (std::list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
         {
-	  std::cerr << "Trovato pacchetto nel secondo buffer" << std::endl;
+            std::cerr << "Trovato pacchetto nel secondo buffer" << std::endl;
 
             if(second_sn + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
             {
                 second_flow += (*it)->getPayLoad();
-                second_sn++; // FIXME se si azzera?
+                second_sn++;  // unsigned, si azzera come avviene nel tcp.
                 second_buffer.remove(*it);
                 delete &(*it);
                 isFound == true;
