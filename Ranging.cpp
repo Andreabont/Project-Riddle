@@ -27,7 +27,8 @@
 #include "libPacket.h"
 #include "libRanging.h"
 
-#define TIMETOLIVE 10
+#define TIMETOLIVE 50
+#define THRESHOLD 1
 
 int rows; // number of rows in window
 int cols; // number of columns in window
@@ -40,7 +41,7 @@ using namespace boost::local_time;
 using namespace boost::posix_time;
 
 void setHead();
-void printLine(int countLine, string mac, string ip, int epoch);
+void printLine(int countLine, string mac, string ip, long int epoch, long int lastEpoch);
 
 int main(int argc, char **argv) {
 
@@ -67,7 +68,7 @@ int main(int argc, char **argv) {
 
     wnd = initscr();	// curses call to initialize window
 
-    if (has_colors() == FALSE)
+    if (!has_colors())
     {
         endwin();
         cerr << "FAIL: Your terminal does not support color." << endl;
@@ -84,6 +85,10 @@ int main(int argc, char **argv) {
 
     list<device> found;
 
+    long int lastEpoch = 0;
+    
+    bool refresh_display;
+
     while (1)
     {
         try
@@ -93,27 +98,26 @@ int main(int argc, char **argv) {
 
             packet* pkg = packet::factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
 
+            refresh_display = (pkg->getEpoch() - lastEpoch > THRESHOLD);
+
+            lastEpoch = pkg->getEpoch();
+
             if(pkg->isArp())
             {
                 ARPpacket *pkg_arp = dynamic_cast<ARPpacket*>(pkg);
 
-                list<device>::iterator p = found.begin();
-
                 bool isFound = false;
+
+                list<device>::iterator p = found.begin();
 
                 while(p != found.end())
                 {
 
                     if(p->getMacAddress() == pkg_arp->getSenderMac() && p->getIpAddress() == pkg_arp->getSenderIp())
                     {
-                        p->setEpoch(pkg_arp->getEpoch());
+                        p->setEpoch(lastEpoch);
                         isFound = true;
                         break;
-                    } else {
-                        if(pkg_arp->getEpoch() >= p->getEpoch() + TIMETOLIVE)
-                        {
-                            p = found.erase(p);
-                        }
                     }
 
                     p++;
@@ -121,9 +125,21 @@ int main(int argc, char **argv) {
 
                 if(!isFound)
                 {
-                    device newDevice(pkg_arp->getSenderMac(), pkg_arp->getSenderIp(), pkg_arp->getEpoch());
+                    device newDevice(pkg_arp->getSenderMac(), pkg_arp->getSenderIp(), lastEpoch);
                     found.push_back(newDevice);
                 }
+            }
+
+            list<device>::iterator q = found.begin();
+
+            while(q != found.end())
+            {
+                if(lastEpoch >= q->getEpoch() + TIMETOLIVE)
+                {
+                    q = found.erase(q);
+                }
+
+                q++;
             }
 
             delete pkg;
@@ -138,20 +154,24 @@ int main(int argc, char **argv) {
             return EXIT_FAILURE;
         }
 
-        clear();
-        setHead();
+        if(refresh_display)
+        {
 
-        int countLine = 1;
+            clear();
+            setHead();
 
-        list<device>::iterator q = found.begin();
-        while(q != found.end()) {
+            int countLine = 1;
 
-            printLine(countLine, q->getMacAddress().to_string(), q->getIpAddress().to_string(), q->getEpoch());
+            list<device>::iterator r = found.begin();
 
-            countLine++;
-            q++;
+            while(r != found.end()) {
+
+                printLine(countLine, r->getMacAddress().to_string(), r->getIpAddress().to_string(), r->getEpoch(), lastEpoch);
+
+                countLine++;
+                r++;
+            }
         }
-
 
     }
     endwin();
@@ -200,7 +220,7 @@ void setHead()
     return;
 }
 
-void printLine(int countLine, string mac, string ip, int epoch)
+void printLine(int countLine, string mac, string ip, long int epoch, long int lastEpoch)
 {
 
     int ip_length = ip.length();
@@ -221,8 +241,7 @@ void printLine(int countLine, string mac, string ip, int epoch)
 
     if(head = (char*)malloc(cols * sizeof(char)))
     {
-        ptime time_t_epoch(date(1970,1,1));
-        int ttl = TIMETOLIVE - (epoch - 0);
+        int ttl = TIMETOLIVE - (lastEpoch - epoch);
         snprintf(head, cols, " %s | %s | %d | %d", mac.c_str(), ip.c_str(), epoch, ttl );
 
         ind2 = strlen(head);
