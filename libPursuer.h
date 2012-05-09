@@ -42,6 +42,8 @@ private:
     unsigned int second_sn;
     std::list<TCPv4packet*> second_buffer;
     std::string second_flow;
+    
+    std::string decodeHexText(std::string raw);
    
 public:
   

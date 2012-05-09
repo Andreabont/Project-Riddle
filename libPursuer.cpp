@@ -63,59 +63,65 @@ bool stream::addPacket(TCPv4packet *newPacket)
 
     using namespace std;
 
-    if(newPacket->getSenderPort() == first_port)
+    if(!newPacket->isSYN())
     {
-        // Siamo nel first_buffer
 
-        if(newPacket->isACK())
+        if(newPacket->getSenderPort() == first_port)
         {
+            // Siamo nel first_buffer
 
-            for (list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
+            if(newPacket->isACK())
             {
-	      
-                if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - ((*it)->getPayLoad().size()/2))
+
+                for (list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
                 {
-                    (*it)->public_flag = true;
-		    break;
+
+                    if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - ((*it)->getPayLoad().size()/2))
+                    {
+                        (*it)->public_flag = true;
+                        break;
+                    }
                 }
+
             }
 
-        }
+            if(newPacket->getPayLoad().size() != 0)
+            {
+                first_buffer.push_back(newPacket);
+		std::cerr << "first_buffer++" << std::endl;
+            }
 
-        if(newPacket->getPayLoad().size() != 0)
+            return true;
+        }
+        else if (newPacket->getSenderPort() == second_port)
         {
-            first_buffer.push_back(newPacket);
-        }
 
-        return true;
+            if(newPacket->isACK())
+            {
+
+                for (list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
+                {
+
+                    if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - (((*it)->getPayLoad().size()/2)))
+                    {
+                        (*it)->public_flag = true;
+                        break;
+                    }
+                }
+
+            }
+
+            if(newPacket->getPayLoad().size() != 0)
+            {
+                second_buffer.push_back(newPacket);
+		std::cerr << "second_buffer++" << std::endl;
+            }
+
+            return true;
+        } else return false;
+
+
     }
-    else if (newPacket->getSenderPort() == second_port)
-    {
-
-        if(newPacket->isACK())
-        {
-
-            for (list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
-            {
-	      
-                if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - (((*it)->getPayLoad().size()/2)))
-                {
-                    (*it)->public_flag = true;
-		    break;
-                }
-            }
-
-        }
-
-        if(newPacket->getPayLoad().size() != 0)
-        {
-            second_buffer.push_back(newPacket);
-        }
-
-        return true;
-    } else return false;
-
-
     return false;
 
 }
@@ -178,11 +184,13 @@ void stream::flushSecondBuffer()
         }
 
     } while (isFound);
+
+
 }
 
 std::string stream::exportFlow()
 {
-    return first_flow + "|" + second_flow; // TODO
+    return decodeHexText(first_flow) + "|" + decodeHexText(second_flow);
 }
 
 
@@ -240,3 +248,24 @@ bool stream::isFIN()
 {
     return flagFirstFIN && flagSecondFIN;
 }
+
+std::string stream::decodeHexText(std::string raw)
+{
+
+  std::string text;
+  
+  for(int i = 0; i <= raw.size(); i += 2)
+  {
+    std::string comp;
+    comp += (char)raw[i];
+    comp += (char)raw[i+1];
+    std::stringstream convert(comp);
+    int temp;
+    convert >> std::hex >> temp;
+    text += (char)temp;
+  }
+  
+  return text;
+  
+}
+
