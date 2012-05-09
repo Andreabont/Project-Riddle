@@ -63,56 +63,58 @@ bool stream::addPacket(TCPv4packet *newPacket)
 
     using namespace std;
 
-    if(!newPacket->isSYN())
+    if(newPacket->getSenderPort() == first_port)
+    {
+        // Siamo nel first_buffer
+
+        if(newPacket->isACK())
+        {
+
+            for (list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
+            {
+	      
+                if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - ((*it)->getPayLoad().size()/2))
+                {
+                    (*it)->public_flag = true;
+		    break;
+                }
+            }
+
+        }
+
+        if(newPacket->getPayLoad().size() != 0)
+        {
+            first_buffer.push_back(newPacket);
+        }
+
+        return true;
+    }
+    else if (newPacket->getSenderPort() == second_port)
     {
 
-        if(newPacket->getSenderPort() == first_port)
+        if(newPacket->isACK())
         {
-            // Siamo nel first_buffer
-            first_buffer.push_back(newPacket);
 
-            if(newPacket->isACK())
+            for (list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
             {
-
-                for (list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
+	      
+                if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - (((*it)->getPayLoad().size()/2)))
                 {
-		  
-                    if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - 1) // FIXME
-                    {
-                        (*it)->public_flag == true;
-			std::cerr << "1 - trovato ack" << std::endl;
-                        break;
-                    }
+                    (*it)->public_flag = true;
+		    break;
                 }
-
             }
 
-
-            return true;
         }
-        else if (newPacket->getSenderPort() == second_port)
+
+        if(newPacket->getPayLoad().size() != 0)
         {
             second_buffer.push_back(newPacket);
+        }
 
-            if(newPacket->isACK())
-            {
+        return true;
+    } else return false;
 
-                for (list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++) 
-                {
-		  
-                    if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - 1) // FIXME
-                    {		      
-                        (*it)->public_flag == true;
-			                        std::cerr << "2 - trovato ack" << std::endl;
-                        break;
-                    }
-                }
-
-            }
-            return true;
-        } else return false;
-
-    }
 
     return false;
 
@@ -127,14 +129,14 @@ void stream::flushFirstBuffer()
 
         for (std::list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
         {
-            std::cerr << "Trovato pacchetto nel primo buffer" << std::endl;
+            std::cerr << "Trovato pacchetto nel primo buffer " << (*it)->getSequenceNumber() << " == " << first_sn + 1 << std::endl;
             if(first_sn + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
             {
-                first_flow += (*it)->getPayLoad();
-                std::cerr << "Nel buffer: " << (*it)->getPayLoad() << std::endl;
-                first_sn++; // unsigned, si azzera come avviene nel tcp.
+                std::string payload = (*it)->getPayLoad();
+                first_flow += payload;
+                std::cerr << "Nel buffer: " << payload << std::endl;
+                first_sn += payload.size()/2; // unsigned, si azzera come avviene nel tcp.
                 first_buffer.remove(*it);
-                delete &(*it);
                 isFound == true;
                 break;
             }
@@ -157,14 +159,15 @@ void stream::flushSecondBuffer()
 
         for (std::list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
         {
-            std::cerr << "Trovato pacchetto nel secondo buffer" << std::endl;
+            std::cerr << "Trovato pacchetto nel secondo buffer " << (*it)->getSequenceNumber() << " == " << second_sn + 1 << std::endl;
 
             if(second_sn + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
             {
-                second_flow += (*it)->getPayLoad();
-                second_sn++;  // unsigned, si azzera come avviene nel tcp.
+                std::string payload = (*it)->getPayLoad();
+                second_flow += payload;
+                std::cerr << "Nel buffer: " << payload << std::endl;
+                second_sn += payload.size()/2; // unsigned, si azzera come avviene nel tcp.
                 second_buffer.remove(*it);
-                delete &(*it);
                 isFound == true;
                 break;
             }
@@ -179,7 +182,7 @@ void stream::flushSecondBuffer()
 
 std::string stream::exportFlow()
 {
-    return first_flow + second_flow; // TODO
+    return first_flow + "|" + second_flow; // TODO
 }
 
 
