@@ -29,27 +29,20 @@ private:
     bool flagFirstFIN;
     bool flagSecondFIN;
     
-    mac_address first_mac;
-    boost::asio::ip::address first_ip;
-    unsigned int first_port;
-    unsigned int first_sn;
-    std::list<TCPv4packet*> first_buffer;
-    std::string first_flow;
-
-    mac_address second_mac;
-    boost::asio::ip::address second_ip;
-    unsigned int second_port;
-    unsigned int second_sn;
-    std::list<TCPv4packet*> second_buffer;
-    std::string second_flow;
+    mac_address macAddress[2];
+    boost::asio::ip::address ipAddress[2];
+    unsigned int port[2];
+    
+    std::list<TCPv4packet*> buffer[2];
+    unsigned int sequenceNumber[2];
+    std::string flow[2];
     
     std::string decodeHexText(std::string raw);
+    void flushBuffer(int number);
    
 public:
-  
-    stream(TCPv4packet *SYN);
     
-    bool streamSynAck(TCPv4packet *SYN);
+    bool factory(TCPv4packet *packet);
     
     bool addPacket(TCPv4packet *newPacket);
     

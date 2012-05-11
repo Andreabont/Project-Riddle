@@ -22,37 +22,47 @@
 #include "libAddress.h"
 #include "libPursuer.h"
 
-stream::stream(TCPv4packet *SYN)
-{
-    timeEpoch = SYN->getEpoch();
-    timeMillis = SYN->getMillis();
-    first_mac = SYN->getSenderMac();
-    second_mac = SYN->getTargetMac();
-    first_ip = SYN->getSenderIp();
-    second_ip = SYN->getTargetIp();
-    first_port = SYN->getSenderPort();
-    second_port = SYN->getTargetPort();
-    first_sn = SYN->getSequenceNumber();
-    second_sn = 0;
-    flagFirstFIN = false;
-    flagSecondFIN = false;
-
-    delete SYN;
-
-    return;
-}
-
-bool stream::streamSynAck(TCPv4packet *SYN)
+bool stream::factory(TCPv4packet *packet)
 {
 
-    if(first_sn + 1 == SYN->getAcknowledgmentNumber() && SYN->isACK() && SYN->isSYN())
+    if(packet->isSYN())
     {
-        second_sn = SYN->getSequenceNumber();
-        return true;
+
+        if(!packet->isACK())
+        {
+
+            timeEpoch = packet->getEpoch();
+            timeMillis = packet->getMillis();
+            macAddress[0] = packet->getSenderMac();
+            macAddress[1] = packet->getTargetMac();
+            ipAddress[0] = packet->getSenderIp();
+            ipAddress[1] = packet->getTargetIp();
+            port[0] = packet->getSenderPort();
+            port[1] = packet->getTargetPort();
+            sequenceNumber[0] = packet->getSequenceNumber();
+            sequenceNumber[1] = 0;
+            flagFirstFIN = false;
+            flagSecondFIN = false;
+
+            delete packet;
+            return true;
+
+        }
+        else
+        {
+
+            if(sequenceNumber[0] + 1 == packet->getAcknowledgmentNumber())
+            {
+                sequenceNumber[1] = packet->getSequenceNumber();
+                delete packet;
+                return true;
+            }
+
+        }
+
     }
 
-    delete SYN;
-
+    delete packet;
     return false;
 
 }
@@ -63,134 +73,117 @@ bool stream::addPacket(TCPv4packet *newPacket)
 
     using namespace std;
 
+    int a,b;
+
     if(!newPacket->isSYN())
     {
 
-        if(newPacket->getSenderPort() == first_port)
+        if(newPacket->getSenderPort() == port[0])
         {
-            // Siamo nel first_buffer
 
-            if(newPacket->isACK())
-            {
+            // Siamo nel primo buffer
 
-                for (list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
-                {
+            a = 1;
+	    b = 0;
 
-                    if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - ((*it)->getPayLoad().size()/2))
-                    {
-                        (*it)->public_flag = true;
-                        break;
-                    }
-                }
-
-            }
-
-            if(newPacket->getPayLoad().size() != 0)
-            {
-                first_buffer.push_back(newPacket);
-		std::cerr << "first_buffer++" << std::endl;
-            }
-
-            return true;
         }
-        else if (newPacket->getSenderPort() == second_port)
+        else if(newPacket->getSenderPort() == port[1])
+        {
+            // Siamo nel secondo buffer
+
+            a = 0;
+	    b = 1;
+	    
+        }
+        else return false; // Buffer non identificato.
+
+
+        if(newPacket->isACK()) // Se c'è ACK setto il flag sul pacchetto corrispondente, se c'è.
         {
 
-            if(newPacket->isACK())
+            for (list<TCPv4packet*>::iterator it = buffer[a].begin(); it != buffer[a].end(); it++)
             {
 
-                for (list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
+                if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - ((*it)->getPayLoad().size()/2))
                 {
-
-                    if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - (((*it)->getPayLoad().size()/2)))
-                    {
-                        (*it)->public_flag = true;
-                        break;
-                    }
+                    (*it)->public_flag = true;
+                    break;
                 }
-
             }
 
-            if(newPacket->getPayLoad().size() != 0)
-            {
-                second_buffer.push_back(newPacket);
-		std::cerr << "second_buffer++" << std::endl;
-            }
+        }
 
-            return true;
-        } else return false;
+        if(newPacket->getPayLoad().size() != 0) // Salvo il pacchetto solo se ha del payload.
+        {
+            buffer[b].push_back(newPacket);
+        }
 
-
+        return true;
     }
+    
     return false;
+
+}
+
+void stream::flushBuffer(int number)
+{
+    bool isFound;
+
+    do {
+
+        isFound = false;
+
+        for (std::list<TCPv4packet*>::iterator it = buffer[number].begin(); it != buffer[number].end(); it++)
+        {
+            if(sequenceNumber[number] + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
+            {
+                std::string payload = (*it)->getPayLoad();
+                flow[number] += payload;
+                sequenceNumber[number] += payload.size()/2; // unsigned, si azzera come avviene nel tcp.
+                buffer[number].remove(*it);
+                isFound = true;
+                break;
+            }
+        }
+
+    } while (isFound);
+
+}
+
+std::string stream::decodeHexText(std::string raw)
+{
+
+    std::string text;
+
+    for(int i = 0; i <= raw.size(); i += 2)
+    {
+        std::string comp;
+        comp += (char)raw[i];
+        comp += (char)raw[i+1];
+        std::stringstream convert(comp);
+        int temp;
+        convert >> std::hex >> temp;
+        text += (char)temp;
+    }
+
+    return text;
 
 }
 
 void stream::flushFirstBuffer()
 {
-    bool isFound = false;
-
-    do
-    {
-
-        for (std::list<TCPv4packet*>::iterator it = first_buffer.begin(); it != first_buffer.end(); it++)
-        {
-            std::cerr << "Trovato pacchetto nel primo buffer " << (*it)->getSequenceNumber() << " == " << first_sn + 1 << std::endl;
-            if(first_sn + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
-            {
-                std::string payload = (*it)->getPayLoad();
-                first_flow += payload;
-                std::cerr << "Nel buffer: " << payload << std::endl;
-                first_sn += payload.size()/2; // unsigned, si azzera come avviene nel tcp.
-                first_buffer.remove(*it);
-                isFound == true;
-                break;
-            }
-            else
-            {
-                isFound == false;
-            }
-        }
-
-    } while (isFound);
-
+    flushBuffer(0);
 }
 
 void stream::flushSecondBuffer()
 {
-    bool isFound = false;
-
-    do
-    {
-
-        for (std::list<TCPv4packet*>::iterator it = second_buffer.begin(); it != second_buffer.end(); it++)
-        {
-            std::cerr << "Trovato pacchetto nel secondo buffer " << (*it)->getSequenceNumber() << " == " << second_sn + 1 << std::endl;
-
-            if(second_sn + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
-            {
-                std::string payload = (*it)->getPayLoad();
-                second_flow += payload;
-                std::cerr << "Nel buffer: " << payload << std::endl;
-                second_sn += payload.size()/2; // unsigned, si azzera come avviene nel tcp.
-                second_buffer.remove(*it);
-                isFound == true;
-                break;
-            }
-            else
-            {
-                isFound == false;
-            }
-        }
-
-    } while (isFound);
-
-
+    flushBuffer(1);
 }
+
 
 std::string stream::exportFlow()
 {
-    return decodeHexText(first_flow) + "|" + decodeHexText(second_flow);
+    return decodeHexText(flow[0]) + "|" + decodeHexText(flow[1]);
 }
 
 
@@ -206,66 +199,45 @@ int stream::getTimeMillis()
 
 mac_address stream::getFirstMacAddress()
 {
-    return first_mac;
+    return macAddress[0];
 }
 
 mac_address stream::getSecondMacAddress()
 {
-    return second_mac;
+    return macAddress[1];
 }
 
 boost::asio::ip::address stream::getFirstIpAddress()
 {
-    return first_ip;
+    return ipAddress[0];
 }
 
 boost::asio::ip::address stream::getSecondIpAddress()
 {
-    return second_ip;
+    return ipAddress[1];
 }
 
 unsigned int stream::getFirstPort()
 {
-    return first_port;
+    return port[0];
 }
 
 unsigned int stream::getSecondPort()
 {
-    return second_port;
+    return port[1];
 }
 
 unsigned int stream::getFirstSN()
 {
-    return first_sn;
+    return sequenceNumber[0];
 }
 
 unsigned int stream::getSecondSN()
 {
-    return second_sn;
+    return sequenceNumber[1];
 }
 
 bool stream::isFIN()
 {
     return flagFirstFIN && flagSecondFIN;
 }
-
-std::string stream::decodeHexText(std::string raw)
-{
-
-  std::string text;
-  
-  for(int i = 0; i <= raw.size(); i += 2)
-  {
-    std::string comp;
-    comp += (char)raw[i];
-    comp += (char)raw[i+1];
-    std::stringstream convert(comp);
-    int temp;
-    convert >> std::hex >> temp;
-    text += (char)temp;
-  }
-  
-  return text;
-  
-}
-

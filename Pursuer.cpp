@@ -75,7 +75,8 @@ int main(int argc, char **argv) {
                     if(pkg_tcpv4->isSYN() && !pkg_tcpv4->isACK())
                     {
 		      	 
-                        stream *temp = new stream(pkg_tcpv4);
+                        stream *temp = new stream();
+			temp->factory(pkg_tcpv4);
                         packet_stream.push_back(temp);
                     }
                     else
@@ -90,9 +91,9 @@ int main(int argc, char **argv) {
                                       ( (*it)->getSecondIpAddress() == pkg_tcpv4->getSenderIp() && (*it)->getSecondPort() == pkg_tcpv4->getSenderPort())))
                             {
 
-                                if(pkg_tcpv4->isSYN() && pkg_tcpv4->isACK())
+                                if(pkg_tcpv4->isSYN())
                                 {
-                                    (*it)->streamSynAck(pkg_tcpv4);
+                                    (*it)->factory(pkg_tcpv4);
                                 }
                                 else if(pkg_tcpv4->isRST())
                                 {
@@ -125,3 +126,4 @@ int main(int argc, char **argv) {
     }
     return EXIT_SUCCESS;
 }
+
