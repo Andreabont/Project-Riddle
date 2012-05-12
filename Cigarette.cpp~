@@ -16,6 +16,8 @@
 #include <iomanip>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
+
+#include <boost/algorithm/string/classification.hpp>
 #include "libCigarette.h"
 #include "libAddress.h"
 #include "libPacket.h"

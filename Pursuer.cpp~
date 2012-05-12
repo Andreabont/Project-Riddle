@@ -17,6 +17,9 @@
 #include <iomanip>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include "libCigarette.h"
 #include "libAddress.h"
 #include "libPacket.h"
@@ -54,7 +57,10 @@ int main(int argc, char **argv) {
             getline(cin,r_packet);
             if (cin.eof()) break;
 
-            packet* pkg = packet::factory(r_packet);
+            std::vector< std::string > line;
+            boost::algorithm::split(line, r_packet, boost::algorithm::is_any_of("!"));
+
+            packet* pkg = packet::factory(lexical_cast<int>(line[0]), lexical_cast<int>(line[1]), line[2]);
 
             if(pkg->isIPv4())
             {
@@ -65,12 +71,12 @@ int main(int argc, char **argv) {
 
                     TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*>(pkg);
 
-
+		    
                     if(pkg_tcpv4->isSYN() && !pkg_tcpv4->isACK())
                     {
-
+		      	 
                         stream *temp = new stream();
-                        temp->factory(pkg_tcpv4);
+			temp->factory(pkg_tcpv4);
                         packet_stream.push_back(temp);
                     }
                     else
@@ -91,14 +97,14 @@ int main(int argc, char **argv) {
                                 }
                                 else if(pkg_tcpv4->isRST())
                                 {
-                                    (*it)->flushFirstBuffer();
-                                    (*it)->flushSecondBuffer();
-                                    std::cout << "Read:" << (*it)->exportFlow() << std::endl;
-                                    packet_stream.remove(*it);
-                                    break;
-                                }
-                                else
-                                {
+				    (*it)->flushFirstBuffer();
+				    (*it)->flushSecondBuffer();
+				    std::cout << "Read:" << (*it)->exportFlow() << std::endl;
+				    packet_stream.remove(*it);
+				    break;
+				}
+				else
+				{
                                     (*it)->addPacket(pkg_tcpv4);
                                 }
                                 break;

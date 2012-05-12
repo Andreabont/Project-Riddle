@@ -54,6 +54,8 @@
 
 #include <string>
 #include <boost/asio.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include "libAddress.h"
 
 /** Class for managing packets */
