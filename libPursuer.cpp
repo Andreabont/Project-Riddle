@@ -84,7 +84,7 @@ bool stream::addPacket(TCPv4packet *newPacket)
             // Siamo nel primo buffer
 
             a = 1;
-	    b = 0;
+            b = 0;
 
         }
         else if(newPacket->getSenderPort() == port[1])
@@ -92,8 +92,8 @@ bool stream::addPacket(TCPv4packet *newPacket)
             // Siamo nel secondo buffer
 
             a = 0;
-	    b = 1;
-	    
+            b = 1;
+
         }
         else return false; // Buffer non identificato.
 
@@ -120,7 +120,7 @@ bool stream::addPacket(TCPv4packet *newPacket)
 
         return true;
     }
-    
+
     return false;
 
 }
@@ -183,7 +183,13 @@ void stream::flushSecondBuffer()
 
 std::string stream::exportFlow()
 {
-    return decodeHexText(flow[0]) + "|" + decodeHexText(flow[1]);
+    std::stringstream stdstring;
+    stdstring << timeEpoch << "!" << timeMillis << "!";
+    stdstring << macAddress[0].to_string() << "!" << macAddress[1].to_string() << "!";
+    stdstring << ipAddress[0].to_string() << "!" << ipAddress[1].to_string() << "!";
+    stdstring << port[0] << "!" << port[1] << "!";
+    stdstring << flow[0] << "!" << flow[1];
+    return stdstring.str();;
 }
 
 

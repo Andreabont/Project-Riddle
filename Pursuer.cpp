@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
                                 {
                                     (*it)->flushFirstBuffer();
                                     (*it)->flushSecondBuffer();
-                                    std::cout << "Read:" << (*it)->exportFlow() << std::endl;
+                                    std::cout << (*it)->exportFlow() << std::endl;
                                     packet_stream.remove(*it);
                                     break;
                                 }
