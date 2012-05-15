@@ -30,6 +30,7 @@ int main(int argc, char **argv) {
     options_description desc("Pursuer - Network TCP Follower");
     desc.add_options()
     ("help", "prints this")
+    ("output",value<string>(), "redirect payload to file (a file for each stream)")
     ;
 
     variables_map vm;
@@ -93,7 +94,16 @@ int main(int argc, char **argv) {
                                 {
                                     (*it)->flushFirstBuffer();
                                     (*it)->flushSecondBuffer();
-                                    std::cout << (*it)->exportFlow() << std::endl;
+				    
+                                    if (vm.count("output"))
+                                    {
+					std::cout << (*it)->exportRawFlow() << std::endl;
+                                    }
+                                    else
+                                    {
+                                        std::cout << (*it)->exportFlow() << std::endl;
+                                    }
+                                    
                                     packet_stream.remove(*it);
                                     break;
                                 }

@@ -22,6 +22,26 @@
 #include "libAddress.h"
 #include "libPursuer.h"
 
+std::string decodeHexText(std::string raw)
+{
+
+    std::string text;
+
+    for(int i = 0; i <= raw.size(); i += 2)
+    {
+        std::string comp;
+        comp += (char)raw[i];
+        comp += (char)raw[i+1];
+        std::stringstream convert(comp);
+        int temp;
+        convert >> std::hex >> temp;
+        text += (char)temp;
+    }
+
+    return text;
+
+}
+
 bool stream::factory(TCPv4packet *packet)
 {
 
@@ -150,26 +170,6 @@ void stream::flushBuffer(int number)
 
 }
 
-std::string stream::decodeHexText(std::string raw)
-{
-
-    std::string text;
-
-    for(int i = 0; i <= raw.size(); i += 2)
-    {
-        std::string comp;
-        comp += (char)raw[i];
-        comp += (char)raw[i+1];
-        std::stringstream convert(comp);
-        int temp;
-        convert >> std::hex >> temp;
-        text += (char)temp;
-    }
-
-    return text;
-
-}
-
 void stream::flushFirstBuffer()
 {
     flushBuffer(0);
@@ -192,6 +192,16 @@ std::string stream::exportFlow()
     return stdstring.str();;
 }
 
+std::string stream::exportRawFlow()
+{
+    std::stringstream stdstring;
+    stdstring << ">> Nuovo flusso:" << std::endl;
+    stdstring << ">> A -> B:" << std::endl;
+    stdstring << decodeHexText(flow[0]) << std::endl;
+    stdstring << ">> B -> A:" << std::endl;
+    stdstring << decodeHexText(flow[1]) << std::endl;
+    return stdstring.str();
+}
 
 long int stream::getTimeEpoch()
 {

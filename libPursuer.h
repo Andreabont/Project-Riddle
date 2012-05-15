@@ -19,6 +19,8 @@
 #include "libAddress.h"
 #include "libPacket.h"
 
+std::string decodeHexText(std::string raw);
+
 /** Class for managing TCP flow. */
 class stream
 {
@@ -37,7 +39,6 @@ private:
     unsigned int sequenceNumber[2];
     std::string flow[2];
     
-    std::string decodeHexText(std::string raw);
     void flushBuffer(int number);
    
 public:
@@ -60,6 +61,7 @@ public:
     unsigned int getFirstSN();
     unsigned int getSecondSN();
     std::string exportFlow();
+    std::string exportRawFlow();
     bool isFIN();
     
 };
