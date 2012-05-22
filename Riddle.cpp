@@ -18,6 +18,11 @@
 #include <boost/program_options.hpp>
 #include "libRiddle.h"
 
+#ifdef __linux__
+#include <unistd.h>
+#include <sys/types.h>
+#endif
+
 using namespace std;
 using namespace boost::program_options;
 
@@ -30,6 +35,9 @@ int main(int argc, char **argv) {
     ("input", value<string>(), "reads packets from a pcap file (disable iface input)")
     ("filter", value<string>(), "use to filter packet with bpf")
     ("limit", value<int>(), "set max number of packet")
+#ifdef __linux__
+    ("secure", "Drop root privileges after initialization.")
+#endif
     ;
 
     variables_map vm;
@@ -41,6 +49,17 @@ int main(int argc, char **argv) {
         cout<<desc<<"\n";
         return 1;
     }
+    
+#ifdef __linux__
+    if (vm.count("secure"))
+    {
+        if (getuid() != 0)
+	{
+	  cerr << "ERROR> To use the \"secure\" option the program must run as root." << endl;
+	  return EXIT_FAILURE;
+	}
+    }
+#endif
 
     char error_buffer[PCAP_ERRBUF_SIZE];
 
@@ -53,7 +72,7 @@ int main(int argc, char **argv) {
             pcap_fatal("pcap_open_offline", error_buffer);
         }
 
-        cerr<<">> Reading packets from "<<vm["input"].as<string>()<<endl;
+        cerr << ">> Reading packets from " << vm["input"].as<string>() << endl;
     }
     else
     {
@@ -76,10 +95,18 @@ int main(int argc, char **argv) {
             pcap_fatal("pcap_open_live", error_buffer);
         }
 
-        cerr<<">> Sniffing on device "<<pcap_device<<endl;
+        cerr << ">> Sniffing on device " << pcap_device << endl;
 
     }
 
+#ifdef __linux__
+    if (vm.count("secure"))
+    {
+	cerr << ">> Drop root privileges." << endl;
+        seteuid(1000); // TODO Select uid.
+    }
+#endif
+    
     if (vm.count("filter"))
     {
         string filter = vm["filter"].as<string>();
