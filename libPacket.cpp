@@ -68,7 +68,7 @@ packet* packet::factory(std::string packetLine)
     boost::algorithm::split(section, packetLine, boost::algorithm::is_any_of("!"));
 
     packet* pkg = packet::factory(lexical_cast<int>(section[0]), lexical_cast<int>(section[1]), section[2]);
-    
+
     return pkg;
 }
 
@@ -412,6 +412,11 @@ unsigned int TCPv4packet::getHeaderLength()
     hl >>= 4;
     hl = (hl * 32) / 8;
     return hl;
+}
+
+unsigned int TCPv4packet::getPayloadLength()
+{
+    return (this->getPayLoad().length())/2;
 }
 
 int TCPv4packet::getFlags()

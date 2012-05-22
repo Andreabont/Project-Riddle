@@ -60,6 +60,13 @@ public:
     unsigned int getSecondPort();
     unsigned int getFirstSN();
     unsigned int getSecondSN();
+    
+    /* Ritorna in byte la somma dei payload dei pachetti nel buffer */
+    unsigned int getBufferLength();
+    
+    /* Ritorna lunghezza in byte dei due flussi in uscita */
+    unsigned int getFlowLength();
+    
     std::string exportFlow();
     std::string exportRawFlow();
     bool isFIN();

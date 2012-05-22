@@ -207,6 +207,9 @@ public:
 
     /** Ritorna dimensione dell'header TCP in byte */
     unsigned int getHeaderLength();
+    
+    /** Ritorna dimensione del payload TCP in byte */
+    unsigned int getPayloadLength();
 
     /** Ritorna i flag TCP in formato raw, da processare */
     int getFlags();

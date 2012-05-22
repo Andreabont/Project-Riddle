@@ -15,6 +15,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <list>
 #include <ios>
 #include <boost/asio.hpp>
 #include <list>
@@ -201,6 +202,31 @@ std::string stream::exportRawFlow()
     stdstring << ">> B -> A:" << std::endl;
     stdstring << decodeHexText(flow[1]) << std::endl;
     return stdstring.str();
+}
+
+unsigned int stream::getBufferLength()
+{
+
+    int bufferlenght = 0;
+
+    for(int i = 0; i <= 1; i++)
+    {
+
+        for (std::list<TCPv4packet*>::iterator it = buffer[i].begin(); it != buffer[i].end(); it++)
+        {
+
+            bufferlenght += (*it)->getPayloadLength();
+
+        }
+
+    }
+
+    return bufferlenght;
+}
+
+unsigned int stream::getFlowLength()
+{
+    return (flow[0].length() + flow[1].length())/2;
 }
 
 long int stream::getTimeEpoch()

@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
                                 {
                                     (*it)->factory(pkg_tcpv4);
                                 }
-                                else if(pkg_tcpv4->isRST())
+                                else if(pkg_tcpv4->isRST() || pkg_tcpv4->isFIN())
                                 {
                                     (*it)->flushFirstBuffer();
                                     (*it)->flushSecondBuffer();
@@ -121,6 +121,30 @@ int main(int argc, char **argv) {
                 }
 
             }
+            
+            
+            // Pulizia stream non terminati.
+            
+            for (list<stream*>::iterator it2 = packet_stream.begin(); it2 != packet_stream.end(); it2++)
+	    {
+	      
+	      if((*it2)->getTimeEpoch() > pkg->getEpoch() + (10*60) || (*it2)->getFlowLength() > (10*1024*1024))
+	      {
+		
+		packet_stream.remove(*it2);
+		
+	      } else if( (*it2)->getBufferLength() > 1024 )
+	      {
+		
+		(*it2)->flushFirstBuffer();
+		(*it2)->flushSecondBuffer();
+		
+	      }
+	      
+	    }
+
+            
+            
         }
         catch (packet::Overflow)
         {
@@ -128,6 +152,7 @@ int main(int argc, char **argv) {
             return EXIT_FAILURE;
         }
     }
+    
     return EXIT_SUCCESS;
 }
 
