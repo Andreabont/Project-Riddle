@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 
         if(effectiveuid)
         {
-            cerr << "ERROR >> To use the \"secure\" option the program must be owned by root and must have enabled the sticky bit. (EUID = " << effectiveuid << ")" << endl;
+            cerr << "ERROR >> To use the \"secure\" option the program must be owned by root and must have enabled the setuid bit. (EUID = " << effectiveuid << ")" << endl;
             return EXIT_FAILURE;
         }
 
