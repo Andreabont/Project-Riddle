@@ -49,15 +49,33 @@ int main(int argc, char **argv) {
         cout<<desc<<"\n";
         return 1;
     }
-    
+
 #ifdef __linux__
+    int realuid, effectiveuid;
     if (vm.count("secure"))
     {
-        if (getuid() != 0)
-	{
-	  cerr << "ERROR> To use the \"secure\" option the program must run as root." << endl;
-	  return EXIT_FAILURE;
-	}
+
+        realuid = getuid();		// UID del lanciatore
+        effectiveuid = geteuid();	// UID del proprietario
+
+        if(realuid == -1 || effectiveuid == -1)
+        {
+            cerr << "ERROR >> Can't read real and effective UID." << endl;
+            return EXIT_FAILURE;
+        }
+
+        if(effectiveuid)
+        {
+            cerr << "ERROR >> To use the \"secure\" option the program must be owned by root and must have enabled the sticky bit. (EUID = " << effectiveuid << ")" << endl;
+            return EXIT_FAILURE;
+        }
+
+        if (!realuid)
+        {
+            cerr << "ERROR >> To use the \"secure\" option the program must't run as root. (RUID = " << realuid << ")" << endl;
+            return EXIT_FAILURE;
+        }
+
     }
 #endif
 
@@ -102,11 +120,11 @@ int main(int argc, char **argv) {
 #ifdef __linux__
     if (vm.count("secure"))
     {
-	cerr << ">> Drop root privileges." << endl;
-        seteuid(1000); // TODO Select uid.
+        cerr << ">> Drop root privileges. Set Real UID to '" << realuid << "'" << endl;
+        seteuid(realuid);
     }
 #endif
-    
+
     if (vm.count("filter"))
     {
         string filter = vm["filter"].as<string>();
