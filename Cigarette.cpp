@@ -53,6 +53,7 @@ int main(int argc, char **argv) {
             if (cin.eof()) break;
 
             packet* pkg = packet::factory(r_packet);
+	    
 
             cout << "[" << std::dec << pkg->getEpoch() << " " << setfill('0') << std::setw(6) << pkg->getMillis() << "] Size: " << pkg->getPacketLength() << " byte" << endl;
             cout << "                    From " << pkg->getSenderMac().to_string() << " to "<< pkg->getTargetMac().to_string() << endl;

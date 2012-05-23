@@ -135,12 +135,12 @@ int main(int argc, char **argv) {
 
         if (pcap_compile(pcap_handle, &fp, filter.c_str(), 0, net) == -1)
         {
-            cerr<< ">> Couldn't parse filter '"<<filter<<"': "<<pcap_geterr(pcap_handle)<<endl;
+            cerr<< "ERROR >> Couldn't parse filter '"<<filter<<"': "<<pcap_geterr(pcap_handle)<<endl;
             return(2);
         }
 
         if (pcap_setfilter(pcap_handle, &fp) == -1) {
-            cerr<< ">> Couldn't install filter '"<<filter<<"': "<<pcap_geterr(pcap_handle)<<endl;
+            cerr<< "ERROR >> Couldn't install filter '"<<filter<<"': "<<pcap_geterr(pcap_handle)<<endl;
             return(2);
         }
     }
