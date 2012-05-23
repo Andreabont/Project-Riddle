@@ -30,7 +30,7 @@ using namespace boost;
 packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
 {
 
-    int protocol_type;
+    uint16_t protocol_type;
 
     std::string temp;
     temp.reserve(4);
@@ -72,17 +72,17 @@ packet* packet::factory(std::string packetLine)
     return pkg;
 }
 
-int packet::getPacketLength()
+uint32_t packet::getPacketLength()
 {
     return pkgLength;
 }
 
-long int packet::getEpoch()
+uint64_t packet::getEpoch()
 {
     return timeEpoch;
 }
 
-int packet::getMillis()
+uint32_t packet::getMillis()
 {
     return timeMillis;
 }
@@ -155,9 +155,9 @@ mac_address packet::getTargetMac()
     return this->getMacAddress(0);
 }
 
-unsigned int packet::getEtherType()
+uint16_t packet::getEtherType()
 {
-    unsigned int protocol_type;
+    uint16_t protocol_type;
 
     std::stringstream convert (this->getHexString(12, 2));
     convert>>std::hex>>protocol_type;
@@ -178,9 +178,9 @@ ARPpacket::ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
     return;
 }
 
-unsigned int ARPpacket::getOpCode()
+uint16_t ARPpacket::getOpCode()
 {
-    unsigned int opcode;
+    uint16_t opcode;
 
     std::stringstream convert (this->getHexString(ARP_OFFSET+6, 2));
     convert>>std::hex>>opcode;
@@ -254,9 +254,9 @@ asio::ip::address IPv4packet::getTargetIp()
     return newaddr;
 }
 
-unsigned int IPv4packet::getIdentity()
+uint16_t IPv4packet::getIdentity()
 {
-    unsigned int id;
+    uint16_t id;
 
     std::stringstream convert (this->getHexString(IPv4_OFFSET+4, 2));
     convert>>std::hex>>id;
@@ -264,9 +264,9 @@ unsigned int IPv4packet::getIdentity()
     return id;
 }
 
-unsigned int IPv4packet::getTTL()
+uint16_t IPv4packet::getTTL()
 {
-    unsigned int ttl;
+    uint16_t ttl;
 
     std::stringstream convert (this->getHexString(IPv4_OFFSET+8, 1));
     convert>>std::hex>>ttl;
@@ -274,9 +274,9 @@ unsigned int IPv4packet::getTTL()
     return ttl;
 }
 
-unsigned int IPv4packet::getProtocolType()
+uint16_t IPv4packet::getProtocolType()
 {
-    unsigned int protocol_type;
+    uint16_t protocol_type;
 
     std::stringstream convert (this->getHexString(IPv4_OFFSET+9, 1));
     convert>>std::hex>>protocol_type;
@@ -284,9 +284,9 @@ unsigned int IPv4packet::getProtocolType()
     return protocol_type;
 }
 
-unsigned int IPv4packet::getIPChecksum()
+uint16_t IPv4packet::getIPChecksum()
 {
-    unsigned int cs;
+    uint16_t cs;
     std::stringstream convert (this->getHexString(IPv4_OFFSET+10, 2));
     convert>>std::hex>>cs;
     return cs;
@@ -368,33 +368,33 @@ TCPv4packet::TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_
     return;
 }
 
-unsigned int TCPv4packet::getSenderPort()
+uint16_t TCPv4packet::getSenderPort()
 {
-    unsigned int port;
+    uint16_t port;
     std::stringstream convert (this->getHexString(TCP_OFFSET, 2));
     convert>>std::hex>>port;
     return port;
 }
 
-unsigned int TCPv4packet::getTargetPort()
+uint16_t TCPv4packet::getTargetPort()
 {
-    unsigned int port;
+    uint16_t port;
     std::stringstream convert (this->getHexString(TCP_OFFSET+2, 2));
     convert>>std::hex>>port;
     return port;
 }
 
-unsigned int TCPv4packet::getSequenceNumber()
+uint32_t TCPv4packet::getSequenceNumber()
 {
-    unsigned int sn;
+    uint32_t sn;
     std::stringstream convert (this->getHexString(TCP_OFFSET+4, 4));
     convert>>std::hex>>sn;
     return sn;
 }
 
-unsigned int TCPv4packet::getAcknowledgmentNumber()
+uint32_t TCPv4packet::getAcknowledgmentNumber()
 {
-    unsigned int an;
+    uint32_t an;
     std::stringstream convert (this->getHexString(TCP_OFFSET+8, 4));
     convert>>std::hex>>an;
     return an;

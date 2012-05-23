@@ -204,10 +204,10 @@ std::string stream::exportRawFlow()
     return stdstring.str();
 }
 
-unsigned int stream::getBufferLength()
+uint64_t stream::getBufferLength()
 {
 
-    int bufferlenght = 0;
+    uint64_t bufferlenght = 0;
 
     for(int i = 0; i <= 1; i++)
     {
@@ -224,17 +224,17 @@ unsigned int stream::getBufferLength()
     return bufferlenght;
 }
 
-unsigned int stream::getFlowLength()
+uint64_t stream::getFlowLength()
 {
     return (flow[0].length() + flow[1].length())/2;
 }
 
-long int stream::getTimeEpoch()
+uint64_t stream::getTimeEpoch()
 {
     return timeEpoch;
 }
 
-int stream::getTimeMillis()
+uint32_t stream::getTimeMillis()
 {
     return timeMillis;
 }
@@ -259,22 +259,22 @@ boost::asio::ip::address stream::getSecondIpAddress()
     return ipAddress[1];
 }
 
-unsigned int stream::getFirstPort()
+uint16_t stream::getFirstPort()
 {
     return port[0];
 }
 
-unsigned int stream::getSecondPort()
+uint16_t stream::getSecondPort()
 {
     return port[1];
 }
 
-unsigned int stream::getFirstSN()
+uint32_t stream::getFirstSN()
 {
     return sequenceNumber[0];
 }
 
-unsigned int stream::getSecondSN()
+uint32_t stream::getSecondSN()
 {
     return sequenceNumber[1];
 }

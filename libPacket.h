@@ -61,10 +61,10 @@ class packet
 {
   
 protected:
+    uint64_t timeEpoch;			/** Timestamp */
+    uint32_t timeMillis;		/** Millisecond from timestamp */
+    uint32_t pkgLength;			/** Packet length */
     std::string rawData;		/** Raw packet recived from riddle */
-    long int timeEpoch;			/** Timestamp */
-    int timeMillis;			/** Millisecond from timestamp */
-    int pkgLength;			/** Packet length */
 
 public:
 
@@ -83,13 +83,13 @@ public:
     /* GENERAL FUNCTIONS */
 
     /** Returns the packet length in bytes. */
-    int getPacketLength();
+    uint32_t getPacketLength();
 
     /** Returns packet epoch */
-    long int getEpoch();
+    uint64_t getEpoch();
 
     /** Returns milliseconds passed from epoch */
-    int getMillis();
+    uint32_t getMillis();
 
     /** Legge n byte a partire dal byte voluto e li restituisce in stringa. */
     std::string getHexString(int string_cursor, int read_byte);
@@ -121,7 +121,7 @@ public:
     mac_address getTargetMac();
 
     /** Restituisce ethertype */
-    unsigned int getEtherType();
+    uint16_t getEtherType();
 
 };
 
@@ -134,7 +134,7 @@ public:
     ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
     
     /** Ritorna OpCode */
-    unsigned int getOpCode();
+    uint16_t getOpCode();
     
     /** Ritorna indirizzo IP del mittente */
     boost::asio::ip::address getSenderIp();
@@ -158,16 +158,16 @@ public:
     boost::asio::ip::address getTargetIp();
     
     /** Ritorna identificatore **/
-    unsigned int getIdentity();
+    uint16_t getIdentity();
     
     /** Ritorna il Time To Live **/
-    unsigned int getTTL();
+    uint16_t getTTL();
 
     /** Ritorna il tipo di protocollo incapsulato */
-    unsigned int getProtocolType();
+    uint16_t getProtocolType();
     
     /** Ritorna checksum */
-    unsigned int getIPChecksum();
+    uint16_t getIPChecksum();
     
     /** Verify checksum **/
     bool verifyIPChecksum();
@@ -194,16 +194,16 @@ public:
     TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
 
     /** Restituisce porta TCP del mittente */
-    unsigned int getSenderPort();
+    uint16_t getSenderPort();
 
     /** Restituisce porta TCP del destinatario */
-    unsigned int getTargetPort();
+    uint16_t getTargetPort();
 
     /** Restituisce il numero di sequenza */
-    unsigned int getSequenceNumber();
+    uint32_t getSequenceNumber();
 
     /** Restituisce il numero di acknowledgment */
-    unsigned int getAcknowledgmentNumber();
+    uint32_t getAcknowledgmentNumber();
 
     /** Ritorna dimensione dell'header TCP in byte */
     unsigned int getHeaderLength();

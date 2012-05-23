@@ -25,18 +25,18 @@ std::string decodeHexText(std::string raw);
 class stream
 {
 private:
-    long int timeEpoch;
-    int timeMillis;
+    uint64_t timeEpoch;
+    uint32_t timeMillis;
     
     bool flagFirstFIN;
     bool flagSecondFIN;
     
     mac_address macAddress[2];
     boost::asio::ip::address ipAddress[2];
-    unsigned int port[2];
+    uint16_t port[2];
     
     std::list<TCPv4packet*> buffer[2];
-    unsigned int sequenceNumber[2];
+    uint32_t sequenceNumber[2];
     std::string flow[2];
     
     void flushBuffer(int number);
@@ -50,22 +50,22 @@ public:
     void flushFirstBuffer();
     void flushSecondBuffer();
   
-    long int getTimeEpoch();
-    int getTimeMillis();
+    uint64_t getTimeEpoch();
+    uint32_t getTimeMillis();
     mac_address getFirstMacAddress();
     mac_address getSecondMacAddress();
     boost::asio::ip::address getFirstIpAddress();
     boost::asio::ip::address getSecondIpAddress();
-    unsigned int getFirstPort();
-    unsigned int getSecondPort();
-    unsigned int getFirstSN();
-    unsigned int getSecondSN();
+    uint16_t getFirstPort();
+    uint16_t getSecondPort();
+    uint32_t getFirstSN();
+    uint32_t getSecondSN();
     
     /* Ritorna in byte la somma dei payload dei pachetti nel buffer */
-    unsigned int getBufferLength();
+    uint64_t getBufferLength();
     
     /* Ritorna lunghezza in byte dei due flussi in uscita */
-    unsigned int getFlowLength();
+    uint64_t getFlowLength();
     
     std::string exportFlow();
     std::string exportRawFlow();

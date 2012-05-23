@@ -5,7 +5,7 @@
 // Copyright   : GNU GPL3
 // Description : Network Sniffer
 //
-// Special Thanks to fede.tft for the big help :-)
+// Special Thanks to fede.tft and admiral0 for the big help :-)
 //
 //============================================================================
 
