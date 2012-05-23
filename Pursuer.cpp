@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
 	      if((*it2)->getTimeEpoch() > pkg->getEpoch() + (10*60) || (*it2)->getFlowLength() > (10*1024*1024))
 	      {
 		
-		packet_stream.remove(*it2);
+		//packet_stream.remove(*it2); FIXME
 		
 	      } else if( (*it2)->getBufferLength() > 1024 )
 	      {
