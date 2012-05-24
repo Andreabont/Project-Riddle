@@ -51,28 +51,31 @@ int main(int argc, char **argv) {
     }
 
 #ifdef __linux__
-    int realuid, effectiveuid;
+    int realuid, realgid, effectiveuid, effectivegid;
     if (vm.count("secure"))
     {
 
         realuid = getuid();		// UID del lanciatore
         effectiveuid = geteuid();	// UID del proprietario
+	realgid = getgid();		// GID del lanciatore
+	effectivegid = getegid();	// GID del proprietario
+	
 
-        if(realuid == -1 || effectiveuid == -1)
+        if(realuid == -1 || effectiveuid == -1 || realgid == -1 || effectivegid == -1)
         {
-            cerr << "ERROR >> Can't read real and effective UID." << endl;
+            cerr << "ERROR >> Can't read real and effective UID/GID." << endl;
             return EXIT_FAILURE;
         }
 
-        if(effectiveuid)
+        if(effectiveuid || effectivegid)
         {
-            cerr << "ERROR >> To use the \"secure\" option the program must be owned by root and must have enabled the setuid bit. (EUID = " << effectiveuid << ")" << endl;
+            cerr << "ERROR >> To use the \"secure\" option the program must be owned by root and must have enabled the setuid bit. (EUID = " << effectiveuid << ", EGID = " << effectivegid << ")" << endl;
             return EXIT_FAILURE;
         }
 
-        if (!realuid)
+        if (!realuid || !realgid)
         {
-            cerr << "ERROR >> To use the \"secure\" option the program must't run as root. (RUID = " << realuid << ")" << endl;
+            cerr << "ERROR >> To use the \"secure\" option the program must't run as root. (RUID = " << realuid << ", RGID = " << realgid << ")" << endl;
             return EXIT_FAILURE;
         }
 
@@ -120,8 +123,9 @@ int main(int argc, char **argv) {
 #ifdef __linux__
     if (vm.count("secure"))
     {
-        cerr << ">> Drop root privileges. Set Real UID to '" << realuid << "'" << endl;
+        cerr << ">> Drop root privileges. Set Real UID to '" << realuid << "' and Real GID to '" << realgid << "'." << endl;
         seteuid(realuid);
+	setegid(realgid);
     }
 #endif
 
