@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     if (vm.count("help"))
     {
         cout<<desc<<"\n";
-        return 1;
+        return EXIT_SUCCESS;
     }
 
 #ifdef __linux__
