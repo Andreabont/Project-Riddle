@@ -14,10 +14,15 @@
 
 #include <string>
 #include <cstring>
+#include <stdint.h>
 
 /* Class for managing MAC address */
 class mac_address
 {
+  
+private:
+    uint16_t byte[6];
+
 public:
 
     /** Costruttore: riceve indirizzo in stringa codifica esadecimale. */
@@ -30,9 +35,6 @@ public:
 
     /** Restituisce stringa stampabile a schermo. */
     std::string to_string();
-
-private:
-    short int byte[6];
 };
 
 #endif //LIBADDRESS_H

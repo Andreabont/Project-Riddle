@@ -27,7 +27,7 @@
 
 using namespace boost;
 
-packet* packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+packet* packet::factory(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i)
 {
 
     uint16_t protocol_type;
@@ -168,7 +168,7 @@ uint16_t packet::getEtherType()
 
 /* ARP */
 
-ARPpacket::ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+ARPpacket::ARPpacket(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i)
 {
 
     timeEpoch = timeEpoch_i;
@@ -203,9 +203,9 @@ boost::asio::ip::address ARPpacket::getTargetIp()
 
 /* IPV4 */
 
-packet* IPv4packet::factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+packet* IPv4packet::factory(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i)
 {
-    int protocol_type;
+    uint16_t protocol_type;
 
     std::string temp;
     temp.reserve(2);
@@ -327,7 +327,7 @@ bool IPv4packet::isICMP()
 
 /* ICMP */
 
-ICMPv4packet::ICMPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+ICMPv4packet::ICMPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i)
 {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;
@@ -336,9 +336,9 @@ ICMPv4packet::ICMPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawDat
     return;
 }
 
-unsigned int ICMPv4packet::getMessageType()
+uint16_t  ICMPv4packet::getMessageType()
 {
-    unsigned int message_type;
+    uint16_t  message_type;
 
     std::stringstream convert (this->getHexString(ICMPV4_OFFSET, 1));
     convert>>std::hex>>message_type;
@@ -346,9 +346,9 @@ unsigned int ICMPv4packet::getMessageType()
     return message_type;
 }
 
-unsigned int ICMPv4packet::getMessageCode()
+uint16_t  ICMPv4packet::getMessageCode()
 {
-    unsigned int message_code;
+    uint16_t  message_code;
 
     std::stringstream convert (this->getHexString(ICMPV4_OFFSET+1, 1));
     convert>>std::hex>>message_code;
@@ -358,7 +358,7 @@ unsigned int ICMPv4packet::getMessageCode()
 
 /* TCP */
 
-TCPv4packet::TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+TCPv4packet::TCPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i)
 {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;
@@ -538,7 +538,7 @@ bool TCPv4packet::isOption()
 
 /* UDP */
 
-UDPv4packet::UDPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+UDPv4packet::UDPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i)
 {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;
@@ -565,7 +565,7 @@ unsigned int UDPv4packet::getTargetPort()
 
 /* UNKNOWN */
 
-UnknownPacket::UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i)
+UnknownPacket::UnknownPacket(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i)
 {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;

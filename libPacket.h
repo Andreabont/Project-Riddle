@@ -72,7 +72,7 @@ public:
     class Overflow {};
 
     /** Class constructor with delayed instantiation*/
-    static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    static packet* factory(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
     /** Class constructor with delayed instantiation, auto-split mode*/
     static packet* factory(std::string packetLine);
@@ -131,7 +131,7 @@ class ARPpacket : public packet
 public:
   
     /** Costruttore finale */
-    ARPpacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    ARPpacket(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
     
     /** Ritorna OpCode */
     uint16_t getOpCode();
@@ -149,7 +149,7 @@ class IPv4packet : public packet
 public:
 
     /** Class constructor with delayed instantiation */
-    static packet* factory(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    static packet* factory(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
     
     /** Ritorna indirizzo IP del mittente */
     boost::asio::ip::address getSenderIp();
@@ -191,7 +191,7 @@ public:
     bool public_flag; 
 
     /** Costruttore finale */
-    TCPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    TCPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
     /** Restituisce porta TCP del mittente */
     uint16_t getSenderPort();
@@ -269,7 +269,7 @@ class UDPv4packet : public IPv4packet
 public:
 
     /** Costruttore finale */
-    UDPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    UDPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
     /** Ritorna porta UDP del mittente */
     unsigned int getSenderPort();
@@ -284,13 +284,13 @@ class ICMPv4packet : public IPv4packet
 public:
 
     /** Costruttore finale */
-    ICMPv4packet(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    ICMPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
     /** Ritorna il tipo di messaggio ICMP */
-    unsigned int getMessageType();
+    uint16_t  getMessageType();
 
     /** Ritorna il MessageCode */
-    unsigned int getMessageCode();
+    uint16_t  getMessageCode();
 };
 
 /** Class for managing unknown packets */
@@ -299,7 +299,7 @@ class UnknownPacket : public packet
 public:
 
     /** Costruttore finale */
-    UnknownPacket(int timeEpoch_i, int timeMillis_i, std::string rawData_i);
+    UnknownPacket(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 };
 
 #endif //LIBHEADER_H

@@ -15,8 +15,8 @@
 #include <string>
 #include "libPacket.h"
 
-std::string ether_type_decode(unsigned int start);
-std::string ipv4_type_decode(unsigned int start);
-std::string icmpv4_type_decode(unsigned int start);
+std::string ether_type_decode(uint16_t  start);
+std::string ipv4_type_decode(uint16_t  start);
+std::string icmpv4_type_decode(uint16_t  start);
 
 #endif //LIBCIGARETTE_H

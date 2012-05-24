@@ -14,7 +14,7 @@
 #include <string>
 #include "libCigarette.h"
 
-std::string ether_type_decode(unsigned int start)
+std::string ether_type_decode(uint16_t  start)
 {
     // Maggiore o uguale di 1536(0x0600) per Ethernet v2, minore per versione
 
@@ -39,7 +39,7 @@ std::string ether_type_decode(unsigned int start)
     else return "Ethernet IEEE 802.3";
 }
 
-std::string ipv4_type_decode(unsigned int start)
+std::string ipv4_type_decode(uint16_t  start)
 {
     switch (start)
     {
@@ -54,7 +54,7 @@ std::string ipv4_type_decode(unsigned int start)
     }
 }
 
-std::string icmpv4_type_decode(unsigned int start)
+std::string icmpv4_type_decode(uint16_t  start)
 {
     switch (start)
     {
