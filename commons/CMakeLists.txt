@@ -1,7 +1,5 @@
 project (commons)
 
-add_library (libAddress STATIC libAddress.h libAddress.cpp)
-add_library (libPacket STATIC libPacket.h libPacket.cpp)
+add_library (commons STATIC libAddress.h libAddress.cpp libPacket.h libPacket.cpp)
 
-target_link_libraries (libAddress)
-target_link_libraries (libPacket)
+target_link_libraries (commons)
