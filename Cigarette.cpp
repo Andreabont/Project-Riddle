@@ -16,9 +16,9 @@
 #include <iomanip>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
-#include "libCigarette.h"
-#include "libAddress.h"
-#include "libPacket.h"
+#include "./libraries/libCigarette.h"
+#include "./commons/libAddress.h"
+#include "./commons/libPacket.h"
 
 using namespace std;
 using namespace boost;

@@ -16,7 +16,7 @@
 #include <limits>
 #include <pcap.h>
 #include <boost/program_options.hpp>
-#include "libRiddle.h"
+#include "./libraries/libRiddle.h"
 
 #ifdef __linux__
 #include <unistd.h>

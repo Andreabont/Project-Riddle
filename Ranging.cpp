@@ -19,9 +19,9 @@
 #include <boost/program_options.hpp>
 
 #include <curses.h>
-#include "libAddress.h"
-#include "libPacket.h"
-#include "libRanging.h"
+#include "./commons/libAddress.h"
+#include "./commons/libPacket.h"
+#include "./libraries/libRanging.h"
 
 #define TIMETOLIVE 50
 #define THRESHOLD 1
