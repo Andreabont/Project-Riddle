@@ -1,13 +1,30 @@
-//============================================================================
-// Name        : Riddle
-// Author      : Andrea Bontempi
-// Version     : 0.1
-// Copyright   : GNU GPL3
-// Description : Network Sniffer
-//
-// Special Thanks to fede.tft for the big help :-)
-//
-//============================================================================
+/**
+ * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+ * 
+ * Name        :  Project Riddle
+ * Author      :  Andrea Bontempi
+ * Version     :  0.1 aplha
+ * Description :  Modular Network Sniffer
+ * 
+ * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+ * 
+ * This file is part of the project Riddle.
+ *
+ *  Foobar is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The project Riddle is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+ */
 
 #include <cstdio>
 #include <iostream>
@@ -43,7 +60,7 @@ std::string decodeHexText(std::string raw)
 
 }
 
-bool stream::factory(TCPv4packet *packet)
+bool stream::factory(libNetwork::TCPv4packet *packet)
 {
 
     if(packet->isSYN())
@@ -89,7 +106,7 @@ bool stream::factory(TCPv4packet *packet)
 }
 
 
-bool stream::addPacket(TCPv4packet *newPacket)
+bool stream::addPacket(libNetwork::TCPv4packet *newPacket)
 {
 
     using namespace std;
@@ -122,7 +139,7 @@ bool stream::addPacket(TCPv4packet *newPacket)
         if(newPacket->isACK()) // Se c'è ACK setto il flag sul pacchetto corrispondente, se c'è.
         {
 
-            for (list<TCPv4packet*>::iterator it = buffer[a].begin(); it != buffer[a].end(); it++)
+            for (list<libNetwork::TCPv4packet*>::iterator it = buffer[a].begin(); it != buffer[a].end(); it++)
             {
 
                 if( (*it)->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - ((*it)->getPayLoad().size()/2))
@@ -154,7 +171,7 @@ void stream::flushBuffer(int number)
 
         isFound = false;
 
-        for (std::list<TCPv4packet*>::iterator it = buffer[number].begin(); it != buffer[number].end(); it++)
+        for (std::list<libNetwork::TCPv4packet*>::iterator it = buffer[number].begin(); it != buffer[number].end(); it++)
         {
             if(sequenceNumber[number] + 1 == (*it)->getSequenceNumber() && (*it)->public_flag)
             {
@@ -212,7 +229,7 @@ uint64_t stream::getBufferLength()
     for(int i = 0; i <= 1; i++)
     {
 
-        for (std::list<TCPv4packet*>::iterator it = buffer[i].begin(); it != buffer[i].end(); it++)
+        for (std::list<libNetwork::TCPv4packet*>::iterator it = buffer[i].begin(); it != buffer[i].end(); it++)
         {
 
             bufferlenght += (*it)->getPayloadLength();
@@ -239,12 +256,12 @@ uint32_t stream::getTimeMillis()
     return timeMillis;
 }
 
-mac_address stream::getFirstMacAddress()
+libNetwork::mac_address stream::getFirstMacAddress()
 {
     return macAddress[0];
 }
 
-mac_address stream::getSecondMacAddress()
+libNetwork::mac_address stream::getSecondMacAddress()
 {
     return macAddress[1];
 }

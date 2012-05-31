@@ -31,13 +31,13 @@ target_link_libraries(riddle ${LIBPCAP})
 
 target_link_libraries(cigarette ${Boost_LIBRARIES})
 target_link_libraries(cigarette ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(cigarette commons)
+target_link_libraries(cigarette libNetwork)
 
 target_link_libraries(ranging ${Boost_LIBRARIES})
 target_link_libraries(ranging ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(ranging ${CURSES_LIBRARY})
-target_link_libraries(ranging commons)
+target_link_libraries(ranging libNetwork)
 
 target_link_libraries(pursuer ${Boost_LIBRARIES})
 target_link_libraries(pursuer ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(pursuer commons)
+target_link_libraries(pursuer libNetwork)

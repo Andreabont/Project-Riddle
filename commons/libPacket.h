@@ -1,13 +1,30 @@
-//============================================================================
-// Name        : Riddle
-// Author      : Andrea Bontempi
-// Version     : 0.1
-// Copyright   : GNU GPL3
-// Description : Network Sniffer
-//
-// Special Thanks to fede.tft for the big help :-)
-//
-//============================================================================
+/**
+ * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+ * 
+ * Name        :  Project Riddle
+ * Author      :  Andrea Bontempi
+ * Version     :  0.1 aplha
+ * Description :  Modular Network Sniffer
+ * 
+ * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+ * 
+ * This file is part of the project Riddle.
+ *
+ *  Foobar is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The project Riddle is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+ */
 
 #ifndef LIBHEADER_H
 #define LIBHEADER_H
@@ -57,10 +74,12 @@
 #include <stdint.h>
 #include "libAddress.h"
 
+namespace libNetwork {
+
 /** Class for managing packets */
 class packet
 {
-  
+
 protected:
     uint64_t timeEpoch;			/** Timestamp */
     uint32_t timeMillis;		/** Millisecond from timestamp */
@@ -77,7 +96,7 @@ public:
 
     /** Class constructor with delayed instantiation, auto-split mode*/
     static packet* factory(std::string packetLine);
-    
+
     /** Virtual destructor */
     virtual ~packet() {}
 
@@ -130,16 +149,16 @@ public:
 class ARPpacket : public packet
 {
 public:
-  
+
     /** Costruttore finale */
     ARPpacket(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
-    
+
     /** Ritorna OpCode */
     uint16_t getOpCode();
-    
+
     /** Ritorna indirizzo IP del mittente */
     boost::asio::ip::address getSenderIp();
-    
+
     /** Ritorna indirizzo IP del destinatario */
     boost::asio::ip::address getTargetIp();
 };
@@ -151,25 +170,25 @@ public:
 
     /** Class constructor with delayed instantiation */
     static packet* factory(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
-    
+
     /** Ritorna indirizzo IP del mittente */
     boost::asio::ip::address getSenderIp();
 
     /** Ritorna indirizzo IP del destinatario */
     boost::asio::ip::address getTargetIp();
-    
+
     /** Ritorna identificatore **/
     uint16_t getIdentity();
-    
+
     /** Ritorna il Time To Live **/
     uint16_t getTTL();
 
     /** Ritorna il tipo di protocollo incapsulato */
     uint16_t getProtocolType();
-    
+
     /** Ritorna checksum */
     uint16_t getIPChecksum();
-    
+
     /** Verify checksum **/
     bool verifyIPChecksum();
 
@@ -189,7 +208,7 @@ class TCPv4packet : public IPv4packet
 public:
 
     /** Flag pubblica usabile per marcare uno specifico oggetto TCPv4packet **/
-    bool public_flag; 
+    bool public_flag;
 
     /** Costruttore finale */
     TCPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
@@ -208,7 +227,7 @@ public:
 
     /** Ritorna dimensione dell'header TCP in byte */
     unsigned int getHeaderLength();
-    
+
     /** Ritorna dimensione del payload TCP in byte */
     unsigned int getPayloadLength();
 
@@ -220,10 +239,10 @@ public:
 
     /** Ritorna checksum */
     unsigned int getTCPChecksum();
-    
+
     /** Verify checksum **/
     bool verifyTCPChecksum();
-    
+
     /** Ritorna l'urgent pointer */
     unsigned int getUrgentPointer();
 
@@ -273,10 +292,10 @@ public:
     UDPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
     /** Ritorna porta UDP del mittente */
-    unsigned int getSenderPort();
+    uint16_t getSenderPort();
 
     /** Ritorna porta UDP del destinatario */
-    unsigned int getTargetPort();
+    uint16_t getTargetPort();
 };
 
 /** Class for managing ICMPv4 packets */
@@ -302,5 +321,7 @@ public:
     /** Costruttore finale */
     UnknownPacket(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 };
+
+}
 
 #endif //LIBHEADER_H

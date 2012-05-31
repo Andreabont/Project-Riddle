@@ -1,21 +1,39 @@
-//============================================================================
-// Name        : Riddle
-// Author      : Andrea Bontempi
-// Version     : 0.1
-// Copyright   : GNU GPL3
-// Description : Network Sniffer
-//
-// Special Thanks to fede.tft for the big help :-)
-//
-//============================================================================
+/**
+ * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+ * 
+ * Name        :  Project Riddle
+ * Author      :  Andrea Bontempi
+ * Version     :  0.1 aplha
+ * Description :  Modular Network Sniffer
+ * 
+ * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+ * 
+ * This file is part of the project Riddle.
+ *
+ *  Foobar is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The project Riddle is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+ */
 
 #include <string>
 #include <sstream>
 #include <iomanip>
 #include "libAddress.h"
 
+
 /** Costruttore */
-mac_address::mac_address(const std::string& rawData)
+libNetwork::mac_address::mac_address(const std::string& rawData)
 {
     int l = 0;
     std::string temp;
@@ -37,7 +55,7 @@ mac_address::mac_address(const std::string& rawData)
 }
 
 /** Restituisce indirizzo stampabile */
-std::string mac_address::to_string()
+std::string libNetwork::mac_address::to_string()
 {
     std::string stamp;
     std::stringstream temp;
@@ -54,7 +72,7 @@ std::string mac_address::to_string()
 }
 
 /** Overload, definisco confronto tra indirizzi */
-bool mac_address::operator==(const mac_address& otherMac)
+bool libNetwork::mac_address::operator==(const mac_address& otherMac)
 {
     for(int i=0; i<=5; i++)
     {
