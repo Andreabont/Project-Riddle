@@ -36,8 +36,6 @@
 #include "../commons/libAddress.h"
 #include "../commons/libPacket.h"
 
-std::string decodeHexText(std::string raw);
-
 /** Class for managing TCP flow. */
 class stream
 {
@@ -89,5 +87,8 @@ public:
     bool isFIN();
     
 };
+
+std::string decodeHexText(std::string raw);
+void writeout(stream* stream, bool tofile);
 
 #endif //LIBPURSUER_H

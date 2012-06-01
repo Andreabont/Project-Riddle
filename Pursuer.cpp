@@ -1,13 +1,13 @@
 /**
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
  * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * This file is part of the project Riddle.
  *
  *  Foobar is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
@@ -31,7 +31,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
-#include <iomanip>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
 #include "./libraries/libCigarette.h"
@@ -48,7 +47,7 @@ int main(int argc, char **argv) {
     options_description desc("Pursuer - Network TCP Follower");
     desc.add_options()
     ("help", "prints this")
-    ("output",value<string>(), "redirect payload to file (a file for each stream)")
+    ("tofile", "redirect payload to file (a file for each stream)")
     ;
 
     variables_map vm;
@@ -112,16 +111,9 @@ int main(int argc, char **argv) {
                                 {
                                     (*it)->flushFirstBuffer();
                                     (*it)->flushSecondBuffer();
-				    
-                                    if (vm.count("output"))
-                                    {
-					std::cout << (*it)->exportRawFlow() << std::endl;
-                                    }
-                                    else
-                                    {
-                                        std::cout << (*it)->exportFlow() << std::endl;
-                                    }
-                                    
+
+                                    writeout((*it), vm.count("tofile"));
+
                                     packet_stream.remove(*it);
                                     break;
                                 }
@@ -139,30 +131,33 @@ int main(int argc, char **argv) {
                 }
 
             }
-            
-            
-            // Pulizia stream non terminati.
-            
-            for (list<stream*>::iterator it2 = packet_stream.begin(); it2 != packet_stream.end(); it2++)
-	    {
-	      
-	      if((*it2)->getTimeEpoch() > pkg->getEpoch() + (10*60) || (*it2)->getFlowLength() > (10*1024*1024))
-	      {
-		
-		//packet_stream.remove(*it2); FIXME
-		
-	      } else if( (*it2)->getBufferLength() > 1024 )
-	      {
-		
-		(*it2)->flushFirstBuffer();
-		(*it2)->flushSecondBuffer();
-		
-	      }
-	      
-	    }
 
-            
-            
+
+            // Pulizia stream non terminati.
+
+            for (list<stream*>::iterator it2 = packet_stream.begin(); it2 != packet_stream.end(); it2++)
+            {
+
+                if((*it2)->getFlowLength() > (100*1024*1024) || (*it2)->getTimeEpoch() > pkg->getEpoch() + (10*60))
+                {
+
+                    writeout((*it2), vm.count("tofile"));
+
+                    packet_stream.remove(*it2);
+                    break;
+
+                } else if( (*it2)->getBufferLength() > 1024 )
+                {
+
+                    (*it2)->flushFirstBuffer();
+                    (*it2)->flushSecondBuffer();
+
+                }
+
+            }
+
+
+
         }
         catch (packet::Overflow)
         {
@@ -170,7 +165,7 @@ int main(int argc, char **argv) {
             return EXIT_FAILURE;
         }
     }
-    
+
     return EXIT_SUCCESS;
 }
 

@@ -1,13 +1,13 @@
 /**
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
  * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * This file is part of the project Riddle.
  *
  *  Foobar is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
@@ -31,6 +31,7 @@
 #include <cstdlib>
 #include <sstream>
 #include <stdexcept>
+#include <fstream>
 #include <string>
 #include <list>
 #include <ios>
@@ -58,6 +59,27 @@ std::string decodeHexText(std::string raw)
 
     return text;
 
+}
+
+void writeout(stream* stream, bool tofile)
+{
+    if(tofile)
+    {
+        std::stringstream filename;
+	char buffer[10];
+        filename << "flow_";
+        filename << stream->getTimeEpoch();
+        filename << ".txt";
+        std::ofstream myfile;
+        myfile.open(filename.str().c_str());
+        if (myfile.is_open())
+        {
+            myfile << stream->exportRawFlow();
+            myfile.close();
+        }
+    } else {
+        std::cout << stream->exportFlow() << std::endl;
+    }
 }
 
 bool stream::factory(libNetwork::TCPv4packet *packet)
@@ -213,10 +235,10 @@ std::string stream::exportFlow()
 std::string stream::exportRawFlow()
 {
     std::stringstream stdstring;
-    stdstring << ">> Nuovo flusso:" << std::endl;
-    stdstring << ">> A -> B:" << std::endl;
+    stdstring << ">> Two-way flow between " << ipAddress[0].to_string() << ":" << port[0] << " and " << ipAddress[1].to_string() << ":" << port[1] << std::endl;
+    stdstring << ">> " << ipAddress[0].to_string() << ":" << port[0] << " -> " << ipAddress[1].to_string() << ":" << port[1] << std::endl;
     stdstring << decodeHexText(flow[0]) << std::endl;
-    stdstring << ">> B -> A:" << std::endl;
+    stdstring << ">> " << ipAddress[1].to_string() << ":" << port[1] << " -> " << ipAddress[0].to_string() << ":" << port[0] << std::endl;
     stdstring << decodeHexText(flow[1]) << std::endl;
     return stdstring.str();
 }
