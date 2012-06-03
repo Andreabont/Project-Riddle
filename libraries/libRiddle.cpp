@@ -10,7 +10,7 @@
  * 
  * This file is part of the project Riddle.
  *
- *  Foobar is free software: you can redistribute it and/or modify
+ *  The project Riddle is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
@@ -32,6 +32,7 @@
 #include <sstream>
 #include <stdexcept>
 #include "libRiddle.h"
+#include "../commons/libDump.h"
 
 // Non mettere using namespace generali in header file.
 
@@ -63,6 +64,7 @@ void hexDump(const unsigned char *start, struct pcap_pkthdr header)
     std::cout<<" uS: "<<header.ts.tv_usec;
     std::cout<<"] Received "<<header.len<<" byte:"<<std::endl;
     int index=0;
+    // TODO
     while (header.len>16)
     {
         memPrint(start,16,index);

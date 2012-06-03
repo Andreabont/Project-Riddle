@@ -28,10 +28,12 @@ find_package(Curses)
 
 target_link_libraries(riddle ${Boost_LIBRARIES})
 target_link_libraries(riddle ${LIBPCAP})
+target_link_libraries(cigarette libDump)
 
 target_link_libraries(cigarette ${Boost_LIBRARIES})
 target_link_libraries(cigarette ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(cigarette libNetwork)
+target_link_libraries(cigarette libDump)
 
 target_link_libraries(ranging ${Boost_LIBRARIES})
 target_link_libraries(ranging ${CMAKE_THREAD_LIBS_INIT})

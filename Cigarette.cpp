@@ -10,7 +10,7 @@
  * 
  * This file is part of the project Riddle.
  *
- *  Foobar is free software: you can redistribute it and/or modify
+ *  The project Riddle is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
@@ -36,6 +36,7 @@
 #include "./libraries/libCigarette.h"
 #include "./commons/libAddress.h"
 #include "./commons/libPacket.h"
+#include "./commons/libDump.h"
 
 using namespace std;
 using namespace boost;
@@ -160,8 +161,8 @@ int main(int argc, char **argv) {
                     
                     if (vm.count("payload"))
                     {
-                        //TODO - Visualizzare meglio il payload ?
-                        cout << "                    + Payload                "<< pkg_tcpv4->getPayLoad() << endl;
+		         cout << "                    + Payload:" << endl;
+                         cout << libDump::classicDump(pkg_tcpv4->getPayLoad()) << endl;
                     }
 
 
