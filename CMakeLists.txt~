@@ -47,5 +47,5 @@ target_link_libraries(pursuer ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(pursuer libNetwork)
 
 target_link_libraries(breeder ${Boost_LIBRARIES})
-target_link_libraries(breeder ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(pursuer ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(breeder libNetwork)

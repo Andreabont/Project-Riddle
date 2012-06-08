@@ -119,3 +119,11 @@ std::string libDump::classicDump(std::string input)
     return out.str();
 }
 
+std::string libDump::classicDump(const unsigned char* input)
+{
+
+  std::string meta(input);
+  return libDump::classicDump(meta);
+  
+}
+

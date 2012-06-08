@@ -127,10 +127,6 @@ bool stream::factory(libNetwork::TCPv4packet *packet)
 
 }
 
-void stream::factory(std::string packet)
-{
-
-}
 
 bool stream::addPacket(libNetwork::TCPv4packet *newPacket)
 {
