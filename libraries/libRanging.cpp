@@ -1,13 +1,13 @@
 /**
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
  * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * This file is part of the project Riddle.
  *
  *  The project Riddle is free software: you can redistribute it and/or modify
@@ -22,37 +22,32 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
 #include "libRanging.h"
 
-device::device(libNetwork::mac_address newMac, boost::asio::ip::address newIp, long int newEpoch)
-{
+device::device ( libNetwork::mac_address newMac, boost::asio::ip::address newIp, long int newEpoch ) {
     mac = newMac;
     ip = newIp;
     timeEpoch = newEpoch;
     return;
 }
 
-boost::asio::ip::address device::getIpAddress()
-{
+boost::asio::ip::address device::getIpAddress() {
     return ip;
 }
 
-libNetwork::mac_address device::getMacAddress()
-{
+libNetwork::mac_address device::getMacAddress() {
     return mac;
 }
 
-long int device::getEpoch()
-{
+long int device::getEpoch() {
     return timeEpoch;
 }
 
-void device::setEpoch(long int newEpoch)
-{
+void device::setEpoch ( long int newEpoch ) {
     timeEpoch = newEpoch;
     return;
 }

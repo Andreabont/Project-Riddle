@@ -36,7 +36,6 @@
 namespace libDump {
   
   std::string classicDump(std::string input);
-  std::string classicDump(const unsigned char * input);
   
 }
 

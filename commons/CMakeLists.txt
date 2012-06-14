@@ -1,6 +1,6 @@
 project (commons)
 
-add_library (libNetwork STATIC libAddress.h libAddress.cpp libPacket.h libPacket.cpp)
+add_library (libNetwork STATIC classMacAddress.h classMacAddress.cpp classPacket.h classPacket.cpp classFlow.h classFlow.cpp)
 add_library (libDump STATIC libDump.h libDump.cpp)
 
 target_link_libraries (libNetwork)

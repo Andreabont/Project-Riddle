@@ -1,13 +1,13 @@
 /**
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
  * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * This file is part of the project Riddle.
  *
  *  The project Riddle is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
@@ -35,26 +35,26 @@
 
 namespace libNetwork {
 
-/* Class for managing MAC address */
-class mac_address
-{
+    /* Class for managing MAC address */
+    class mac_address
+    {
 
-private:
-    uint16_t byte[6];
+        private:
+        uint16_t byte[6];
 
-public:
+        public:
 
-    /** Costruttore: riceve indirizzo in stringa codifica esadecimale. */
-    mac_address() {
-        std::memset(byte,0,6);
-    }
-    mac_address(const std::string&);
+        /** Costruttore: riceve indirizzo in stringa codifica esadecimale. */
+        mac_address() {
+            std::memset ( byte,0,6 );
+        }
+        mac_address ( const std::string& );
 
-    bool operator==(const mac_address& otherMac);
+        bool operator== ( const mac_address& otherMac );
 
-    /** Restituisce stringa stampabile a schermo. */
-    std::string to_string();
-};
+        /** Restituisce stringa stampabile a schermo. */
+        std::string to_string();
+    };
 
 }
 

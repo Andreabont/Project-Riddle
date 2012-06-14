@@ -1,13 +1,13 @@
 /**
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
  * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * This file is part of the project Riddle.
  *
  *  The project Riddle is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
@@ -36,49 +36,43 @@
 
 // Non mettere using namespace generali in header file.
 
-void pcap_fatal(const char *error_in, const char *error_buffer)
-{
+void pcap_fatal ( const char *error_in, const char *error_buffer ) {
     std::stringstream ss;
     ss<<"Fatal Error in "<<error_in<<": "<<error_buffer;
-    throw(std::runtime_error(ss.str()));
+    throw ( std::runtime_error ( ss.str() ) );
 }
 
-static void memPrint(const unsigned char *start, char len, int index)
-{
-    printf("0x%08x | ",index);
+static void memPrint ( const unsigned char *start, char len, int index ) {
+    printf ( "0x%08x | ",index );
     int i;
-    for (i=0;i<len;i++) printf("%02x ",start[i]);
-    for (i=0;i<(16-len);i++) printf("   ");
-    printf("| ");
-    for (i=0;i<len;i++)
-    {
-        if ((start[i]>32)&&(start[i]<128)) printf("%c",start[i]);
-        else printf(".");
+    for ( i=0; i<len; i++ ) printf ( "%02x ",start[i] );
+    for ( i=0; i< ( 16-len ); i++ ) printf ( "   " );
+    printf ( "| " );
+    for ( i=0; i<len; i++ ) {
+        if ( ( start[i]>32 ) && ( start[i]<128 ) ) printf ( "%c",start[i] );
+        else printf ( "." );
     }
-    printf("\n");
+    printf ( "\n" );
 }
 
-void hexDump(const unsigned char *start, struct pcap_pkthdr header)
-{
+void hexDump ( const unsigned char *start, struct pcap_pkthdr header ) {
     std::cout<<std::endl<<"[TS: "<<header.ts.tv_sec;
     std::cout<<" uS: "<<header.ts.tv_usec;
     std::cout<<"] Received "<<header.len<<" byte:"<<std::endl;
     int index=0;
-    while (header.len>16)
-    {
-        memPrint(start,16,index);
+    while ( header.len>16 ) {
+        memPrint ( start,16,index );
         header.len-=16;
         start+=16;
         index+=16;
     }
-    if (header.len>0) memPrint(start,header.len,index);
-    
+    if ( header.len>0 ) memPrint ( start,header.len,index );
+
 }
 
-void rawDump(const unsigned char *start, struct pcap_pkthdr header)
-{
+void rawDump ( const unsigned char *start, struct pcap_pkthdr header ) {
     std::cout<<header.ts.tv_sec<<"!";
     std::cout<<header.ts.tv_usec<<"!";
-    for (int i=0;i<header.len;i++) printf("%02x",start[i]);
+    for ( int i=0; i<header.len; i++ ) printf ( "%02x",start[i] );
     std::cout<<std::endl;
 }

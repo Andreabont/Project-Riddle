@@ -1,13 +1,13 @@
 /**
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
  * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * This file is part of the project Riddle.
  *
  *  The project Riddle is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
@@ -38,10 +38,10 @@
  } *
  */
 
-void pcap_fatal(const char *error_in, const char *error_buffer);
+void pcap_fatal ( const char *error_in, const char *error_buffer );
 
 /* Funzioni per la stampa su schermo dei dati in formato esadecimale */
-void hexDump(const unsigned char *start, struct pcap_pkthdr header);
-void rawDump(const unsigned char *start, struct pcap_pkthdr header);
+void hexDump ( const unsigned char *start, struct pcap_pkthdr header );
+void rawDump ( const unsigned char *start, struct pcap_pkthdr header );
 
 #endif //LIBRIDDLE_H

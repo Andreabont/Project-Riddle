@@ -1,13 +1,13 @@
 /**
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
  * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * This file is part of the project Riddle.
  *
  *  The project Riddle is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
@@ -30,10 +30,10 @@
 #define LIBCIGARETTE_H
 
 #include <string>
-#include "../commons/libPacket.h"
+#include "../commons/classPacket.h"
 
-std::string ether_type_decode(uint16_t  start);
-std::string ipv4_type_decode(uint16_t  start);
-std::string icmpv4_type_decode(uint16_t  start);
+std::string ether_type_decode ( uint16_t  start );
+std::string ipv4_type_decode ( uint16_t  start );
+std::string icmpv4_type_decode ( uint16_t  start );
 
 #endif //LIBCIGARETTE_H

@@ -1,13 +1,13 @@
 /**
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
  * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * This file is part of the project Riddle.
  *
  *  The project Riddle is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
@@ -30,20 +30,19 @@
 #define LIBRANGING_H
 
 #include <boost/asio.hpp>
-#include "../commons/libAddress.h"
+#include "../commons/classMacAddress.h"
 
-class device
-{
-private:
+class device {
+    private:
     libNetwork::mac_address mac;
     boost::asio::ip::address ip;
     long int timeEpoch;
-public:
-    device(libNetwork::mac_address newMac, boost::asio::ip::address newIp, long int newEpoch);
+    public:
+    device ( libNetwork::mac_address newMac, boost::asio::ip::address newIp, long int newEpoch );
     libNetwork::mac_address getMacAddress();
     boost::asio::ip::address getIpAddress();
     long int getEpoch();
-    void setEpoch(long int newEpoch);
+    void setEpoch ( long int newEpoch );
 };
 
 #endif //LIBRANGING_H

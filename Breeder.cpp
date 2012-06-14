@@ -31,55 +31,48 @@
 #include <vector>
 #include <boost/regex.hpp>
 #include <boost/program_options.hpp>
-#include "./commons/libPacket.h"
+#include "./commons/classPacket.h"
 
 using namespace std;
 using namespace boost::program_options;
 using namespace libNetwork;
 
-int main(int argc, char **argv) {
-    options_description desc("Breeder - Network TCP Flux Seletor");
+int main ( int argc, char **argv ) {
+    options_description desc ( "Breeder - Network TCP Flux Seletor" );
     desc.add_options()
-    ("help", "prints this")
-    ("http", "select the http protocol.")
+    ( "help", "prints this" )
+    ( "http", "select the http protocol." )
     ;
 
     variables_map vm;
-    store(parse_command_line(argc, argv, desc), vm);
-    notify(vm);
+    store ( parse_command_line ( argc, argv, desc ), vm );
+    notify ( vm );
 
-    if (vm.count("help"))
-    {
+    if ( vm.count ( "help" ) ) {
         cout<<desc<<"\n";
         return EXIT_SUCCESS;
     }
 
     list<std::string> regularexpressions;
 
-    if(vm.count("http"))
-    {
-        regularexpressions.push_front("HTTP.*");
+    if ( vm.count ( "http" ) ) {
+        regularexpressions.push_front ( "HTTP.*" );
     }
 
-    if(regularexpressions.empty())
-    {
+    if ( regularexpressions.empty() ) {
         std::cerr<<"ERROR >> You have not selected any protocol!"<<std::endl;
         return EXIT_FAILURE;
     }
 
-    while (1)
-    {
-        try
-        {
+    while ( 1 ) {
+        try {
             string r_flux;
-            getline(cin,r_flux);
-            if (cin.eof()) break;
+            getline ( cin,r_flux );
+            if ( cin.eof() ) break;
 
 // TODO
 
-        }
-        catch (packet::Overflow)
-        {
+        } catch ( packet::Overflow ) {
             std::cerr<<"Overflow! :-P"<<std::endl;
             return EXIT_FAILURE;
         }

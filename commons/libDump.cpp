@@ -35,36 +35,29 @@
 #include <stdint.h>
 #include "libDump.h"
 
-std::string libDump::classicDump(std::string input)
-{
+std::string libDump::classicDump ( std::string input ) {
 
     std::stringstream out;
     int stringlen = input.length();
     int stringtodo = input.length();
 
-    for(uint16_t address = 0; address < stringlen; address += LINE*2)
-    {
-        out << "0x" << std::setfill('0') << std::setw(5) << std::hex << address/2 << " | ";
+    for ( uint16_t address = 0; address < stringlen; address += LINE*2 ) {
+        out << "0x" << std::setfill ( '0' ) << std::setw ( 5 ) << std::hex << address/2 << " | ";
 
-        for(int i = 0; i < LINE*2; i+=2)
-        {
+        for ( int i = 0; i < LINE*2; i+=2 ) {
 
-            if(i < stringtodo)
-            {
+            if ( i < stringtodo ) {
 
                 out << std::hex << input[address + i];
                 out << std::hex << input [address + i + 1] << " ";
 
-            }
-            else
-            {
+            } else {
 
                 out << "   ";
 
             }
 
-            if(i == LINE-2)
-            {
+            if ( i == LINE-2 ) {
                 out << " ";
             }
 
@@ -72,37 +65,29 @@ std::string libDump::classicDump(std::string input)
 
         out << "| ";
 
-        for(int i = 0; i < LINE*2; i+=2)
-        {
+        for ( int i = 0; i < LINE*2; i+=2 ) {
 
-            if(i < stringtodo)
-            {
+            if ( i < stringtodo ) {
 
                 std::string comp;
-                comp += (char)input[address + i];
-                comp += (char)input[address + i + 1];
-                std::stringstream convert(comp);
+                comp += ( char ) input[address + i];
+                comp += ( char ) input[address + i + 1];
+                std::stringstream convert ( comp );
                 int temp;
                 convert >> std::hex >> temp;
-                if((temp>32)&&(temp<128))
-                {
-                    out << (char)temp;
-                }
-                else
-                {
+                if ( ( temp>32 ) && ( temp<128 ) ) {
+                    out << ( char ) temp;
+                } else {
                     out << ".";
                 }
 
-            }
-            else
-            {
+            } else {
 
                 out << "   ";
 
             }
 
-            if(i == LINE-2)
-            {
+            if ( i == LINE-2 ) {
                 out << " ";
             }
 

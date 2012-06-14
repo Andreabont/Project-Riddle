@@ -34,8 +34,8 @@
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
 #include "./libraries/libCigarette.h"
-#include "./commons/libAddress.h"
-#include "./commons/libPacket.h"
+#include "./commons/classMacAddress.h"
+#include "./commons/classPacket.h"
 #include "./libraries/libPursuer.h"
 
 using namespace std;
@@ -43,19 +43,18 @@ using namespace boost;
 using namespace boost::program_options;
 using namespace libNetwork;
 
-int main(int argc, char **argv) {
-    options_description desc("Pursuer - Network TCP Follower");
+int main ( int argc, char **argv ) {
+    options_description desc ( "Pursuer - Network TCP Follower" );
     desc.add_options()
-    ("help", "prints this")
-    ("tofile", "redirect payload to file (a file for each stream)")
+    ( "help", "prints this" )
+    ( "tofile", "redirect payload to file (a file for each stream)" )
     ;
 
     variables_map vm;
-    store(parse_command_line(argc, argv, desc), vm);
-    notify(vm);
+    store ( parse_command_line ( argc, argv, desc ), vm );
+    notify ( vm );
 
-    if (vm.count("help"))
-    {
+    if ( vm.count ( "help" ) ) {
         cout<<desc<<"\n";
         return EXIT_SUCCESS;
     }
@@ -64,62 +63,48 @@ int main(int argc, char **argv) {
 
     string r_packet;
 
-    while (1)
-    {
-        try
-        {
+    while ( 1 ) {
+        try {
 
-            getline(cin,r_packet);
-            if (cin.eof()) break;
+            getline ( cin,r_packet );
+            if ( cin.eof() ) break;
 
-            packet* pkg = packet::factory(r_packet);
+            packet* pkg = packet::factory ( r_packet );
 
-            if(pkg->isIPv4())
-            {
-                IPv4packet *pkg_ipv4 = dynamic_cast<IPv4packet*>(pkg);
+            if ( pkg->isIPv4() ) {
+                IPv4packet *pkg_ipv4 = dynamic_cast<IPv4packet*> ( pkg );
 
-                if(pkg_ipv4->isTCP())
-                {
+                if ( pkg_ipv4->isTCP() ) {
 
-                    TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*>(pkg);
+                    TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*> ( pkg );
 
 
-                    if(pkg_tcpv4->isSYN() && !pkg_tcpv4->isACK())
-                    {
+                    if ( pkg_tcpv4->isSYN() && !pkg_tcpv4->isACK() ) {
 
                         stream *temp = new stream();
-                        temp->factory(pkg_tcpv4);
-                        packet_stream.push_back(temp);
-                    }
-                    else
-                    {
+                        temp->factory ( pkg_tcpv4 );
+                        packet_stream.push_back ( temp );
+                    } else {
 
-                        for (list<stream*>::iterator it = packet_stream.begin(); it != packet_stream.end(); it++)
-                        {
+                        for ( list<stream*>::iterator it = packet_stream.begin(); it != packet_stream.end(); it++ ) {
                             // MA LOL !!!!!
-                            if( ( ( (*it)->getFirstIpAddress() == pkg_tcpv4->getSenderIp() && (*it)->getFirstPort() == pkg_tcpv4->getSenderPort()) &&
-                                    ( (*it)->getSecondIpAddress() == pkg_tcpv4->getTargetIp() && (*it)->getSecondPort() == pkg_tcpv4->getTargetPort())) ||
-                                    ( ( (*it)->getFirstIpAddress() == pkg_tcpv4->getTargetIp() && (*it)->getFirstPort() == pkg_tcpv4->getTargetPort()) &&
-                                      ( (*it)->getSecondIpAddress() == pkg_tcpv4->getSenderIp() && (*it)->getSecondPort() == pkg_tcpv4->getSenderPort())))
-                            {
+                            if ( ( ( ( *it )->getFirstIpAddress() == pkg_tcpv4->getSenderIp() && ( *it )->getFirstPort() == pkg_tcpv4->getSenderPort() ) &&
+                                    ( ( *it )->getSecondIpAddress() == pkg_tcpv4->getTargetIp() && ( *it )->getSecondPort() == pkg_tcpv4->getTargetPort() ) ) ||
+                                    ( ( ( *it )->getFirstIpAddress() == pkg_tcpv4->getTargetIp() && ( *it )->getFirstPort() == pkg_tcpv4->getTargetPort() ) &&
+                                      ( ( *it )->getSecondIpAddress() == pkg_tcpv4->getSenderIp() && ( *it )->getSecondPort() == pkg_tcpv4->getSenderPort() ) ) ) {
 
-                                if(pkg_tcpv4->isSYN())
-                                {
-                                    (*it)->factory(pkg_tcpv4);
-                                }
-                                else if(pkg_tcpv4->isRST() || pkg_tcpv4->isFIN())
-                                {
-                                    (*it)->flushFirstBuffer();
-                                    (*it)->flushSecondBuffer();
+                                if ( pkg_tcpv4->isSYN() ) {
+                                    ( *it )->factory ( pkg_tcpv4 );
+                                } else if ( pkg_tcpv4->isRST() || pkg_tcpv4->isFIN() ) {
+                                    ( *it )->flushFirstBuffer();
+                                    ( *it )->flushSecondBuffer();
 
-                                    writeout((*it), vm.count("tofile"));
+                                    writeout ( ( *it ), vm.count ( "tofile" ) );
 
-                                    packet_stream.remove(*it);
+                                    packet_stream.remove ( *it );
                                     break;
-                                }
-                                else
-                                {
-                                    (*it)->addPacket(pkg_tcpv4);
+                                } else {
+                                    ( *it )->addPacket ( pkg_tcpv4 );
                                 }
                                 break;
                             }
@@ -135,22 +120,19 @@ int main(int argc, char **argv) {
 
             // Regole di pulizia.
 
-            for (list<stream*>::iterator it2 = packet_stream.begin(); it2 != packet_stream.end(); it2++)
-            {
+            for ( list<stream*>::iterator it2 = packet_stream.begin(); it2 != packet_stream.end(); it2++ ) {
 
-                if((*it2)->getFlowLength() > (100*1024*1024) || (*it2)->getTimeEpoch() > pkg->getEpoch() + (10*60))
-                {
+                if ( ( *it2 )->getFlowLength() > ( 100*1024*1024 ) || ( *it2 )->getTimeEpoch() > pkg->getEpoch() + ( 10*60 ) ) {
 
-                    writeout((*it2), vm.count("tofile"));
+                    writeout ( ( *it2 ), vm.count ( "tofile" ) );
 
-                    packet_stream.erase(it2);
+                    packet_stream.erase ( it2 );
                     break;
 
-                } else if( (*it2)->getBufferLength() > 1024 )
-                {
+                } else if ( ( *it2 )->getBufferLength() > 1024 ) {
 
-                    (*it2)->flushFirstBuffer();
-                    (*it2)->flushSecondBuffer();
+                    ( *it2 )->flushFirstBuffer();
+                    ( *it2 )->flushSecondBuffer();
 
                 }
 
@@ -158,9 +140,7 @@ int main(int argc, char **argv) {
 
 
 
-        }
-        catch (packet::Overflow)
-        {
+        } catch ( packet::Overflow ) {
             std::cerr<<"Overflow! :-P"<<std::endl;
             return EXIT_FAILURE;
         }
@@ -168,12 +148,11 @@ int main(int argc, char **argv) {
 
     // Esporto fussi non terminati prima dell'uscita.
     // Non usare il for, non va d'accordo con gli erase.
-    while (!packet_stream.empty()) 
-    {
+    while ( !packet_stream.empty() ) {
 
         list<stream*>::iterator it3 = packet_stream.begin();
-        writeout((*it3), vm.count("tofile"));
-        packet_stream.erase(it3);
+        writeout ( ( *it3 ), vm.count ( "tofile" ) );
+        packet_stream.erase ( it3 );
 
     }
 

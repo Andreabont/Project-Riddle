@@ -1,13 +1,13 @@
 /**
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
  * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- * 
+ *
  * This file is part of the project Riddle.
  *
  *  The project Riddle is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
@@ -32,53 +32,45 @@
 #include <string>
 #include "libCigarette.h"
 
-std::string ether_type_decode(uint16_t  start)
-{
+std::string ether_type_decode ( uint16_t  start ) {
     // Maggiore o uguale di 1536(0x0600) per Ethernet v2, minore per versione
 
-    if (start >= ETHER_V2_CODE)
-    {
-        switch (start)
-        {
-        case (ETHER_TYPE_IPV4):
+    if ( start >= ETHER_V2_CODE ) {
+        switch ( start ) {
+        case ( ETHER_TYPE_IPV4 ) :
             return "IPv4";
-        case (ETHER_TYPE_ARP):
+        case ( ETHER_TYPE_ARP ) :
             return "ARP";
-        case (ETHER_TYPE_IPV6):
+        case ( ETHER_TYPE_IPV6 ) :
             return "IPv6";
-        case (ETHER_TYPE_PPP):
+        case ( ETHER_TYPE_PPP ) :
             return "PPP";
-        case (ETHER_TYPE_IEEE802):
+        case ( ETHER_TYPE_IEEE802 ) :
             return "IEEE 802.1Q";
         default:
             return "UNDEFINED";
         }
-    }
-    else return "Ethernet IEEE 802.3";
+    } else return "Ethernet IEEE 802.3";
 }
 
-std::string ipv4_type_decode(uint16_t  start)
-{
-    switch (start)
-    {
-    case (IPV4_TYPE_TCP):
+std::string ipv4_type_decode ( uint16_t  start ) {
+    switch ( start ) {
+    case ( IPV4_TYPE_TCP ) :
         return "TCP";
-    case (IPV4_TYPE_UDP):
+    case ( IPV4_TYPE_UDP ) :
         return "UDP";
-    case (IPV4_TYPE_ICMP):
+    case ( IPV4_TYPE_ICMP ) :
         return "ICMP";
     default:
         return "UNDEFINED";
     }
 }
 
-std::string icmpv4_type_decode(uint16_t  start)
-{
-    switch (start)
-    {
-    case (ICMPV4_ECHO_REQ):
+std::string icmpv4_type_decode ( uint16_t  start ) {
+    switch ( start ) {
+    case ( ICMPV4_ECHO_REQ ) :
         return "ECHO Request";
-    case (ICMPV4_ECHO_REP):
+    case ( ICMPV4_ECHO_REP ) :
         return "ECHO Reply";
     default:
         return "UNDEFINED";
