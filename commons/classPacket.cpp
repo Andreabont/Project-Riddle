@@ -43,8 +43,6 @@
 
 /* PACKET */
 
-using namespace boost;
-
 libNetwork::packet* libNetwork::packet::factory ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
 
     uint16_t protocol_type;
@@ -80,7 +78,7 @@ libNetwork::packet* libNetwork::packet::factory ( std::string packetLine ) {
     std::vector< std::string > section;
     boost::algorithm::split ( section, packetLine, boost::algorithm::is_any_of ( "!" ) );
 
-    packet* pkg = packet::factory ( lexical_cast<int> ( section[0] ), lexical_cast<int> ( section[1] ), section[2] );
+    packet* pkg = packet::factory ( boost::lexical_cast<int> ( section[0] ), boost::lexical_cast<int> ( section[1] ), section[2] );
 
     return pkg;
 }
@@ -121,7 +119,7 @@ std::string libNetwork::packet::getDecimalIP ( int string_cursor ) {
             std::stringstream convert ( temp );
             int a;
             convert>>std::hex>>a;
-            stamp += lexical_cast<std::string> ( a );
+            stamp += boost::lexical_cast<std::string> ( a );
             if ( i != 7 ) stamp += ".";
             temp = "";
         }
@@ -231,12 +229,12 @@ libNetwork::packet* libNetwork::IPv4packet::factory ( uint64_t timeEpoch_i, uint
     return p;
 }
 
-asio::ip::address libNetwork::IPv4packet::getSenderIp() {
+boost::asio::ip::address libNetwork::IPv4packet::getSenderIp() {
     boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( IPv4_OFFSET+12 ) );
     return newaddr;
 }
 
-asio::ip::address libNetwork::IPv4packet::getTargetIp() {
+boost::asio::ip::address libNetwork::IPv4packet::getTargetIp() {
     boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( IPv4_OFFSET+16 ) );
     return newaddr;
 }

@@ -28,6 +28,9 @@
 
 #include <stdint.h>
 #include <boost/asio.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include "classFlow.h"
 #include "classMacAddress.h"
 #include "classPacket.h"
@@ -71,13 +74,25 @@ bool libNetwork::stream::factory ( libNetwork::TCPv4packet *packet ) {
 
 }
 
-void libNetwork::stream::factory ( std::string packet ) {
+void libNetwork::stream::factory ( std::string newflow ) {
+
+    std::vector< std::string > section;
+    boost::algorithm::split ( section, newflow, boost::algorithm::is_any_of ( "!" ) );
+
+    timeEpoch = boost::lexical_cast<uint64_t> ( section[0] );
+    timeMillis = boost::lexical_cast<uint64_t> ( section[1] );
+   /* macAddress[0] = new libNetwork::mac_address ( section[2] );
+    macAddress[1] = new libNetwork::mac_address ( section[3] );
+    ipAddress[0] = ;
+    ipAddress[1] = ; */
+    port[0] =  boost::lexical_cast<uint16_t> ( section[6] );
+    port[1] =  boost::lexical_cast<uint16_t> ( section[7] );
+    flow[0] = section[8];
+    flow[1] = section[9];
 
 }
 
 bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
-
-    using namespace std;
 
     int a,b;
 
@@ -101,7 +116,7 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
         if ( newPacket->isACK() ) { // Se c'è ACK setto il flag sul pacchetto corrispondente, se c'è.
 
-            for ( list<libNetwork::TCPv4packet*>::iterator it = buffer[a].begin(); it != buffer[a].end(); it++ ) {
+            for ( std::list<libNetwork::TCPv4packet*>::iterator it = buffer[a].begin(); it != buffer[a].end(); it++ ) {
 
                 if ( ( *it )->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - ( ( *it )->getPayLoad().size() /2 ) ) {
                     ( *it )->public_flag = true;

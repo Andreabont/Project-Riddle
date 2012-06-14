@@ -61,7 +61,7 @@ namespace libNetwork {
 
         public:
         bool factory ( libNetwork::TCPv4packet *packet );
-        void factory ( std::string packet );
+        void factory ( std::string flow );
 
         bool addPacket ( libNetwork::TCPv4packet *newPacket );
 
