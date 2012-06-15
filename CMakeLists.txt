@@ -18,7 +18,7 @@ add_executable(riddle ${RIDDLE_SRCS})
 add_executable(pursuer ${PURSUER_SRCS})
 add_executable(breeder ${BREEDER_SRCS})
 
-set(BOOST_LIBS program_options system)
+set(BOOST_LIBS program_options system regex)
 find_package(Boost COMPONENTS ${BOOST_LIBS} REQUIRED)
 
 find_library(LIBPCAP pcap)

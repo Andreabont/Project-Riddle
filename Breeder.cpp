@@ -77,12 +77,12 @@ int main ( int argc, char **argv ) {
 
             a_flux = libDump::decodeHexText ( flow->getFirstCharStream() );
             b_flux = libDump::decodeHexText ( flow->getSecondCharStream() );
-	    
-	    //boost::regex reg ("HTTP.*", boost::regex_constants::icase, boost::regex_constants::perl);
 
-           // if(boost::regex_search(a_flux, reg, boost::regex_constants::format_perl) || boost::regex_search(b_flux, reg, boost::regex_constants::format_perl)) {
+            boost::regex regexp ( ".*" ); // TODO
+
+            if ( boost::regex_match ( a_flux, regexp ) || boost::regex_match ( b_flux, regexp ) ) {
                 cout << flow->exportFlow() << endl;
-           // }
+            }
 
             delete flow;
 
