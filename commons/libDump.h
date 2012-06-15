@@ -36,6 +36,7 @@
 namespace libDump {
 
     std::string classicDump ( std::string input );
+    std::string decodeHexText ( std::string raw );
 
 }
 

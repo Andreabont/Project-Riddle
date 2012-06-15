@@ -87,8 +87,8 @@ void libNetwork::stream::factory ( std::string newflow ) {
     ipAddress[1] = ; */
     port[0] =  boost::lexical_cast<uint16_t> ( section[6] );
     port[1] =  boost::lexical_cast<uint16_t> ( section[7] );
-    flow[0] = section[8];
-    flow[1] = section[9];
+    charStream[0] = section[8];
+    charStream[1] = section[9];
 
 }
 
@@ -116,7 +116,7 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
         if ( newPacket->isACK() ) { // Se c'è ACK setto il flag sul pacchetto corrispondente, se c'è.
 
-            for ( std::list<libNetwork::TCPv4packet*>::iterator it = buffer[a].begin(); it != buffer[a].end(); it++ ) {
+            for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[a].begin(); it != packetBuffer[a].end(); it++ ) {
 
                 if ( ( *it )->getSequenceNumber() == newPacket->getAcknowledgmentNumber() - ( ( *it )->getPayLoad().size() /2 ) ) {
                     ( *it )->public_flag = true;
@@ -127,7 +127,7 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
         }
 
         if ( newPacket->getPayLoad().size() != 0 ) { // Salvo il pacchetto solo se ha del payload.
-            buffer[b].push_back ( newPacket );
+            packetBuffer[b].push_back ( newPacket );
         }
 
         return true;
@@ -144,12 +144,12 @@ void libNetwork::stream::flushBuffer ( int number ) {
 
         isFound = false;
 
-        for ( std::list<libNetwork::TCPv4packet*>::iterator it = buffer[number].begin(); it != buffer[number].end(); it++ ) {
+        for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[number].begin(); it != packetBuffer[number].end(); it++ ) {
             if ( sequenceNumber[number] + 1 == ( *it )->getSequenceNumber() && ( *it )->public_flag ) {
                 std::string payload = ( *it )->getPayLoad();
-                flow[number] += payload;
+                charStream[number] += payload;
                 sequenceNumber[number] += payload.size() /2; // unsigned, si azzera come avviene nel tcp.
-                buffer[number].remove ( *it );
+                packetBuffer[number].remove ( *it );
                 isFound = true;
                 break;
             }
@@ -174,7 +174,7 @@ std::string libNetwork::stream::exportFlow() {
     stdstring << macAddress[0].to_string() << "!" << macAddress[1].to_string() << "!";
     stdstring << ipAddress[0].to_string() << "!" << ipAddress[1].to_string() << "!";
     stdstring << port[0] << "!" << port[1] << "!";
-    stdstring << flow[0] << "!" << flow[1];
+    stdstring << charStream[0] << "!" << charStream[1];
     return stdstring.str();;
 }
 
@@ -184,7 +184,7 @@ uint64_t libNetwork::stream::getBufferLength() {
 
     for ( int i = 0; i <= 1; i++ ) {
 
-        for ( std::list<libNetwork::TCPv4packet*>::iterator it = buffer[i].begin(); it != buffer[i].end(); it++ ) {
+        for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[i].begin(); it != packetBuffer[i].end(); it++ ) {
 
             bufferlenght += ( *it )->getPayloadLength();
 
@@ -196,7 +196,7 @@ uint64_t libNetwork::stream::getBufferLength() {
 }
 
 uint64_t libNetwork::stream::getFlowLength() {
-    return ( flow[0].length() + flow[1].length() ) /2;
+    return ( charStream[0].length() + charStream[1].length() ) /2;
 }
 
 uint64_t libNetwork::stream::getTimeEpoch() {
@@ -243,10 +243,10 @@ bool libNetwork::stream::isFIN() {
     return flagFirstFIN && flagSecondFIN;
 }
 
-std::string libNetwork::stream::getFirstBuffer() {
-    return flow[0];
+std::string libNetwork::stream::getFirstCharStream() {
+    return charStream[0];
 }
 
-std::string libNetwork::stream::getSecondBuffer() {
-    return flow[1];
+std::string libNetwork::stream::getSecondCharStream() {
+    return charStream[1];
 }

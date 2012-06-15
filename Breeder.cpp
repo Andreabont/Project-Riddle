@@ -32,6 +32,8 @@
 #include <boost/regex.hpp>
 #include <boost/program_options.hpp>
 #include "./commons/classPacket.h"
+#include "./commons/classFlow.h"
+#include "./commons/libDump.h"
 
 using namespace std;
 using namespace boost::program_options;
@@ -66,11 +68,23 @@ int main ( int argc, char **argv ) {
 
     while ( 1 ) {
         try {
-            string r_flux;
+            string r_flux, a_flux, b_flux;
             getline ( cin,r_flux );
             if ( cin.eof() ) break;
 
-// TODO
+            stream * flow = new stream();
+            flow->factory ( r_flux );
+
+            a_flux = libDump::decodeHexText ( flow->getFirstCharStream() );
+            b_flux = libDump::decodeHexText ( flow->getSecondCharStream() );
+	    
+	    //boost::regex reg ("HTTP.*", boost::regex_constants::icase, boost::regex_constants::perl);
+
+           // if(boost::regex_search(a_flux, reg, boost::regex_constants::format_perl) || boost::regex_search(b_flux, reg, boost::regex_constants::format_perl)) {
+                cout << flow->exportFlow() << endl;
+           // }
+
+            delete flow;
 
         } catch ( packet::Overflow ) {
             std::cerr<<"Overflow! :-P"<<std::endl;

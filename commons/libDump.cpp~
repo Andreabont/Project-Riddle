@@ -35,87 +35,93 @@
 #include <stdint.h>
 #include "libDump.h"
 
-std::string libDump::classicDump(std::string input)
-{
+namespace libDump {
 
-    std::stringstream out;
-    int stringlen = input.length();
-    int stringtodo = input.length();
+    std::string libDump::classicDump ( std::string input ) {
 
-    for(uint16_t address = 0; address < stringlen; address += LINE*2)
-    {
-        out << "0x" << std::setfill('0') << std::setw(5) << std::hex << address/2 << " | ";
+        std::stringstream out;
+        int stringlen = input.length();
+        int stringtodo = input.length();
 
-        for(int i = 0; i < LINE*2; i+=2)
-        {
+        for ( uint16_t address = 0; address < stringlen; address += LINE*2 ) {
+            out << "0x" << std::setfill ( '0' ) << std::setw ( 5 ) << std::hex << address/2 << " | ";
 
-            if(i < stringtodo)
-            {
+            for ( int i = 0; i < LINE*2; i+=2 ) {
 
-                out << std::hex << input[address + i];
-                out << std::hex << input [address + i + 1] << " ";
+                if ( i < stringtodo ) {
 
-            }
-            else
-            {
+                    out << std::hex << input[address + i];
+                    out << std::hex << input [address + i + 1] << " ";
 
-                out << "   ";
+                } else {
 
-            }
+                    out << "   ";
 
-            if(i == LINE-2)
-            {
-                out << " ";
-            }
-
-        }
-
-        out << "| ";
-
-        for(int i = 0; i < LINE*2; i+=2)
-        {
-
-            if(i < stringtodo)
-            {
-
-                std::string comp;
-                comp += (char)input[address + i];
-                comp += (char)input[address + i + 1];
-                std::stringstream convert(comp);
-                int temp;
-                convert >> std::hex >> temp;
-                if((temp>32)&&(temp<128))
-                {
-                    out << (char)temp;
                 }
-                else
-                {
-                    out << ".";
+
+                if ( i == LINE-2 ) {
+                    out << " ";
                 }
 
             }
-            else
-            {
 
-                out << "   ";
+            out << "| ";
+
+            for ( int i = 0; i < LINE*2; i+=2 ) {
+
+                if ( i < stringtodo ) {
+
+                    std::string comp;
+                    comp += ( char ) input[address + i];
+                    comp += ( char ) input[address + i + 1];
+                    std::stringstream convert ( comp );
+                    int temp;
+                    convert >> std::hex >> temp;
+                    if ( ( temp>32 ) && ( temp<128 ) ) {
+                        out << ( char ) temp;
+                    } else {
+                        out << ".";
+                    }
+
+                } else {
+
+                    out << "   ";
+
+                }
+
+                if ( i == LINE-2 ) {
+                    out << " ";
+                }
+
+
 
             }
 
-            if(i == LINE-2)
-            {
-                out << " ";
-            }
+            out << std::endl;
 
-
+            stringtodo = stringtodo - LINE*2;
 
         }
 
-        out << std::endl;
+        return out.str();
+    }
 
-        stringtodo = stringtodo - LINE*2;
+    std::string decodeHexText ( std::string raw ) {
+
+        std::string text;
+
+        for ( int i = 0; i <= raw.size(); i += 2 ) {
+            std::string comp;
+            comp += ( char ) raw[i];
+            comp += ( char ) raw[i+1];
+            std::stringstream convert ( comp );
+            int temp;
+            convert >> std::hex >> temp;
+            text += ( char ) temp;
+        }
+
+        return text;
 
     }
 
-    return out.str();
 }
-

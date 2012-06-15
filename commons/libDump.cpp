@@ -35,6 +35,7 @@
 #include <stdint.h>
 #include "libDump.h"
 
+
 std::string libDump::classicDump ( std::string input ) {
 
     std::stringstream out;
@@ -104,3 +105,20 @@ std::string libDump::classicDump ( std::string input ) {
     return out.str();
 }
 
+std::string libDump::decodeHexText ( std::string raw ) {
+
+    std::string text;
+
+    for ( int i = 0; i <= raw.size(); i += 2 ) {
+        std::string comp;
+        comp += ( char ) raw[i];
+        comp += ( char ) raw[i+1];
+        std::stringstream convert ( comp );
+        int temp;
+        convert >> std::hex >> temp;
+        text += ( char ) temp;
+    }
+
+    return text;
+
+}

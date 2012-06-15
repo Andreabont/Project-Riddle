@@ -35,7 +35,6 @@
 #include "../commons/classPacket.h"
 #include "../commons/classFlow.h"
 
-std::string decodeHexText ( std::string raw );
 void writeout ( libNetwork::stream* stream, bool tofile );
 std::string exportFormattedRawFlow ( libNetwork::stream* stream );
 

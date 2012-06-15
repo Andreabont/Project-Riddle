@@ -30,7 +30,7 @@ find_package(Curses)
 
 target_link_libraries(riddle ${Boost_LIBRARIES})
 target_link_libraries(riddle ${LIBPCAP})
-target_link_libraries(cigarette libDump)
+target_link_libraries(riddle libDump)
 
 target_link_libraries(cigarette ${Boost_LIBRARIES})
 target_link_libraries(cigarette ${CMAKE_THREAD_LIBS_INIT})
@@ -45,7 +45,9 @@ target_link_libraries(ranging libNetwork)
 target_link_libraries(pursuer ${Boost_LIBRARIES})
 target_link_libraries(pursuer ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(pursuer libNetwork)
+target_link_libraries(pursuer libDump)
 
 target_link_libraries(breeder ${Boost_LIBRARIES})
 target_link_libraries(breeder ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(breeder libNetwork)
+target_link_libraries(breeder libDump)

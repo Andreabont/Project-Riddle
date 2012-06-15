@@ -37,25 +37,8 @@
 #include "../commons/classPacket.h"
 #include "../commons/classMacAddress.h"
 #include "../commons/classFlow.h"
+#include "./commons/libDump.h"
 #include "libPursuer.h"
-
-std::string decodeHexText ( std::string raw ) {
-
-    std::string text;
-
-    for ( int i = 0; i <= raw.size(); i += 2 ) {
-        std::string comp;
-        comp += ( char ) raw[i];
-        comp += ( char ) raw[i+1];
-        std::stringstream convert ( comp );
-        int temp;
-        convert >> std::hex >> temp;
-        text += ( char ) temp;
-    }
-
-    return text;
-
-}
 
 void writeout ( libNetwork::stream* stream, bool tofile ) {
     if ( tofile ) {
@@ -71,7 +54,7 @@ void writeout ( libNetwork::stream* stream, bool tofile ) {
             myfile.close();
         }
     } else {
-        std::cout << exportFormattedRawFlow ( stream ) << std::endl;
+        std::cout << stream->exportFlow() << std::endl;
     }
 }
 
@@ -83,8 +66,8 @@ std::string exportFormattedRawFlow ( libNetwork::stream* stream ) {
     std::stringstream stdstring;
     stdstring << ">> Two-way flow between " << stream->getFirstIpAddress().to_string() << ":" << first_port << " and " << stream->getSecondIpAddress().to_string() << ":" << second_port << std::endl;
     stdstring << ">> " << stream->getFirstIpAddress().to_string() << ":" << first_port << " -> " << stream->getSecondIpAddress().to_string() << ":" << second_port << std::endl;
-    stdstring << decodeHexText ( stream->getFirstPort() ) << std::endl;
+    stdstring << libDump::decodeHexText ( stream->getFirstCharStream() ) << std::endl;
     stdstring << ">> " << stream->getSecondIpAddress().to_string() << ":" << second_port << " -> " << stream->getFirstIpAddress().to_string() << ":" << first_port << std::endl;
-    stdstring << decodeHexText ( stream->getSecondPort() ) << std::endl;
+    stdstring << libDump::decodeHexText ( stream->getSecondCharStream() ) << std::endl;
     return stdstring.str();
 }

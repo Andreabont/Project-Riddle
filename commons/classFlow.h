@@ -53,27 +53,49 @@ namespace libNetwork {
         boost::asio::ip::address ipAddress[2];
         uint16_t port[2];
 
-        std::list<libNetwork::TCPv4packet*> buffer[2];
+        std::list<libNetwork::TCPv4packet*> packetBuffer[2];
         uint32_t sequenceNumber[2];
-        std::string flow[2];
+        std::string charStream[2];
 
         void flushBuffer ( int number );
 
         public:
+        /** Initialize flow with the first packet of the TCP handshake (SYN) */
         bool factory ( libNetwork::TCPv4packet *packet );
+
+        /** Initialize flow with string (classFlow protocol) */
         void factory ( std::string flow );
 
+
+        /** Put new packet in the flow */
         bool addPacket ( libNetwork::TCPv4packet *newPacket );
 
+        /**
+         * Read the first packet buffer and save the payload in the first char stream.
+         * Stop if the flow is interrupted.
+         */
         void flushFirstBuffer();
 
-        std::string getFirstBuffer();
-
+        /**
+         * Read the second packet buffer and save the payload in the second char stream.
+         * Stop if the flow is interrupted.
+         */
         void flushSecondBuffer();
 
-        std::string getSecondBuffer();
+        /**
+         * Return the first char stream.
+         */
+        std::string getFirstCharStream();
 
+        /**
+         * Return the second char stream.
+         */
+        std::string getSecondCharStream();
+
+        /** return epoch */
         uint64_t getTimeEpoch();
+
+        /** return milliseconds after epoch */
         uint32_t getTimeMillis();
         libNetwork::mac_address getFirstMacAddress();
         libNetwork::mac_address getSecondMacAddress();
