@@ -46,9 +46,6 @@ namespace libNetwork {
         uint64_t timeEpoch;
         uint32_t timeMillis;
 
-        bool flagFirstFIN;
-        bool flagSecondFIN;
-
         libNetwork::mac_address macAddress[2];
         boost::asio::ip::address ipAddress[2];
         uint16_t port[2];
@@ -56,6 +53,8 @@ namespace libNetwork {
         std::list<libNetwork::TCPv4packet*> packetBuffer[2];
         uint32_t sequenceNumber[2];
         std::string charStream[2];
+
+        bool fluxFIN[2];
 
         void flushBuffer ( int number );
 
@@ -107,13 +106,15 @@ namespace libNetwork {
         uint32_t getSecondSN();
 
         /* Ritorna in byte la somma dei payload dei pachetti nel buffer */
-        uint64_t getBufferLength();
+        uint64_t getFirstBufferLength();
+        uint64_t getSecondBufferLength();
 
         /* Ritorna lunghezza in byte dei due flussi in uscita */
         uint64_t getFlowLength();
 
         std::string exportFlow();
-        bool isFIN();
+        bool firstFIN();
+        bool secondFIN();
 
     };
 

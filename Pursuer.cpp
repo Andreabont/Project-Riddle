@@ -33,6 +33,9 @@
 #include <string>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
+#include <boost/thread.hpp>
+#include <boost/date_time.hpp>
+#include <sys/time.h>
 #include "./libraries/libCigarette.h"
 #include "./commons/classMacAddress.h"
 #include "./commons/classPacket.h"
@@ -42,6 +45,56 @@ using namespace std;
 using namespace boost;
 using namespace boost::program_options;
 using namespace libNetwork;
+
+boost::mutex mymutex;
+bool thread_alive;
+
+/** Hello, my job is clean up and finalize the flows */
+void dustman ( std::list<stream*> packet_stream ) {
+
+    static boost::posix_time::seconds delay ( 1 );
+    static int maxBufferLength = 512;		// byte
+    static int maxFlowLength = 2*1024*1024;	// byte
+    static unsigned int maxTime = 20;		// second
+
+    while ( 1 ) {
+
+        boost::mutex::scoped_lock mylock ( mymutex, boost::defer_lock ); // defer_lock makes it initially unlocked
+
+        mylock.lock();
+
+        cerr << "take lock" << endl;
+
+        for ( list<stream*>::iterator element = packet_stream.begin(); element != packet_stream.end(); element++ ) {
+
+            if ( ! ( *element )->firstFIN() && ( *element )->getFirstBufferLength() > maxBufferLength ) {
+                ( *element )->flushFirstBuffer();
+            }
+
+            if ( ! ( *element )->secondFIN() && ( *element )->getSecondBufferLength() > maxBufferLength ) {
+                ( *element )->flushSecondBuffer();
+            }
+
+            if ( ( ( *element )->firstFIN() && ( *element )->secondFIN() ) || ( *element )->getFlowLength() > maxFlowLength || time ( NULL ) > ( *element )->getTimeEpoch() + maxTime ) {
+
+                ( *element )->flushFirstBuffer();
+                ( *element )->flushSecondBuffer();
+                writeout ( ( *element ), false );
+                packet_stream.erase ( element );
+            }
+
+        }
+
+        mylock.unlock();
+
+        if ( !thread_alive ) {
+            return;
+        }
+
+        boost::this_thread::sleep ( delay );
+    }
+
+}
 
 int main ( int argc, char **argv ) {
     options_description desc ( "Pursuer - Network TCP Follower" );
@@ -61,6 +114,12 @@ int main ( int argc, char **argv ) {
 
     std::list<stream*> packet_stream;
 
+    thread_alive == true;
+
+    boost::thread workerThread ( dustman, packet_stream );
+
+    workerThread.join();
+
     string r_packet;
 
     while ( 1 ) {
@@ -78,6 +137,9 @@ int main ( int argc, char **argv ) {
 
                     TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*> ( pkg );
 
+                    boost::mutex::scoped_lock mylock ( mymutex, boost::defer_lock ); // defer_lock makes it initially unlocked
+
+                    mylock.lock();
 
                     if ( pkg_tcpv4->isSYN() && !pkg_tcpv4->isACK() ) {
 
@@ -95,14 +157,6 @@ int main ( int argc, char **argv ) {
 
                                 if ( pkg_tcpv4->isSYN() ) {
                                     ( *it )->factory ( pkg_tcpv4 );
-                                } else if ( pkg_tcpv4->isRST() || pkg_tcpv4->isFIN() ) {
-                                    ( *it )->flushFirstBuffer();
-                                    ( *it )->flushSecondBuffer();
-
-                                    writeout ( ( *it ), vm.count ( "tofile" ) );
-
-                                    packet_stream.remove ( *it );
-                                    break;
                                 } else {
                                     ( *it )->addPacket ( pkg_tcpv4 );
                                 }
@@ -113,34 +167,14 @@ int main ( int argc, char **argv ) {
 
                     }
 
-                }
-
-            }
-
-
-            // Regole di pulizia.
-
-            for ( list<stream*>::iterator it2 = packet_stream.begin(); it2 != packet_stream.end(); it2++ ) {
-
-                if ( ( *it2 )->getFlowLength() > ( 100*1024*1024 ) || ( *it2 )->getTimeEpoch() > pkg->getEpoch() + ( 10*60 ) ) {
-
-                    writeout ( ( *it2 ), vm.count ( "tofile" ) );
-
-                    packet_stream.erase ( it2 );
-                    break;
-
-                } else if ( ( *it2 )->getBufferLength() > 1024 ) {
-
-                    ( *it2 )->flushFirstBuffer();
-                    ( *it2 )->flushSecondBuffer();
+                    mylock.unlock();
 
                 }
 
             }
-
-
 
         } catch ( packet::Overflow ) {
+            thread_alive == false;
             std::cerr<<"Overflow! :-P"<<std::endl;
             return EXIT_FAILURE;
         }
@@ -148,9 +182,18 @@ int main ( int argc, char **argv ) {
 
     // Esporto fussi non terminati prima dell'uscita.
     // Non usare il for, non va d'accordo con gli erase.
+
+    thread_alive == false;
+
+    boost::mutex::scoped_lock lastlock ( mymutex, boost::defer_lock ); // defer_lock makes it initially unlocked
+
+    lastlock.lock();
+
     while ( !packet_stream.empty() ) {
 
         list<stream*>::iterator it3 = packet_stream.begin();
+        ( *it3 )->flushFirstBuffer();
+        ( *it3 )->flushSecondBuffer();
         writeout ( ( *it3 ), vm.count ( "tofile" ) );
         packet_stream.erase ( it3 );
 
@@ -158,4 +201,5 @@ int main ( int argc, char **argv ) {
 
     return EXIT_SUCCESS;
 }
+
 

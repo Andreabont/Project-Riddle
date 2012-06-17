@@ -58,7 +58,7 @@ int main ( int argc, char **argv ) {
     list<std::string> regularexpressions;
 
     if ( vm.count ( "http" ) ) {
-        regularexpressions.push_front ( "HTTP.*" );
+        regularexpressions.push_front ( ".*HTTP.*" );
     }
 
     if ( regularexpressions.empty() ) {
@@ -78,7 +78,7 @@ int main ( int argc, char **argv ) {
             a_flux = libDump::decodeHexText ( flow->getFirstCharStream() );
             b_flux = libDump::decodeHexText ( flow->getSecondCharStream() );
 
-            boost::regex regexp ( ".*" ); // TODO
+            boost::regex regexp ( ".*HTTP.*" ); // TODO
 
             if ( boost::regex_match ( a_flux, regexp ) || boost::regex_match ( b_flux, regexp ) ) {
                 cout << flow->exportFlow() << endl;

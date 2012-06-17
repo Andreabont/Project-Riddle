@@ -51,8 +51,8 @@ bool libNetwork::stream::factory ( libNetwork::TCPv4packet *packet ) {
             port[1] = packet->getTargetPort();
             sequenceNumber[0] = packet->getSequenceNumber();
             sequenceNumber[1] = 0;
-            flagFirstFIN = false;
-            flagSecondFIN = false;
+            fluxFIN[0] = false;
+            fluxFIN[1] = false;
 
             delete packet;
             return true;
@@ -81,10 +81,10 @@ void libNetwork::stream::factory ( std::string newflow ) {
 
     timeEpoch = boost::lexical_cast<uint64_t> ( section[0] );
     timeMillis = boost::lexical_cast<uint64_t> ( section[1] );
-   /* macAddress[0] = new libNetwork::mac_address ( section[2] );
-    macAddress[1] = new libNetwork::mac_address ( section[3] );
-    ipAddress[0] = ;
-    ipAddress[1] = ; */
+    /* macAddress[0] = new libNetwork::mac_address ( section[2] );
+     macAddress[1] = new libNetwork::mac_address ( section[3] );
+     ipAddress[0] = ;
+     ipAddress[1] = ; */
     port[0] =  boost::lexical_cast<uint16_t> ( section[6] );
     port[1] =  boost::lexical_cast<uint16_t> ( section[7] );
     charStream[0] = section[8];
@@ -126,8 +126,17 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
         }
 
-        if ( newPacket->getPayLoad().size() != 0 ) { // Salvo il pacchetto solo se ha del payload.
+        if ( newPacket->getPayLoad().size() != 0 && !fluxFIN[b] ) { // Salvo il pacchetto solo se ha del payload.
             packetBuffer[b].push_back ( newPacket );
+        }
+
+        if ( newPacket->isFIN() ) {
+            fluxFIN[b] = true;
+        }
+
+        if ( newPacket->isRST() ) {
+            fluxFIN[0] = true;
+            fluxFIN[1] = true;
         }
 
         return true;
@@ -178,21 +187,30 @@ std::string libNetwork::stream::exportFlow() {
     return stdstring.str();;
 }
 
-uint64_t libNetwork::stream::getBufferLength() {
+uint64_t libNetwork::stream::getFirstBufferLength() {
 
     uint64_t bufferlenght = 0;
 
-    for ( int i = 0; i <= 1; i++ ) {
+    for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[0].begin(); it != packetBuffer[0].end(); it++ ) {
 
-        for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[i].begin(); it != packetBuffer[i].end(); it++ ) {
-
-            bufferlenght += ( *it )->getPayloadLength();
-
-        }
+        bufferlenght += ( *it )->getPayloadLength();
 
     }
 
+
     return bufferlenght;
+}
+
+uint64_t libNetwork::stream::getSecondBufferLength() {
+
+    uint64_t bufferlenght = 0;
+
+    for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[1].begin(); it != packetBuffer[1].end(); it++ ) {
+
+        bufferlenght += ( *it )->getPayloadLength();
+
+    }
+
 }
 
 uint64_t libNetwork::stream::getFlowLength() {
@@ -239,8 +257,12 @@ uint32_t libNetwork::stream::getSecondSN() {
     return sequenceNumber[1];
 }
 
-bool libNetwork::stream::isFIN() {
-    return flagFirstFIN && flagSecondFIN;
+bool libNetwork::stream::firstFIN() {
+    return fluxFIN[0];
+}
+
+bool libNetwork::stream::secondFIN() {
+    return fluxFIN[1];
 }
 
 std::string libNetwork::stream::getFirstCharStream() {
