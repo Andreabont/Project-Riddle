@@ -1,30 +1,30 @@
 /**
- * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- *
- * Name        :  Project Riddle
- * Author      :  Andrea Bontempi
- * Version     :  0.1 aplha
- * Description :  Modular Network Sniffer
- *
- * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- *
- * This file is part of the project Riddle.
- *
- *  The project Riddle is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  The project Riddle is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
- *
- * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
- */
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+*
+* Name        :  Project Riddle
+* Author      :  Andrea Bontempi
+* Version     :  0.1 aplha
+* Description :  Modular Network Sniffer
+*
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+*
+* This file is part of the project Riddle.
+*
+*  The project Riddle is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation, either version 3 of the License, or
+*  (at your option) any later version.
+*
+*  The project Riddle is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with this project.  If not, see <http://www.gnu.org/licenses/>.
+*
+* - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
+*/
 
 #include <cstdio>
 #include <stdint.h>
@@ -130,6 +130,10 @@ std::string libNetwork::packet::getDecimalIP ( int string_cursor ) {
 libNetwork::mac_address libNetwork::packet::getMacAddress ( int string_cursor ) {
     mac_address mac_temp ( this->getHexString ( string_cursor, 6 ) );
     return mac_temp;
+}
+
+boost::asio::ip::address libNetwork::packet::getIPv4Address ( int string_cursor ) {
+//TODO
 }
 
 bool libNetwork::packet::isArp() {
@@ -289,6 +293,21 @@ bool libNetwork::IPv4packet::verifyIPChecksum() {
     return ( ( sum & 0xFFFF ) + ( sum >>= 16 ) == 0xFFFF );
 }
 
+int libNetwork::IPv4packet::getFlagsIP() {
+    int flag;
+    std::stringstream convert ( this->getHexString ( IPv4_OFFSET+6, 1 ) );
+    convert>>std::hex>>flag;
+    return flag;
+}
+
+bool libNetwork::IPv4packet::isDF() {
+    return ( this->getFlagsIP() & 64 );
+}
+
+bool libNetwork::IPv4packet::isMF() {
+    return ( this->getFlagsIP() & 32 );
+}
+
 bool libNetwork::IPv4packet::isTCP() {
     return ( this->getProtocolType() == IPV4_TYPE_TCP );
 }
@@ -385,7 +404,7 @@ unsigned int libNetwork::TCPv4packet::getPayloadLength() {
     return ( this->getPayLoad().length() ) /2;
 }
 
-int libNetwork::TCPv4packet::getFlags() {
+int libNetwork::TCPv4packet::getFlagsTCP() {
     int flag;
     std::stringstream convert ( this->getHexString ( TCP_OFFSET+13, 1 ) );
     convert>>std::hex>>flag;
@@ -447,35 +466,35 @@ std::string libNetwork::TCPv4packet::getPayLoad() {
 }
 
 bool libNetwork::TCPv4packet::isCWR() {
-    return ( this->getFlags() & 128 );
+    return ( this->getFlagsTCP() & 128 );
 }
 
 bool libNetwork::TCPv4packet::isECE() {
-    return ( this->getFlags() & 64 );
+    return ( this->getFlagsTCP() & 64 );
 }
 
 bool libNetwork::TCPv4packet::isURG() {
-    return ( this->getFlags() & 32 );
+    return ( this->getFlagsTCP() & 32 );
 }
 
 bool libNetwork::TCPv4packet::isACK() {
-    return ( this->getFlags() & 16 );
+    return ( this->getFlagsTCP() & 16 );
 }
 
 bool libNetwork::TCPv4packet::isPSH() {
-    return ( this->getFlags() & 8 );
+    return ( this->getFlagsTCP() & 8 );
 }
 
 bool libNetwork::TCPv4packet::isRST() {
-    return ( this->getFlags() & 4 );
+    return ( this->getFlagsTCP() & 4 );
 }
 
 bool libNetwork::TCPv4packet::isSYN() {
-    return ( this->getFlags() & 2 );
+    return ( this->getFlagsTCP() & 2 );
 }
 
 bool libNetwork::TCPv4packet::isFIN() {
-    return ( this->getFlags() & 1 );
+    return ( this->getFlagsTCP() & 1 );
 }
 
 bool libNetwork::TCPv4packet::isOption() {

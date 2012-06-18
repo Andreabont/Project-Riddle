@@ -127,7 +127,7 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
         }
 
-        if ( newPacket->getPayloadLength() != 0 && !fluxFIN[b] ) { // Salvo il pacchetto solo se ha del payload.
+        if ( newPacket->getPayloadLength() != 0 ) { // Salvo il pacchetto solo se ha del payload.
             packetBuffer[b].push_back ( newPacket );
         }
 
@@ -155,8 +155,9 @@ void libNetwork::stream::flushBuffer ( int number ) {
         isFound = false;
 
         for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[number].begin(); it != packetBuffer[number].end(); it++ ) {
+	   std::cerr << "Cerco " << sequenceNumber[number] << " " << ( *it )->getSequenceNumber() << std::endl;
             if ( sequenceNumber[number] == ( *it )->getSequenceNumber() && ( *it )->public_flag && ( *it )->getPayloadLength() != 0 ) {
-	      std::cerr << "Packet processato" << ( *it )->getSequenceNumber() << std::endl;
+	      std::cerr << "Packet processato " << number << " - " << ( *it )->getSequenceNumber() << std::endl;
                 std::string payload = ( *it )->getPayLoad();
                 charStream[number] += payload;
                 sequenceNumber[number] += ( *it )->getPayloadLength(); // unsigned, si azzera come avviene nel tcp.

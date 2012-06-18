@@ -99,6 +99,10 @@ int main ( int argc, char **argv ) {
                 cout << "                    ProtocolType: 0x" << pkg_ipv4->getProtocolType() << " ("<< ipv4_type_decode ( pkg_ipv4->getProtocolType() ) << ")" << endl;
 
                 if ( vm.count ( "ipv4" ) ) {
+		    cout << "                    + Flags                  ";
+		    if ( pkg_ipv4->isDF() ) cout << "Don't Fragment ";
+		    if ( pkg_ipv4->isMF() ) cout << "More Fragments ";
+		    cout << endl;
                     cout << "                    + Time To Live           " << std::dec << pkg_ipv4->getTTL() << endl;
                     cout << "                    + Identification         0x" << std::hex << pkg_ipv4->getIdentity() << endl;;
                     cout << "                    + Checksum               0x" << std::hex << pkg_ipv4->getIPChecksum();

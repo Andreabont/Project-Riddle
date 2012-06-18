@@ -191,6 +191,15 @@ namespace libNetwork {
 
         /** Verify checksum **/
         bool verifyIPChecksum();
+	
+	/** Prende i flag del header IP, da processare */
+	int getFlagsIP();
+	
+	/** If "Don't Fragment" flag is up */
+	bool isDF();
+	
+	/** If "More Fragments" flag is up */
+	bool isMF();
 
         /** True se incapsula un pacchetto TCP */
         bool isTCP();
@@ -232,7 +241,7 @@ namespace libNetwork {
         unsigned int getPayloadLength();
 
         /** Ritorna i flag TCP in formato raw, da processare */
-        int getFlags();
+        int getFlagsTCP();
 
         /** Ritorna dimensione della finestra di ricezione */
         unsigned int getWindowSize();
