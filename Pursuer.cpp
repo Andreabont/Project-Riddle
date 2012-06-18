@@ -53,8 +53,8 @@ void dustman ( std::list<stream*> *packet_stream, bool tofile ) {
 
     static boost::posix_time::seconds delay ( 2 );
     static int maxBufferLength = 512;		// byte
-    static int maxFlowLength = 2*1024*1024;	// byte
-    static unsigned int maxTime = 20;		// second
+    static int maxFlowLength = 10*1024*1024;	// byte
+    static unsigned int maxTime = 5*60;		// second
 
     while ( 1 ) {
 

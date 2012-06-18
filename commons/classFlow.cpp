@@ -126,7 +126,7 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
         }
 
-        if ( newPacket->getPayLoad().size() != 0 && !fluxFIN[b] ) { // Salvo il pacchetto solo se ha del payload.
+        if ( newPacket->getPayloadLength() != 0 && !fluxFIN[b] ) { // Salvo il pacchetto solo se ha del payload.
             packetBuffer[b].push_back ( newPacket );
         }
 
