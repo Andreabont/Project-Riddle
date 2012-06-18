@@ -46,6 +46,8 @@ void writeout ( libNetwork::stream* stream, bool tofile ) {
         char buffer[10];
         filename << "flow_";
         filename << stream->getTimeEpoch();
+	filename << "_";
+	filename << stream->getTimeMillis();
         filename << ".txt";
         std::ofstream myfile;
         myfile.open ( filename.str().c_str() );

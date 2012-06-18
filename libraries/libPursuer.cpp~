@@ -37,7 +37,7 @@
 #include "../commons/classPacket.h"
 #include "../commons/classMacAddress.h"
 #include "../commons/classFlow.h"
-#include "./commons/libDump.h"
+#include "../commons/libDump.h"
 #include "libPursuer.h"
 
 void writeout ( libNetwork::stream* stream, bool tofile ) {

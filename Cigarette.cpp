@@ -120,8 +120,11 @@ int main ( int argc, char **argv ) {
 
                     if ( vm.count ( "tcp" ) ) {
                         cout << "                    + Sequence Number        " << pkg_tcpv4->getSequenceNumber() << endl;
+			cout << "                    + Next Sequence Number   " << pkg_tcpv4->getSequenceNumber() + pkg_tcpv4->getPayloadLength() << endl;
                         cout << "                    + Acknowledgment Number  " << pkg_tcpv4->getAcknowledgmentNumber() << endl;
                         cout << "                    + Header Length          " << pkg_tcpv4->getHeaderLength() << " byte" << endl;
+			cout << "                    + Payload Length         " << pkg_tcpv4->getPayloadLength() << " byte" << endl;
+			cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
                         cout << "                    + Flags                  ";
                         if ( pkg_tcpv4->isSYN() ) cout << "SYN ";
                         if ( pkg_tcpv4->isFIN() ) cout << "FIN ";
@@ -132,7 +135,6 @@ int main ( int argc, char **argv ) {
                         if ( pkg_tcpv4->isECE() ) cout << "ECE ";
                         if ( pkg_tcpv4->isCWR() ) cout << "CWR ";
                         cout << endl;
-                        cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
                         cout << "                    + Checksum               0x" << std::hex << pkg_tcpv4->getTCPChecksum() << endl;
                         cout << "                    + Urgent Pointer         0x" << std::hex << pkg_tcpv4->getUrgentPointer() << endl;
                         std::map<int, std::string> options = pkg_tcpv4->getOptionMap();
