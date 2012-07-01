@@ -38,7 +38,7 @@ class device {
     boost::asio::ip::address ip;
     long int timeEpoch;
     public:
-    device ( libNetwork::mac_address newMac, boost::asio::ip::address newIp, long int newEpoch );
+    device ( libNetwork::mac_address newMac, boost::asio::ip::address newIp);
     libNetwork::mac_address getMacAddress();
     boost::asio::ip::address getIpAddress();
     long int getEpoch();

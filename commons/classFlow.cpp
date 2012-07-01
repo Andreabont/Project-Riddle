@@ -156,11 +156,11 @@ void libNetwork::stream::flushBuffer ( int number ) {
 
         for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[number].begin(); it != packetBuffer[number].end(); it++ ) {
 	   std::cerr << "Cerco " << sequenceNumber[number] << " " << ( *it )->getSequenceNumber() << std::endl;
-            if ( sequenceNumber[number] == ( *it )->getSequenceNumber() && ( *it )->public_flag && ( *it )->getPayloadLength() != 0 ) {
+            if ( sequenceNumber[number] == ( *it )->getSequenceNumber() && ( *it )->getPayloadLength() != 0 && ( *it )->public_flag) {
 	      std::cerr << "Packet processato " << number << " - " << ( *it )->getSequenceNumber() << std::endl;
                 std::string payload = ( *it )->getPayLoad();
                 charStream[number] += payload;
-                sequenceNumber[number] += ( *it )->getPayloadLength(); // unsigned, si azzera come avviene nel tcp.
+                sequenceNumber[number] += ( *it )->getPayloadLength(); // unsigned, si azzera come avviene nel tcp. 
                 packetBuffer[number].remove ( *it );
                 isFound = true;
                 break;

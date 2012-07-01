@@ -26,12 +26,13 @@
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
+#include <sys/time.h>
 #include "libRanging.h"
 
-device::device ( libNetwork::mac_address newMac, boost::asio::ip::address newIp, long int newEpoch ) {
+device::device ( libNetwork::mac_address newMac, boost::asio::ip::address newIp) {
     mac = newMac;
     ip = newIp;
-    timeEpoch = newEpoch;
+    timeEpoch = time ( NULL );
     return;
 }
 

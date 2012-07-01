@@ -34,6 +34,10 @@
 #include <list>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
+#include <boost/concept_check.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/date_time.hpp>
+#include <sys/time.h>
 
 #include <curses.h>
 #include "./commons/classMacAddress.h"
@@ -53,8 +57,108 @@ using namespace boost::gregorian;
 using namespace boost::posix_time;
 using namespace libNetwork;
 
+boost::mutex mymutex;
+
 void setHead();
-void printLine ( int countLine, string mac, string ip, long int epoch, long int lastEpoch );
+void printLine ( int countLine, string mac, string ip, long int epoch );
+
+void printer ( list<device> *found ) {
+
+    static boost::posix_time::seconds delay ( 1 );
+
+    while ( 1 ) {
+
+        boost::mutex::scoped_lock mylock ( mymutex );
+
+        clear();
+        setHead();
+
+        int countLine = 1;
+
+        list<device>::iterator r = found->begin();
+
+        while ( r != found->end() ) {
+
+            if ( time ( NULL ) > r->getEpoch() + TIMETOLIVE ) {
+
+                list<device>::iterator ex = r;
+                r++;
+                found->erase ( ex );
+
+            } else {
+
+                printLine ( countLine, r->getMacAddress().to_string(), r->getIpAddress().to_string(), r->getEpoch() );
+                r++;
+
+            }
+
+            countLine++;
+
+        }
+
+        mylock.unlock();
+
+        boost::this_thread::sleep ( delay );
+
+    }
+
+}
+
+void scribe ( list<device> *found ) {
+
+    string r_packet;
+    getline ( cin,r_packet );
+    if ( cin.eof() ) return;
+
+    while ( 1 ) {
+        try {
+
+            packet* pkg = packet::factory ( r_packet );
+
+            if ( pkg->isArp() ) {
+
+                boost::mutex::scoped_lock mylock ( mymutex );
+
+                ARPpacket *pkg_arp = dynamic_cast<ARPpacket*> ( pkg );
+
+                bool isFound = false;
+
+                list<device>::iterator p = found->begin();
+
+                while ( p != found->end() ) {
+
+                    if ( p->getMacAddress() == pkg_arp->getSenderMac() && p->getIpAddress() == pkg_arp->getSenderIp() ) {
+                        p->setEpoch ( pkg_arp->getEpoch() );
+                        isFound = true;
+                        break;
+                    }
+
+                    p++;
+                }
+
+                if ( !isFound ) {
+                    device newDevice ( pkg_arp->getSenderMac(), pkg_arp->getSenderIp() );
+                    found->push_back ( newDevice );
+                }
+
+                mylock.unlock();
+
+            }
+
+            delete pkg;
+            getline ( cin,r_packet );
+            if ( cin.eof() ) return;
+
+        } catch ( packet::Overflow ) {
+            cerr << "Overflow! :-P" << endl;
+            endwin();
+            return;
+        }
+
+
+    }
+
+}
 
 int main ( int argc, char **argv ) {
 
@@ -71,10 +175,6 @@ int main ( int argc, char **argv ) {
         cout<<desc<<"\n";
         return EXIT_SUCCESS;
     }
-
-    string r_packet;
-    getline ( cin,r_packet );
-    if ( cin.eof() ) return EXIT_SUCCESS;
 
     WINDOW *wnd;
 
@@ -96,82 +196,12 @@ int main ( int argc, char **argv ) {
 
     list<device> found;
 
-    long int lastEpoch = 0;
+    boost::thread scribe_t ( scribe, &found );
+    boost::thread printer_t ( printer, &found );
 
-    bool refresh_display;
+    scribe_t.join();
+    printer_t.join();
 
-    while ( 1 ) {
-        try {
-
-            packet* pkg = packet::factory ( r_packet );
-
-            refresh_display = ( pkg->getEpoch() - lastEpoch > THRESHOLD );
-
-            lastEpoch = pkg->getEpoch();
-
-            if ( pkg->isArp() ) {
-                ARPpacket *pkg_arp = dynamic_cast<ARPpacket*> ( pkg );
-
-                bool isFound = false;
-
-                list<device>::iterator p = found.begin();
-
-                while ( p != found.end() ) {
-
-                    if ( p->getMacAddress() == pkg_arp->getSenderMac() && p->getIpAddress() == pkg_arp->getSenderIp() ) {
-                        p->setEpoch ( lastEpoch );
-                        isFound = true;
-                        break;
-                    }
-
-                    p++;
-                }
-
-                if ( !isFound ) {
-                    device newDevice ( pkg_arp->getSenderMac(), pkg_arp->getSenderIp(), lastEpoch );
-                    found.push_back ( newDevice );
-                }
-            }
-
-            list<device>::iterator q = found.begin();
-
-            while ( q != found.end() ) {
-                if ( lastEpoch >= q->getEpoch() + TIMETOLIVE ) {
-                    q = found.erase ( q );
-                }
-
-                q++;
-            }
-
-            delete pkg;
-            getline ( cin,r_packet );
-            if ( cin.eof() ) break;
-
-        } catch ( packet::Overflow ) {
-            cerr << "Overflow! :-P" << endl;
-            endwin();
-            return EXIT_FAILURE;
-        }
-
-        if ( refresh_display ) {
-
-            clear();
-            setHead();
-
-            int countLine = 1;
-
-            list<device>::iterator r = found.begin();
-
-            while ( r != found.end() ) {
-
-                printLine ( countLine, r->getMacAddress().to_string(), r->getIpAddress().to_string(), r->getEpoch(), lastEpoch );
-
-                countLine++;
-                r++;
-            }
-        }
-
-    }
     endwin();
     return EXIT_SUCCESS;
 }
@@ -213,7 +243,7 @@ void setHead() {
     return;
 }
 
-void printLine ( int countLine, string mac, string ip, long int epoch, long int lastEpoch ) {
+void printLine ( int countLine, string mac, string ip, long int epoch ) {
 
     int ip_length = ip.length();
 
@@ -230,7 +260,7 @@ void printLine ( int countLine, string mac, string ip, long int epoch, long int 
     int ind2;
 
     if ( head = ( char* ) malloc ( cols * sizeof ( char ) ) ) {
-        int ttl = TIMETOLIVE - ( lastEpoch - epoch );
+        int ttl = TIMETOLIVE - ( time ( NULL ) - epoch );
         snprintf ( head, cols, " %s | %s | %d | %d", mac.c_str(), ip.c_str(), epoch, ttl );
 
         ind2 = strlen ( head );
