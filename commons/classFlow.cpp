@@ -107,6 +107,7 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
             b = 0;
 
         } else if ( newPacket->getSenderPort() == port[1] ) {
+
             // Siamo nel secondo buffer
 
             a = 0;
@@ -119,8 +120,48 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
             for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[a].begin(); it != packetBuffer[a].end(); it++ ) {
 
-                if ( newPacket->getAcknowledgmentNumber() == ( *it )->getSequenceNumber() + ( *it )->getPayloadLength() ) {
+                if ( newPacket->getAcknowledgmentNumber() == ( *it )->getExpectedAcknowledgmentNumber() ) {
                     ( *it )->public_flag = true;
+
+                    uint32_t backExpected = ( *it )->getSequenceNumber(); // ripercorri indietro e setta a true il pacchetto che ha atteso ack su questo SN.
+
+                    bool endFlag = false;
+                    bool foundPacket = true;
+
+                    // Cerco solo paccetti più vecchi, non ha senso madare un ACK di un pacchetto non ancora ricevuto.
+
+                    if ( it != packetBuffer[a].begin() ) {
+
+                        while ( !endFlag && foundPacket ) {
+
+                            foundPacket = false;
+
+                            for ( std::list<libNetwork::TCPv4packet*>::iterator it2 = packetBuffer[a].begin(); it2 != it; it2++ ) {
+
+                                std::cout << "LOLs " << backExpected << std::endl;
+
+
+                                if ( ( *it2 )->getExpectedAcknowledgmentNumber() == backExpected ) {
+
+                                    foundPacket = true;
+
+                                    if ( ( *it2 )->public_flag == true ) {
+                                        endFlag = true;
+                                        break;
+                                    }
+
+                                    ( *it2 )->public_flag = true;
+                                    backExpected = ( *it2 )->getSequenceNumber();
+                                    break;
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
                     break;
                 }
             }
@@ -155,12 +196,12 @@ void libNetwork::stream::flushBuffer ( int number ) {
         isFound = false;
 
         for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[number].begin(); it != packetBuffer[number].end(); it++ ) {
-	   std::cerr << "Cerco " << sequenceNumber[number] << " " << ( *it )->getSequenceNumber() << std::endl;
-            if ( sequenceNumber[number] == ( *it )->getSequenceNumber() && ( *it )->getPayloadLength() != 0 && ( *it )->public_flag) {
-	      std::cerr << "Packet processato " << number << " - " << ( *it )->getSequenceNumber() << std::endl;
+            std::cerr << "Cerco " << sequenceNumber[number] << " " << ( *it )->getSequenceNumber() << std::endl;
+            if ( sequenceNumber[number] == ( *it )->getSequenceNumber() && ( *it )->getPayloadLength() != 0 && ( *it )->public_flag ) {
+                std::cerr << "Packet processato " << number << " - " << ( *it )->getSequenceNumber() << std::endl;
                 std::string payload = ( *it )->getPayLoad();
                 charStream[number] += payload;
-                sequenceNumber[number] += ( *it )->getPayloadLength(); // unsigned, si azzera come avviene nel tcp. 
+                sequenceNumber[number] += ( *it )->getPayloadLength(); // unsigned, si azzera come avviene nel tcp.
                 packetBuffer[number].remove ( *it );
                 isFound = true;
                 break;

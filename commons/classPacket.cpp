@@ -387,6 +387,10 @@ uint32_t libNetwork::TCPv4packet::getAcknowledgmentNumber() {
     return an;
 }
 
+uint32_t libNetwork::TCPv4packet::getExpectedAcknowledgmentNumber() {
+    return this->getSequenceNumber() + this->getPayloadLength();
+}
+
 unsigned int libNetwork::TCPv4packet::getHeaderLength() {
     /*
      * Sono utilizzati solo i primi 8 bit del byte, necessita traslazione.

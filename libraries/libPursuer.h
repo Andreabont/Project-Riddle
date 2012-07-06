@@ -31,11 +31,13 @@
 
 #include <list>
 #include <string>
+#include <list>
 #include "../commons/classMacAddress.h"
 #include "../commons/classPacket.h"
 #include "../commons/classFlow.h"
 
 void writeout ( libNetwork::stream* stream, bool tofile );
 std::string exportFormattedRawFlow ( libNetwork::stream* stream );
+bool isStream ( std::list< libNetwork::stream* >::iterator iter, libNetwork::TCPv4packet* pkg );
 
 #endif //LIBPURSUER_H

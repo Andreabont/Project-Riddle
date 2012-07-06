@@ -191,15 +191,15 @@ namespace libNetwork {
 
         /** Verify checksum **/
         bool verifyIPChecksum();
-	
-	/** Prende i flag del header IP, da processare */
-	int getFlagsIP();
-	
-	/** If "Don't Fragment" flag is up */
-	bool isDF();
-	
-	/** If "More Fragments" flag is up */
-	bool isMF();
+
+        /** Prende i flag del header IP, da processare */
+        int getFlagsIP();
+
+        /** If "Don't Fragment" flag is up */
+        bool isDF();
+
+        /** If "More Fragments" flag is up */
+        bool isMF();
 
         /** True se incapsula un pacchetto TCP */
         bool isTCP();
@@ -233,6 +233,9 @@ namespace libNetwork {
 
         /** Restituisce il numero di acknowledgment */
         uint32_t getAcknowledgmentNumber();
+
+        /** Restituisce il numero di acknowledgment atteso per confermare il pacchetto presente */
+        uint32_t getExpectedAcknowledgmentNumber();
 
         /** Ritorna dimensione dell'header TCP in byte */
         unsigned int getHeaderLength();

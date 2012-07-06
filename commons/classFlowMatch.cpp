@@ -26,18 +26,28 @@
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
-#ifndef LIBPURSUER_H
-#define LIBPURSUER_H
+#include <fstream>
+#include "classFlowMatch.h"
 
-#include <list>
-#include <string>
-#include <list>
-#include "../commons/classMacAddress.h"
-#include "../commons/classPacket.h"
-#include "../commons/classFlow.h"
+classFlowMatch::classFlowMatch ( std::string path ) {
 
-void writeout ( libNetwork::stream* stream, bool tofile );
-std::string exportFormattedRawFlow ( libNetwork::stream* stream );
-bool isStream ( list< libNetwork::stream* >::iterator iter, libNetwork::TCPv4packet* pkg );
+    std::ifstream config;
+    config.open ( path.c_str() );
+    if ( config.is_open() && !config.eof() ) {
 
-#endif //LIBPURSUER_H
+        std::string line;
+
+        while ( getline ( config, line ) ) {
+
+	  // TODO
+
+        }
+
+    } else {
+      
+      // TODO ERROR
+      
+    }
+
+}
+

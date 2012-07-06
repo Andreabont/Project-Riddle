@@ -33,6 +33,7 @@
 #include <stdexcept>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <ios>
 #include "../commons/classPacket.h"
 #include "../commons/classMacAddress.h"
@@ -46,8 +47,8 @@ void writeout ( libNetwork::stream* stream, bool tofile ) {
         char buffer[10];
         filename << "flow_";
         filename << stream->getTimeEpoch();
-	filename << "_";
-	filename << stream->getTimeMillis();
+        filename << "_";
+        filename << stream->getTimeMillis();
         filename << ".txt";
         std::ofstream myfile;
         myfile.open ( filename.str().c_str() );
@@ -73,3 +74,11 @@ std::string exportFormattedRawFlow ( libNetwork::stream* stream ) {
     stdstring << libDump::decodeHexText ( stream->getSecondCharStream() ) << std::endl;
     return stdstring.str();
 }
+
+bool isStream ( std::list< libNetwork::stream* >::iterator iter, libNetwork::TCPv4packet *pkg ) {
+    return ( ( ( *iter )->getFirstIpAddress() == pkg->getSenderIp() && ( *iter )->getFirstPort() == pkg->getSenderPort() ) &&
+             ( ( *iter )->getSecondIpAddress() == pkg->getTargetIp() && ( *iter )->getSecondPort() == pkg->getTargetPort() ) ) ||
+           ( ( ( *iter )->getFirstIpAddress() == pkg->getTargetIp() && ( *iter )->getFirstPort() == pkg->getTargetPort() ) &&
+             ( ( *iter )->getSecondIpAddress() == pkg->getSenderIp() && ( *iter )->getSecondPort() == pkg->getSenderPort() ) ) ;
+}
+

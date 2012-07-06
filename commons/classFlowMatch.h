@@ -21,23 +21,40 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with this project.  If not, see <http://www.gnu.org/licenses/>.
+ *  along with this project.  If not, see <http://www.gnu.org/licenses/>.packet
  *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
-#ifndef LIBPURSUER_H
-#define LIBPURSUER_H
 
-#include <list>
-#include <string>
-#include <list>
-#include "../commons/classMacAddress.h"
-#include "../commons/classPacket.h"
-#include "../commons/classFlow.h"
+#ifndef CLASSFLOWMATCH_H
+#define CLASSFLOWMATCH_H
 
-void writeout ( libNetwork::stream* stream, bool tofile );
-std::string exportFormattedRawFlow ( libNetwork::stream* stream );
-bool isStream ( list< libNetwork::stream* >::iterator iter, libNetwork::TCPv4packet* pkg );
+#include <map>
+#include "./classFlow.h"
 
-#endif //LIBPURSUER_H
+class classFlowMatch {
+
+
+    private:
+    class matchRules {
+
+        private:
+        std::string regex;
+        int port;
+
+        public:
+        matchRules ( std::string regex_n, int port_n ) {
+            regex = regex_n;
+            port = port_n;
+        }
+    };
+    std::map<std::string, matchRules*> rulesMap;
+
+    public:
+    classFlowMatch ( std::string path );
+
+};
+
+
+#endif // CLASSFLOWMATCH_H

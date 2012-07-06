@@ -127,14 +127,12 @@ void scribe ( std::list<stream*> *packet_stream ) {
                         stream *temp = new stream();
                         temp->factory ( pkg_tcpv4 );
                         packet_stream->push_back ( temp );
+			
                     } else {
 
                         for ( list<stream*>::iterator it = packet_stream->begin(); it != packet_stream->end(); it++ ) {
-                            // MA LOL !!!!!
-                            if ( ( ( ( *it )->getFirstIpAddress() == pkg_tcpv4->getSenderIp() && ( *it )->getFirstPort() == pkg_tcpv4->getSenderPort() ) &&
-                                    ( ( *it )->getSecondIpAddress() == pkg_tcpv4->getTargetIp() && ( *it )->getSecondPort() == pkg_tcpv4->getTargetPort() ) ) ||
-                                    ( ( ( *it )->getFirstIpAddress() == pkg_tcpv4->getTargetIp() && ( *it )->getFirstPort() == pkg_tcpv4->getTargetPort() ) &&
-                                      ( ( *it )->getSecondIpAddress() == pkg_tcpv4->getSenderIp() && ( *it )->getSecondPort() == pkg_tcpv4->getSenderPort() ) ) ) {
+
+                            if ( isStream ( it, pkg_tcpv4 ) ) {
 
                                 if ( pkg_tcpv4->isSYN() ) {
                                     ( *it )->factory ( pkg_tcpv4 );

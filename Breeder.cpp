@@ -34,6 +34,7 @@
 #include "./commons/classPacket.h"
 #include "./commons/classFlow.h"
 #include "./commons/libDump.h"
+#include "./commons/classFlowMatch.h"
 
 using namespace std;
 using namespace boost::program_options;
@@ -54,6 +55,10 @@ int main ( int argc, char **argv ) {
         cout<<desc<<"\n";
         return EXIT_SUCCESS;
     }
+    
+    // TODO
+    
+    classFlowMatch* match = new classFlowMatch("file.txt");
 
     list<std::string> regularexpressions;
 
@@ -64,7 +69,8 @@ int main ( int argc, char **argv ) {
     if ( regularexpressions.empty() ) {
         std::cerr<<"ERROR >> You have not selected any protocol!"<<std::endl;
         return EXIT_FAILURE;
-    }
+    }   
+    
 
     while ( 1 ) {
         try {
