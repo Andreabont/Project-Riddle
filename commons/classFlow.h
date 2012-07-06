@@ -50,8 +50,6 @@ namespace libNetwork {
         boost::asio::ip::address ipAddress[2];
         uint16_t port[2];
 
-        // std::list<libNetwork::TCPv4packet*> packetBuffer[2];
-
         std::map<uint32_t, libNetwork::TCPv4packet*> snBuffer[2];
         std::map<uint32_t, libNetwork::TCPv4packet*> ackExpBuffer[2];
         uint32_t snPointer[2];
