@@ -31,6 +31,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <map>
 #include "classFlow.h"
 #include "classMacAddress.h"
 #include "classPacket.h"
@@ -49,8 +50,8 @@ bool libNetwork::stream::factory ( libNetwork::TCPv4packet *packet ) {
             ipAddress[1] = packet->getTargetIp();
             port[0] = packet->getSenderPort();
             port[1] = packet->getTargetPort();
-            sequenceNumber[0] = packet->getSequenceNumber();
-            sequenceNumber[1] = 0;
+            snPointer[0] = packet->getSequenceNumber();
+            snPointer[1] = 0;
             fluxFIN[0] = false;
             fluxFIN[1] = false;
 
@@ -59,9 +60,9 @@ bool libNetwork::stream::factory ( libNetwork::TCPv4packet *packet ) {
 
         } else {
 
-            if ( sequenceNumber[0] + 1 == packet->getAcknowledgmentNumber() ) {
-                sequenceNumber[0]++;
-                sequenceNumber[1] = packet->getSequenceNumber() + 1;
+            if ( snPointer[0] + 1 == packet->getAcknowledgmentNumber() ) {
+                snPointer[0]++;
+                snPointer[1] = packet->getSequenceNumber() + 1;
                 delete packet;
                 return true;
             }
@@ -118,58 +119,40 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
         if ( newPacket->isACK() ) { // Se c'è ACK setto il flag sul pacchetto corrispondente, se c'è.
 
-            for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[a].begin(); it != packetBuffer[a].end(); it++ ) {
 
-                if ( newPacket->getAcknowledgmentNumber() == ( *it )->getExpectedAcknowledgmentNumber() ) {
-                    ( *it )->public_flag = true;
+            std::map<uint32_t, libNetwork::TCPv4packet*>::iterator iter = ackExpBuffer[a].find ( newPacket->getAcknowledgmentNumber() );
 
-                    uint32_t backExpected = ( *it )->getSequenceNumber(); // ripercorri indietro e setta a true il pacchetto che ha atteso ack su questo SN.
+            if ( iter != ackExpBuffer[a].end() ) {
 
-                    bool endFlag = false;
-                    bool foundPacket = true;
+                ( *iter ).second->public_flag == true;
 
-                    // Cerco solo paccetti più vecchi, non ha senso madare un ACK di un pacchetto non ancora ricevuto.
+                uint32_t ackExpToFind = ( *iter ).second->getSequenceNumber();
 
-                    if ( it != packetBuffer[a].begin() ) {
+                bool endLoop = false;
 
-                        while ( !endFlag && foundPacket ) {
+                while ( !endLoop ) {
 
-                            foundPacket = false;
+                    std::map<uint32_t, libNetwork::TCPv4packet*>::iterator subIter = ackExpBuffer[a].find ( ackExpToFind );
 
-                            for ( std::list<libNetwork::TCPv4packet*>::iterator it2 = packetBuffer[a].begin(); it2 != it; it2++ ) {
+                    if ( subIter != ackExpBuffer[a].end() && ( *subIter ).second->public_flag == false ) {
 
-                                std::cout << "LOLs " << backExpected << std::endl;
-
-
-                                if ( ( *it2 )->getExpectedAcknowledgmentNumber() == backExpected ) {
-
-                                    foundPacket = true;
-
-                                    if ( ( *it2 )->public_flag == true ) {
-                                        endFlag = true;
-                                        break;
-                                    }
-
-                                    ( *it2 )->public_flag = true;
-                                    backExpected = ( *it2 )->getSequenceNumber();
-                                    break;
-
-                                }
-
-                            }
-
-                        }
+                        ( *subIter ).second->public_flag = true;
+                        ackExpToFind = ( *subIter ).second->getSequenceNumber();
+                        continue;
 
                     }
 
-                    break;
+                    endLoop = true;
+
                 }
-            }
+
+            } // Non trovato opss XD
 
         }
 
         if ( newPacket->getPayloadLength() != 0 ) { // Salvo il pacchetto solo se ha del payload.
-            packetBuffer[b].push_back ( newPacket );
+            snBuffer[b][newPacket->getSequenceNumber()] = newPacket;
+            ackExpBuffer[b][newPacket->getExpectedAcknowledgmentNumber()] = newPacket;
         }
 
         if ( newPacket->isFIN() ) {
@@ -188,27 +171,43 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
 }
 
+void libNetwork::stream::delPacket ( uint32_t sn, int bufferNumber ) {
+
+    std::map<uint32_t, libNetwork::TCPv4packet*>::iterator iter1 = snBuffer[bufferNumber].find ( sn );
+    std::map<uint32_t, libNetwork::TCPv4packet*>::iterator iter2 = ackExpBuffer[bufferNumber].find ( sn );
+
+    if ( iter1 != snBuffer[bufferNumber].end() ) {
+        snBuffer[bufferNumber].erase ( iter1 );
+    }
+
+    if ( iter2 != ackExpBuffer[bufferNumber].end() ) {
+        ackExpBuffer[bufferNumber].erase ( iter2 );
+    }
+
+}
+
+
 void libNetwork::stream::flushBuffer ( int number ) {
-    bool isFound;
 
-    do {
+    while ( true ) {
 
-        isFound = false;
+        std::map<uint32_t, libNetwork::TCPv4packet*>::iterator iter = snBuffer[number].find ( snPointer[number] );
 
-        for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[number].begin(); it != packetBuffer[number].end(); it++ ) {
-            std::cerr << "Cerco " << sequenceNumber[number] << " " << ( *it )->getSequenceNumber() << std::endl;
-            if ( sequenceNumber[number] == ( *it )->getSequenceNumber() && ( *it )->getPayloadLength() != 0 && ( *it )->public_flag ) {
-                std::cerr << "Packet processato " << number << " - " << ( *it )->getSequenceNumber() << std::endl;
-                std::string payload = ( *it )->getPayLoad();
-                charStream[number] += payload;
-                sequenceNumber[number] += ( *it )->getPayloadLength(); // unsigned, si azzera come avviene nel tcp.
-                packetBuffer[number].remove ( *it );
-                isFound = true;
-                break;
-            }
+		    std::cout << "ENTER for buffer " << number << std::endl;
+		    
+		    std::cout << "SEARCH SN  " << snPointer[number] << std::endl;
+	
+        if ( iter == snBuffer[number].end() ) {
+            break;
         }
+        
+        	    std::cout << "FOUND PACKET" << std::endl;
 
-    } while ( isFound );
+        charStream[number] += ( *iter ).second->getPayLoad();
+        snPointer[number] = ( *iter ).second->getExpectedAcknowledgmentNumber(); // Next SN
+        delPacket ( ( *iter ).first, number );
+
+    }
 
 }
 
@@ -235,9 +234,9 @@ uint64_t libNetwork::stream::getFirstBufferLength() {
 
     uint64_t bufferlenght = 0;
 
-    for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[0].begin(); it != packetBuffer[0].end(); it++ ) {
+    for ( std::map<uint32_t, libNetwork::TCPv4packet*>::iterator it = snBuffer[0].begin(); it != snBuffer[0].end(); it++ ) {
 
-        bufferlenght += ( *it )->getPayloadLength();
+        bufferlenght += ( *it ).second->getPayloadLength();
 
     }
 
@@ -249,9 +248,9 @@ uint64_t libNetwork::stream::getSecondBufferLength() {
 
     uint64_t bufferlenght = 0;
 
-    for ( std::list<libNetwork::TCPv4packet*>::iterator it = packetBuffer[1].begin(); it != packetBuffer[1].end(); it++ ) {
+    for ( std::map<uint32_t, libNetwork::TCPv4packet*>::iterator it = snBuffer[1].begin(); it != snBuffer[1].end(); it++ ) {
 
-        bufferlenght += ( *it )->getPayloadLength();
+        bufferlenght += ( *it ).second->getPayloadLength();
 
     }
 
@@ -294,11 +293,11 @@ uint16_t libNetwork::stream::getSecondPort() {
 }
 
 uint32_t libNetwork::stream::getFirstSN() {
-    return sequenceNumber[0];
+    return snPointer[0];
 }
 
 uint32_t libNetwork::stream::getSecondSN() {
-    return sequenceNumber[1];
+    return snPointer[1];
 }
 
 bool libNetwork::stream::firstFIN() {
