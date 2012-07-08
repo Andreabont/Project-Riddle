@@ -45,7 +45,6 @@
 #include "./libraries/libRanging.h"
 
 #define TIMETOLIVE 50
-#define THRESHOLD 1
 
 int rows; // number of rows in window
 int cols; // number of columns in window
@@ -289,4 +288,3 @@ void printLine ( int countLine, string mac, string ip, long int epoch ) {
 
     return;
 }
-
