@@ -35,9 +35,10 @@
 
 namespace libDump {
 
+  /** print in a format style "memory dump". */
     std::string classicDump ( std::string input );
     std::string decodeHexText ( std::string raw );
-    
+
 }
 
 #endif //LIBDUMP_H

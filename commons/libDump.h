@@ -35,8 +35,11 @@
 
 namespace libDump {
 
-    std::string classicDump ( std::string input );
-    std::string decodeHexText ( std::string raw );
+/** print hex string in a format style "memory dump". */
+std::string classicDump ( std::string input );
+
+/** decode hex string using the ASCII table. */
+std::string decodeHexText ( std::string raw );
 
 }
 

@@ -152,16 +152,16 @@ class ARPpacket : public packet
 
 public:
 
-    /** Costruttore finale */
+    /** final constructor. */
     ARPpacket ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i );
 
-    /** Ritorna OpCode */
+    /** returns OpCode */
     uint16_t getOpCode();
 
-    /** Ritorna indirizzo IP del mittente */
+    /** returns the ip address of the sender. */
     boost::asio::ip::address getSenderIp();
 
-    /** Ritorna indirizzo IP del destinatario */
+    /** returns the ip address of the destination. */
     boost::asio::ip::address getTargetIp();
 
 };
@@ -175,43 +175,43 @@ public:
     /** Class constructor with delayed instantiation */
     static packet* factory ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i );
 
-    /** Ritorna indirizzo IP del mittente */
+    /** returns the ip address of the sender. */
     boost::asio::ip::address getSenderIp();
 
-    /** Ritorna indirizzo IP del destinatario */
+    /** returns the ip address of the destination. */
     boost::asio::ip::address getTargetIp();
 
-    /** Ritorna identificatore **/
+    /** returns identity **/
     uint16_t getIdentity();
 
-    /** Ritorna il Time To Live **/
+    /** returns Time To Live **/
     uint16_t getTTL();
 
-    /** Ritorna il tipo di protocollo incapsulato */
+    /** returns protocol type */
     uint16_t getProtocolType();
 
-    /** Ritorna checksum */
+    /** returns checksum */
     uint16_t getIPChecksum();
 
-    /** Verify checksum **/
+    /** verify checksum **/
     bool verifyIPChecksum();
 
-    /** Prende i flag del header IP, da processare */
+    /** returns raw flags. */
     int getFlagsIP();
 
-    /** If "Don't Fragment" flag is up */
+    /** true if "Don't Fragment" flag is up */
     bool isDF();
 
-    /** If "More Fragments" flag is up */
+    /** true if "More Fragments" flag is up */
     bool isMF();
 
-    /** True se incapsula un pacchetto TCP */
+    /** true if the packet encapsulates a packet TCP. */
     bool isTCP();
 
-    /** True se incapsula un pacchetto UDP */
+    /** true if the packet encapsulates a packet UDP. */
     bool isUDP();
 
-    /** True se incapsula un pacchetto ICMP */
+    /** true if the packet encapsulates a packet ICMP. */
     bool isICMP();
 
 };
@@ -222,82 +222,82 @@ class TCPv4packet : public IPv4packet
 
 public:
 
-    /** Flag pubblica usabile per marcare uno specifico oggetto TCPv4packet **/
+    /** public flag. use it as you want. */
     bool public_flag;
 
-    /** Costruttore finale */
+    /** final constructor. */
     TCPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i );
 
-    /** Restituisce porta TCP del mittente */
+    /** return the port of the sender. */
     uint16_t getSenderPort();
 
-    /** Restituisce porta TCP del destinatario */
+    /** return the port of the destination. */
     uint16_t getTargetPort();
 
-    /** Restituisce il numero di sequenza */
+    /** return sequence number. */
     uint32_t getSequenceNumber();
 
-    /** Restituisce il numero di acknowledgment */
+    /** return acknowledgment number. */
     uint32_t getAcknowledgmentNumber();
 
-    /** Restituisce il numero di acknowledgment atteso per confermare il pacchetto presente */
+    /** return expected acknowledgment number. */
     uint32_t getExpectedAcknowledgmentNumber();
 
-    /** Ritorna dimensione dell'header TCP in byte */
+    /** return the TCP header size in bytes. */
     unsigned int getHeaderLength();
 
-    /** Ritorna dimensione del payload TCP in byte */
+    /** return the TCP payload size in bytes. */
     unsigned int getPayloadLength();
 
-    /** Ritorna i flag TCP in formato raw, da processare */
+    /** returns raw flags. */
     int getFlagsTCP();
 
-    /** Ritorna dimensione della finestra di ricezione */
+    /** return size of the receive window in bytes. */
     unsigned int getWindowSize();
 
-    /** Ritorna checksum */
+    /** return checksum. */
     unsigned int getTCPChecksum();
 
-    /** Verify checksum **/
+    /** verify checksum. **/
     bool verifyTCPChecksum();
 
-    /** Ritorna l'urgent pointer */
+    /** return the urgent pointer. */
     unsigned int getUrgentPointer();
 
-    /** Ritorna le opzioni TCP in formato raw, da processare */
+    /** return raw TCP option. */
     std::string getOptionRaw();
 
-    /** Ritorna le opzioni TCP in una std::map */
+    /** return TCP option in a std::map */
     std::map<int, std::string> getOptionMap();
 
-    /** Ritorna i dati trasportati dal pacchetto TCP */
+    /** return packet payload. */
     std::string getPayLoad();
 
-    /** True se ha flag ACK */
+    /** true if flag ACK is set. */
     bool isACK();
 
-    /** True se ha flag SYN */
+    /** true if flag SYN is set. */
     bool isSYN();
 
-    /** True se ha flag FIN */
+    /** true if flag FIN is set. */
     bool isFIN();
 
-    /** True se ha flag RST */
+    /** true if flag RST is set. */
     bool isRST();
 
-    /** True se ha flag PSH */
+    /** true if flag PSH is set. */
     bool isPSH();
 
-    /** True se ha flag URG */
+    /** true if flag URG is set. */
     bool isURG();
 
-    /** True se ha flag ECE */
+    /** true if flag ECE is set. */
     bool isECE();
 
-    /** True se ha flag CWR */
+    /** true if flag CWR is set. */
     bool isCWR();
 
-    /** True se sono presenti delle opzioni aggiuntive */
+    /** true if there are additional options. */
     bool isOption();
 
 };
@@ -308,13 +308,13 @@ class UDPv4packet : public IPv4packet
 
 public:
 
-    /** Costruttore finale */
+    /** final constructor. */
     UDPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i );
 
-    /** Ritorna porta UDP del mittente */
+    /** return the port of the sender. */
     uint16_t getSenderPort();
 
-    /** Ritorna porta UDP del destinatario */
+    /** return the port of the destination. */
     uint16_t getTargetPort();
 
 };
@@ -325,13 +325,13 @@ class ICMPv4packet : public IPv4packet
 
 public:
 
-    /** Costruttore finale */
+    /** final constructor. */
     ICMPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i );
 
-    /** Ritorna il tipo di messaggio ICMP */
+    /** return message type. */
     uint16_t  getMessageType();
 
-    /** Ritorna il MessageCode */
+    /** return message code. */
     uint16_t  getMessageCode();
 
 };
@@ -342,7 +342,7 @@ class UnknownPacket : public packet
 
 public:
 
-    /** Costruttore finale */
+    /** final constructor. */
     UnknownPacket ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i );
 
 };
