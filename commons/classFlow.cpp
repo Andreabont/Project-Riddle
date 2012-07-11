@@ -152,6 +152,20 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
         }
 
         if ( newPacket->getPayloadLength() != 0 ) { // Salvo il pacchetto solo se ha del payload.
+
+            // Sovrascrivo se è ritrasmissione.
+
+            std::map<uint32_t, libNetwork::TCPv4packet*>::iterator searchIter1 = snBuffer[b].find ( newPacket->getSequenceNumber() );
+            std::map<uint32_t, libNetwork::TCPv4packet*>::iterator searchIter2 = ackExpBuffer[b].find ( newPacket->getExpectedAcknowledgmentNumber() );
+
+            if(searchIter1 != snBuffer[b].end()) {
+                snBuffer[b].erase(searchIter1);
+            }
+
+            if(searchIter2 != ackExpBuffer[b].end()) {
+                ackExpBuffer[b].erase(searchIter2);
+            }
+
             snBuffer[b][newPacket->getSequenceNumber()] = newPacket;
             ackExpBuffer[b][newPacket->getExpectedAcknowledgmentNumber()] = newPacket;
         }
@@ -194,15 +208,15 @@ void libNetwork::stream::flushBuffer ( int number ) {
 
         std::map<uint32_t, libNetwork::TCPv4packet*>::iterator iter = snBuffer[number].find ( snPointer[number] );
 
-		    std::cout << "ENTER for buffer " << number << std::endl;
-		    
-		    std::cout << "SEARCH SN  " << snPointer[number] << std::endl;
-	
+        std::cout << "ENTER for buffer " << number << std::endl;
+
+        std::cout << "SEARCH SN  " << snPointer[number] << std::endl;
+
         if ( iter == snBuffer[number].end() ) {
             break;
         }
-        
-        	    std::cout << "FOUND PACKET" << std::endl;
+
+        std::cout << "FOUND PACKET" << std::endl;
 
         charStream[number] += ( *iter ).second->getPayLoad();
         snPointer[number] = ( *iter ).second->getExpectedAcknowledgmentNumber(); // Next SN

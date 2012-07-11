@@ -52,7 +52,7 @@ void writeout ( libNetwork::stream* stream, bool tofile ) {
         filename << ".txt";
         std::ofstream myfile;
         myfile.open ( filename.str().c_str() );
-        if ( myfile.is_open() ) {
+        if ( myfile.is_open(), std::ios::out | std::ios::app ) {
             myfile << exportFormattedRawFlow ( stream );
             myfile.close();
         }
