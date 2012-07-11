@@ -31,6 +31,7 @@ Accetta i seguenti parametri:
 --input <x>	Legge da un file pcap al posto del device.
 --iface <x>	Impone sniffing su una interfaccia specifica (se non presente usa standard)
 --filter <x>	Visualizza solo pacchetti voluti (non filtra a livello applicativo)
+--secure	Solo per utenti linux, cambia UID e GID dopo l'inizializzazione togliendo i permessi di root.
 
 NB: E' la sola parte da eseguire con permessi di root!!
 
@@ -54,11 +55,19 @@ Analizza pacchetti ARP per elencare le macchine connesse (scanner passivo).
 
 TODO --> Aggiungere analisi DHCP
 
+Accetta i seguenti parametri:
+
+--ttl <x>	Permette di modificare il timeout per il match mac-ip.
+
 -------
 Pursuer
 -------
 
-Segue i flussi TCP e li restituisce in standard output.
+Segue i flussi TCP e li restituisce in standard output o salvati in file.
+
+Accetta i seguenti parametri:
+
+--tofile	Scrive i flussi in una serie di file al posto che sullo stdout.
 
 -------------
 Esempio d'uso
@@ -73,4 +82,4 @@ TODO
 ----
 
 - Filtro pacchetti avanzato (piu' potente del filtro pcap) con anche filtro livello applicativo.
-- Follower TCP con ricostruzione file.
+- Follower TCP: ricostruzione file.
