@@ -57,6 +57,7 @@ using namespace boost::posix_time;
 using namespace libNetwork;
 
 boost::mutex mymutex;
+int maxttl = TIMETOLIVE;
 
 void setHead();
 void printLine ( int countLine, string mac, string ip, long int epoch );
@@ -78,7 +79,7 @@ void printer ( list<device> *found ) {
 
         while ( r != found->end() ) {
 
-            if ( time ( NULL ) > r->getEpoch() + TIMETOLIVE ) {
+            if ( time ( NULL ) > r->getEpoch() + maxttl ) {
 
                 list<device>::iterator ex = r;
                 r++;
@@ -164,6 +165,7 @@ int main ( int argc, char **argv ) {
     options_description desc ( "Ranging - Network Passive Scanner" );
     desc.add_options()
     ( "help", "prints this" )
+    ( "ttl", value<int>(), "sets the deadline (in seconds) for each match (default = 50)" )
     ;
 
     variables_map vm;
@@ -173,6 +175,10 @@ int main ( int argc, char **argv ) {
     if ( vm.count ( "help" ) ) {
         cout<<desc<<"\n";
         return EXIT_SUCCESS;
+    }
+
+    if ( vm.count ( "ttl" ) ) {
+        maxttl = vm["ttl"].as<int>();
     }
 
     WINDOW *wnd;
@@ -259,7 +265,7 @@ void printLine ( int countLine, string mac, string ip, long int epoch ) {
     int ind2;
 
     if ( head = ( char* ) malloc ( cols * sizeof ( char ) ) ) {
-        int ttl = TIMETOLIVE - ( time ( NULL ) - epoch );
+        int ttl = maxttl - ( time ( NULL ) - epoch );
         snprintf ( head, cols, " %s | %s | %d | %d", mac.c_str(), ip.c_str(), epoch, ttl );
 
         ind2 = strlen ( head );
