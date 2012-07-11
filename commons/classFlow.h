@@ -39,87 +39,106 @@
 
 namespace libNetwork {
 
-    /** Class for managing TCP flow. */
-    class stream
-    {
-        private:
-        uint64_t timeEpoch;
-        uint32_t timeMillis;
+/** Class for managing TCP flow. */
+class stream
+{
+private:
+    uint64_t timeEpoch;
+    uint32_t timeMillis;
 
-        libNetwork::mac_address macAddress[2];
-        boost::asio::ip::address ipAddress[2];
-        uint16_t port[2];
+    libNetwork::mac_address macAddress[2];
+    boost::asio::ip::address ipAddress[2];
+    uint16_t port[2];
 
-        std::map<uint32_t, libNetwork::TCPv4packet*> snBuffer[2];
-        std::map<uint32_t, libNetwork::TCPv4packet*> ackExpBuffer[2];
-        uint32_t snPointer[2];
+    std::map<uint32_t, libNetwork::TCPv4packet*> snBuffer[2];
+    std::map<uint32_t, libNetwork::TCPv4packet*> ackExpBuffer[2];
+    uint32_t snPointer[2];
 
-        std::string charStream[2];
+    std::string charStream[2];
 
-        bool fluxFIN[2];
+    bool fluxFIN[2];
 
-        void flushBuffer ( int number );
-        void delPacket ( uint32_t sn, int bufferNumber );
+    void flushBuffer ( int number );
+    void delPacket ( uint32_t sn, int bufferNumber );
 
-        public:
-        /** Initialize flow with the first packet of the TCP handshake (SYN) */
-        bool factory ( libNetwork::TCPv4packet *packet );
+public:
+    /** Initialize flow with the first packet of the TCP handshake (SYN) */
+    bool factory ( libNetwork::TCPv4packet *packet );
 
-        /** Initialize flow with string (classFlow protocol) */
-        void factory ( std::string flow );
+    /** Initialize flow with string (classFlow protocol) */
+    void factory ( std::string flow );
 
 
-        /** Put new packet in the flow */
-        bool addPacket ( libNetwork::TCPv4packet *newPacket );
+    /** Put new packet in the flow */
+    bool addPacket ( libNetwork::TCPv4packet *newPacket );
 
-        /**
-         * Read the first packet buffer and save the payload in the first char stream.
-         * Stop if the flow is interrupted.
-         */
-        void flushFirstBuffer();
+    /**
+     * Read the first packet buffer and save the payload in the first char stream.
+     * Stop if the flow is interrupted.
+     */
+    void flushFirstBuffer();
 
-        /**
-         * Read the second packet buffer and save the payload in the second char stream.
-         * Stop if the flow is interrupted.
-         */
-        void flushSecondBuffer();
+    /**
+     * Read the second packet buffer and save the payload in the second char stream.
+     * Stop if the flow is interrupted.
+     */
+    void flushSecondBuffer();
 
-        /**
-         * Return the first char stream.
-         */
-        std::string getFirstCharStream();
+    /** return the first char stream. */
+    std::string getFirstCharStream();
 
-        /**
-         * Return the second char stream.
-         */
-        std::string getSecondCharStream();
+    /** return the second char stream. */
+    std::string getSecondCharStream();
 
-        /** return epoch */
-        uint64_t getTimeEpoch();
+    /** return epoch */
+    uint64_t getTimeEpoch();
 
-        /** return milliseconds after epoch */
-        uint32_t getTimeMillis();
-        libNetwork::mac_address getFirstMacAddress();
-        libNetwork::mac_address getSecondMacAddress();
-        boost::asio::ip::address getFirstIpAddress();
-        boost::asio::ip::address getSecondIpAddress();
-        uint16_t getFirstPort();
-        uint16_t getSecondPort();
-        uint32_t getFirstSN();
-        uint32_t getSecondSN();
+    /** return milliseconds after epoch */
+    uint32_t getTimeMillis();
 
-        /* Ritorna in byte la somma dei payload dei pachetti nel buffer */
-        uint64_t getFirstBufferLength();
-        uint64_t getSecondBufferLength();
+    /** return first mac address */
+    libNetwork::mac_address getFirstMacAddress();
 
-        /* Ritorna lunghezza in byte dei due flussi in uscita */
-        uint64_t getFlowLength();
+    /** return second mac address */
+    libNetwork::mac_address getSecondMacAddress();
 
-        std::string exportFlow();
-        bool firstFIN();
-        bool secondFIN();
+    /** return first ip address */
+    boost::asio::ip::address getFirstIpAddress();
 
-    };
+    /** return second ip address */
+    boost::asio::ip::address getSecondIpAddress();
+    
+    /** return first port */
+    uint16_t getFirstPort();
+    
+    /** return second port */
+    uint16_t getSecondPort();
+    
+    /** return first sn */
+    uint32_t getFirstSN();
+    
+    /** return second sn */
+    uint32_t getSecondSN();
+
+    /** return the sum in bytes of the contents of the payload in the first buffer */
+    uint64_t getFirstBufferLength();
+    
+    /** return the sum in bytes of the contents of the payload in the second buffer */
+    uint64_t getSecondBufferLength();
+
+    /** returns length in bytes of the two output streams */
+    uint64_t getFlowLength();
+    
+    /** export formatted flow */
+    std::string exportFlow();
+    
+    /** true if the first flow have FIN or RST packet */
+    bool firstFIN();
+    
+    /** true if the second flow have FIN or RST packet */
+    bool secondFIN();
+
+};
 
 }
 

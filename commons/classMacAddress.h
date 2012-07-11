@@ -35,26 +35,29 @@
 
 namespace libNetwork {
 
-    /* Class for managing MAC address */
-    class mac_address
-    {
+/* Class for managing MAC address */
+class mac_address
+{
 
-        private:
-        uint16_t byte[6];
+private:
+    uint16_t byte[6];
 
-        public:
+public:
 
-        /** Costruttore: riceve indirizzo in stringa codifica esadecimale. */
-        mac_address() {
-            std::memset ( byte,0,6 );
-        }
-        mac_address ( const std::string& );
+    /** builds the object with null mac address */
+    mac_address() {
+        std::memset ( byte,0,6 );
+    }
 
-        bool operator== ( const mac_address& otherMac );
+    /** builds the object from a hexadecimal string */
+    mac_address ( const std::string& );
 
-        /** Restituisce stringa stampabile a schermo. */
-        std::string to_string();
-    };
+    /** implements the comparison between mac address */
+    bool operator== ( const mac_address& otherMac );
+
+    /** build printable mac address */
+    std::string to_string();
+};
 
 }
 
