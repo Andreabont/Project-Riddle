@@ -132,10 +132,6 @@ libNetwork::mac_address libNetwork::packet::getMacAddress ( int string_cursor ) 
     return mac_temp;
 }
 
-boost::asio::ip::address libNetwork::packet::getIPv4Address ( int string_cursor ) {
-//TODO
-}
-
 bool libNetwork::packet::isArp() {
     return ( this->getEtherType() == ETHER_TYPE_ARP );
 }
@@ -427,10 +423,6 @@ unsigned int libNetwork::TCPv4packet::getTCPChecksum() {
     std::stringstream convert ( this->getHexString ( TCP_OFFSET+16, 2 ) );
     convert>>std::hex>>cs;
     return cs;
-}
-
-bool libNetwork::TCPv4packet::verifyTCPChecksum() {
-    // TODO - Checksum TCP non viene usato???
 }
 
 unsigned int libNetwork::TCPv4packet::getUrgentPointer() {

@@ -96,9 +96,6 @@ protected:
     /** Salva MAC address a partire da un punto (n° del byte) della stringa rawData */
     mac_address getMacAddress ( int string_cursor );
 
-    /** Salva IPv4 address a partire da un punto (n° del byte) della stringa rawData */
-    boost::asio::ip::address getIPv4Address ( int string_cursor );
-
 public:
 
     /** Overflow management */
@@ -257,9 +254,6 @@ public:
 
     /** return checksum. */
     unsigned int getTCPChecksum();
-
-    /** verify checksum. **/
-    bool verifyTCPChecksum();
 
     /** return the urgent pointer. */
     unsigned int getUrgentPointer();
