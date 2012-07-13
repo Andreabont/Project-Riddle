@@ -44,8 +44,10 @@ Legge output di Riddle e restituisce a video informazioni in tempo reale sui pac
 Accetta i seguenti parametri:
 
 --help		Scrive un messaggio di help.
+--ipv4		Espande opzioni IPv4
 --tcp		Espande opzioni TCP
 --icmp		Espande opzioni ICMP
+--payload	Scrive il dump del payload dei pacchetti.
 
 -------
 Ranging
@@ -57,6 +59,7 @@ TODO --> Aggiungere analisi DHCP
 
 Accetta i seguenti parametri:
 
+--help		Scrive un messaggio di help.
 --ttl <x>	Permette di modificare il timeout per il match mac-ip.
 
 -------
@@ -67,7 +70,12 @@ Segue i flussi TCP e li restituisce in standard output o salvati in file.
 
 Accetta i seguenti parametri:
 
+--help		Scrive un messaggio di help.
 --tofile	Scrive i flussi in una serie di file al posto che sullo stdout.
+
+Restituisce flussi ricostruiti su standard output uno per riga nel formato:
+
+<epoch>!<millisecondi da epoch>!<mac primo flusso>!<mac secondo flusso>!<ip primo flusso>!<ip secondo flusso>!<porta primo flusso>!<porta secondo flusso>!<dump primo flusso>!<dump secondo flusso>
 
 -------------
 Esempio d'uso
