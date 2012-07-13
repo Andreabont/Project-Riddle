@@ -208,15 +208,9 @@ void libNetwork::stream::flushBuffer ( int number ) {
 
         std::map<uint32_t, libNetwork::TCPv4packet*>::iterator iter = snBuffer[number].find ( snPointer[number] );
 
-        std::cout << "ENTER for buffer " << number << std::endl;
-
-        std::cout << "SEARCH SN  " << snPointer[number] << std::endl;
-
         if ( iter == snBuffer[number].end() ) {
             break;
         }
-
-        std::cout << "FOUND PACKET" << std::endl;
 
         charStream[number] += ( *iter ).second->getPayLoad();
         snPointer[number] = ( *iter ).second->getExpectedAcknowledgmentNumber(); // Next SN
