@@ -163,8 +163,8 @@ void scribe ( std::list<stream*> *packet_stream ) {
 int main ( int argc, char **argv ) {
     options_description desc ( "Pursuer - Network TCP Follower" );
     desc.add_options()
-    ( "help", "prints this" )
-    ( "tofile", "redirect payload to file (a file for each stream)" )
+    ( "help,h", "prints this" )
+    ( "tofile,f", "redirect payload to file (a file for each stream)" )
     ;
 
     variables_map vm;

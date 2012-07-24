@@ -46,14 +46,14 @@ using namespace boost::program_options;
 int main ( int argc, char **argv ) {
     options_description desc ( "Riddle - Network Sniffer" );
     desc.add_options()
-    ( "help", "prints this" )
-    ( "dump", "enable dump mode" )
-    ( "iface", value<string>(), "interface to sniff from (not set = default device)" )
-    ( "input", value<string>(), "reads packets from a pcap file (disable iface input)" )
-    ( "filter", value<string>(), "use to filter packet with bpf" )
-    ( "limit", value<int>(), "set max number of packet" )
+    ( "help,h", "prints this" )
+    ( "dump,d", "enable dump mode" )
+    ( "iface,i", value<string>(), "interface to sniff from (not set = default device)" )
+    ( "input,I", value<string>(), "reads packets from a pcap file (disable iface input)" )
+    ( "filter,f", value<string>(), "use to filter packet with bpf" )
+    ( "limit,l", value<int>(), "set max number of packet" )
 #ifdef __linux__
-    ( "secure", "Drop root privileges after initialization." )
+    ( "secure,s", "Drop root privileges after initialization." )
 #endif
     ;
 

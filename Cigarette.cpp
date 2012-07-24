@@ -46,11 +46,11 @@ using namespace libNetwork;
 int main ( int argc, char **argv ) {
     options_description desc ( "Cigarette - Network Packet Parser" );
     desc.add_options()
-    ( "help", "prints this" )
-    ( "ipv4", "expand IPv4 info" )
-    ( "tcp", "expand TCP info" )
-    ( "icmp", "expand ICMP info" )
-    ( "payload", "print payload dump" )
+    ( "help,h", "prints this" )
+    ( "ipv4,4", "expand IPv4 info" )
+    ( "tcp,t", "expand TCP info" )
+    ( "icmp,i", "expand ICMP info" )
+    ( "payload,p", "print payload dump" )
     ;
 
     variables_map vm;

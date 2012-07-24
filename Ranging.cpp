@@ -164,8 +164,8 @@ int main ( int argc, char **argv ) {
 
     options_description desc ( "Ranging - Network Passive Scanner" );
     desc.add_options()
-    ( "help", "prints this" )
-    ( "ttl", value<int>(), "sets the deadline (in seconds) for each match (default = 50)" )
+    ( "help,h", "prints this" )
+    ( "ttl,t", value<int>(), "sets the deadline (in seconds) for each match (default = 50)" )
     ;
 
     variables_map vm;
