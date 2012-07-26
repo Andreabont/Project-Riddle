@@ -169,8 +169,19 @@ int main ( int argc, char **argv ) {
     ;
 
     variables_map vm;
-    store ( parse_command_line ( argc, argv, desc ), vm );
-    notify ( vm );
+
+    try {
+        store ( parse_command_line ( argc, argv, desc ), vm );
+        notify ( vm );
+    } catch ( boost::program_options::unknown_option ex1 ) {
+        cerr << "ERROR >> " << ex1.what() << "" << endl;
+        cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
+        return EXIT_SUCCESS;
+    } catch ( boost::program_options::invalid_command_line_syntax ex2 ) {
+        cerr << "ERROR >> " << ex2.what() << "" << endl;
+        cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
+        return EXIT_SUCCESS;
+    }
 
     if ( vm.count ( "help" ) ) {
         cout<<desc<<"\n";

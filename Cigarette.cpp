@@ -54,8 +54,19 @@ int main ( int argc, char **argv ) {
     ;
 
     variables_map vm;
-    store ( parse_command_line ( argc, argv, desc ), vm );
-    notify ( vm );
+
+    try {
+        store ( parse_command_line ( argc, argv, desc ), vm );
+        notify ( vm );
+    } catch ( boost::program_options::unknown_option ex1 ) {
+        cerr << "ERROR >> " << ex1.what() << "" << endl;
+        cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
+        return EXIT_SUCCESS;
+    } catch ( boost::program_options::invalid_command_line_syntax ex2 ) {
+        cerr << "ERROR >> " << ex2.what() << "" << endl;
+        cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
+        return EXIT_SUCCESS;
+    }
 
     if ( vm.count ( "help" ) ) {
         cout<<desc<<"\n";
@@ -79,7 +90,7 @@ int main ( int argc, char **argv ) {
             if ( pkg->isArp() ) {
 
                 ARPpacket *pkg_arp = dynamic_cast<ARPpacket*> ( pkg );
-		
+
                 if ( pkg_arp->getOpCode() == 1 ) {
                     cout << "                    Who has " << pkg_arp->getTargetIp().to_string() << " ? Tell "<< pkg_arp->getSenderIp().to_string() << endl;
                     cout << endl;
@@ -99,10 +110,10 @@ int main ( int argc, char **argv ) {
                 cout << "                    ProtocolType: 0x" << pkg_ipv4->getProtocolType() << " ("<< ipv4_type_decode ( pkg_ipv4->getProtocolType() ) << ")" << endl;
 
                 if ( vm.count ( "ipv4" ) ) {
-		    cout << "                    + Flags                  ";
-		    if ( pkg_ipv4->isDF() ) cout << "Don't Fragment ";
-		    if ( pkg_ipv4->isMF() ) cout << "More Fragments ";
-		    cout << endl;
+                    cout << "                    + Flags                  ";
+                    if ( pkg_ipv4->isDF() ) cout << "Don't Fragment ";
+                    if ( pkg_ipv4->isMF() ) cout << "More Fragments ";
+                    cout << endl;
                     cout << "                    + Time To Live           " << std::dec << pkg_ipv4->getTTL() << endl;
                     cout << "                    + Identification         0x" << std::hex << pkg_ipv4->getIdentity() << endl;;
                     cout << "                    + Checksum               0x" << std::hex << pkg_ipv4->getIPChecksum();
@@ -124,11 +135,11 @@ int main ( int argc, char **argv ) {
 
                     if ( vm.count ( "tcp" ) ) {
                         cout << "                    + Sequence Number        " << pkg_tcpv4->getSequenceNumber() << endl;
-			cout << "                    + Next Sequence Number   " << pkg_tcpv4->getSequenceNumber() + pkg_tcpv4->getPayloadLength() << endl;
+                        cout << "                    + Next Sequence Number   " << pkg_tcpv4->getSequenceNumber() + pkg_tcpv4->getPayloadLength() << endl;
                         cout << "                    + Acknowledgment Number  " << pkg_tcpv4->getAcknowledgmentNumber() << endl;
                         cout << "                    + Header Length          " << pkg_tcpv4->getHeaderLength() << " byte" << endl;
-			cout << "                    + Payload Length         " << pkg_tcpv4->getPayloadLength() << " byte" << endl;
-			cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
+                        cout << "                    + Payload Length         " << pkg_tcpv4->getPayloadLength() << " byte" << endl;
+                        cout << "                    + Window Size            " << pkg_tcpv4->getWindowSize() << " byte" << endl;
                         cout << "                    + Flags                  ";
                         if ( pkg_tcpv4->isSYN() ) cout << "SYN ";
                         if ( pkg_tcpv4->isFIN() ) cout << "FIN ";
