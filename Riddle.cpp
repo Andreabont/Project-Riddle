@@ -148,15 +148,15 @@ int main ( int argc, char **argv ) {
         struct bpf_program fp;
         bpf_u_int32 net;
 
-        cerr<<">> Filtering with '"<<filter<<"'"<<endl;
+        cerr << ">> Filtering with '" << filter << "'" << endl;
 
         if ( pcap_compile ( pcap_handle, &fp, filter.c_str(), 0, net ) == -1 ) {
-            cerr<< "ERROR >> Couldn't parse filter '"<<filter<<"': "<<pcap_geterr ( pcap_handle ) <<endl;
+            cerr << "ERROR >> Couldn't parse filter '" << filter << "': "<< pcap_geterr ( pcap_handle ) << endl;
             return ( 2 );
         }
 
         if ( pcap_setfilter ( pcap_handle, &fp ) == -1 ) {
-            cerr<< "ERROR >> Couldn't install filter '"<<filter<<"': "<<pcap_geterr ( pcap_handle ) <<endl;
+            cerr << "ERROR >> Couldn't install filter '" << filter << "': "<<pcap_geterr ( pcap_handle ) << endl;
             return ( 2 );
         }
     }
@@ -177,14 +177,14 @@ int main ( int argc, char **argv ) {
     for ( ; maxpacket > 0; ) {
         packet = pcap_next ( pcap_handle, &header );
         if ( packet == NULL ) {
-            cerr<<">> Flow terminated"<<endl;
+            cerr << ">> Flow terminated" << endl;
             break;
         }
         dumper ( packet, header );
         if ( maxpacket!=numeric_limits<int>::max() ) maxpacket--;
     }
 
-    cerr<<">> I finished the job, goodbye!"<<endl;
+    cerr << ">> I finished the job, goodbye!" << endl;
     pcap_close ( pcap_handle );
 
     return EXIT_SUCCESS;
