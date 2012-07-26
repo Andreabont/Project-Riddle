@@ -86,7 +86,6 @@ int main ( int argc, char **argv ) {
         realgid = getgid();		// GID del lanciatore
         effectivegid = getegid();	// GID del proprietario
 
-
         if ( realuid == -1 || effectiveuid == -1 || realgid == -1 || effectivegid == -1 ) {
             cerr << "ERROR >> Can't read real and effective UID/GID." << endl;
             return EXIT_FAILURE;
@@ -114,7 +113,6 @@ int main ( int argc, char **argv ) {
         if ( pcap_handle == NULL ) {
             pcap_fatal ( "pcap_open_offline", error_buffer );
         }
-
         cerr << ">> Reading packets from " << vm["input"].as<string>() << endl;
     } else {
 
@@ -134,9 +132,7 @@ int main ( int argc, char **argv ) {
         if ( pcap_handle == NULL ) {
             pcap_fatal ( "pcap_open_live", error_buffer );
         }
-
         cerr << ">> Sniffing on device " << pcap_device << endl;
-
     }
 
 #ifdef __linux__
