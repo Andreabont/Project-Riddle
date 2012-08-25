@@ -31,6 +31,7 @@
 #include <vector>
 #include <boost/regex.hpp>
 #include <boost/program_options.hpp>
+#include "./libraries/libBreeder.h"
 #include "./commons/classPacket.h"
 #include "./commons/classFlow.h"
 #include "./commons/libDump.h"
@@ -56,8 +57,10 @@ int main ( int argc, char **argv ) {
         return EXIT_SUCCESS;
     }
     
-    // TODO
+    configInitialization();
     
+    // TODO
+
     classFlowMatch* match = new classFlowMatch("file.txt");
 
     list<std::string> regularexpressions;
@@ -69,8 +72,8 @@ int main ( int argc, char **argv ) {
     if ( regularexpressions.empty() ) {
         std::cerr<<"ERROR >> You have not selected any protocol!"<<std::endl;
         return EXIT_FAILURE;
-    }   
-    
+    }
+
 
     while ( 1 ) {
         try {

@@ -10,7 +10,7 @@ set(RIDDLE_SRCS ${LIBRARIES_DIR}/libRiddle.cpp ${LIBRARIES_DIR}/libRiddle.h Ridd
 set(CIGARETTE_SRCS ${LIBRARIES_DIR}/libCigarette.cpp ${LIBRARIES_DIR}/libCigarette.h Cigarette.cpp)
 set(RANGING_SRCS ${LIBRARIES_DIR}/libRanging.h ${LIBRARIES_DIR}/libRanging.cpp Ranging.cpp)
 set(PURSUER_SRCS ${LIBRARIES_DIR}/libPursuer.h ${LIBRARIES_DIR}/libPursuer.cpp Pursuer.cpp)
-set(BREEDER_SRCS Breeder.cpp)
+set(BREEDER_SRCS ${LIBRARIES_DIR}/libBreeder.h ${LIBRARIES_DIR}/libBreeder.cpp Breeder.cpp)
 
 add_executable(ranging ${RANGING_SRCS})
 add_executable(cigarette ${CIGARETTE_SRCS})
