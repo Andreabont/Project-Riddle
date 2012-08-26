@@ -47,7 +47,7 @@ void breederConfig::init()
 
     boost::property_tree::ptree http;
     http.put( "description", "..." );
-    http.put( "regexp", "..." );
+    http.put( "regexp", "HTTP/[0-9]\.[0-9]" );
     http.put( "ports", "80 8080" );
 
     root.push_back(

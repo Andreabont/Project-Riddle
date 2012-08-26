@@ -36,7 +36,6 @@
 #include "./commons/classPacket.h"
 #include "./commons/classFlow.h"
 #include "./commons/libDump.h"
-#include "./commons/classFlowMatch.h"
 
 using namespace std;
 using namespace boost::program_options;
@@ -45,27 +44,38 @@ using namespace libNetwork;
 int main ( int argc, char **argv ) {
     options_description desc ( "Breeder - Network TCP Flux Seletor" );
     desc.add_options()
-    ( "help", "prints this" )
-    ( "http", "select the http protocol." )
+    ( "help,h", "prints this" )
+    ( "filters,f", value<string>(), "specifies a list of protocols." )
     ;
 
     variables_map vm;
-    store ( parse_command_line ( argc, argv, desc ), vm );
-    notify ( vm );
+
+    try {
+        store ( parse_command_line ( argc, argv, desc ), vm );
+        notify ( vm );
+    } catch ( boost::program_options::unknown_option ex1 ) {
+        cerr << "ERROR >> " << ex1.what() << "" << endl;
+        cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
+        return EXIT_SUCCESS;
+    } catch ( boost::program_options::invalid_command_line_syntax ex2 ) {
+        cerr << "ERROR >> " << ex2.what() << "" << endl;
+        cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
+        return EXIT_SUCCESS;
+    }
 
     if ( vm.count ( "help" ) ) {
         cout<<desc<<"\n";
         return EXIT_SUCCESS;
     }
-    
+
     breederConfig::init();
     boost::property_tree::ptree config = breederConfig::load();
-    
-    cout << config.get<std::string>("global.protocols") << endl;
-    
-    // TODO
 
-    classFlowMatch* match = new classFlowMatch("file.txt");
+    cout << config.get<std::string>("global.protocols") << endl;
+
+    
+
+    // TODO
 
     list<std::string> regularexpressions;
 
