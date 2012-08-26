@@ -29,6 +29,15 @@
 #ifndef LIBBREEDER_H
 #define LIBBREEDER_H
 
-void configInitialization();
+#define FILECONFIG "breeder.conf"
+
+#include <boost/property_tree/ptree.hpp>
+
+namespace breederConfig {
+
+void init();
+boost::property_tree::ptree load();
+
+}
 
 #endif //LIBBREEDER_H

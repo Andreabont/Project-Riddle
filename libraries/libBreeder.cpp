@@ -32,7 +32,7 @@
 
 #include "libBreeder.h"
 
-void configInitialization()
+void breederConfig::init()
 {
 
     boost::property_tree::ptree root;
@@ -54,6 +54,17 @@ void configInitialization()
         boost::property_tree::ptree::value_type( "http", http )
     );
 
-    write_ini( "breeder.conf", root );
+    boost::property_tree::ini_parser::write_ini( FILECONFIG, root );
 
 }
+
+boost::property_tree::ptree breederConfig::load()
+{
+
+    boost::property_tree::ptree config;
+    boost::property_tree::ini_parser::read_ini( FILECONFIG, config );
+    
+    return config;
+
+}
+

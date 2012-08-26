@@ -30,6 +30,7 @@
 #include <string>
 #include <vector>
 #include <boost/regex.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <boost/program_options.hpp>
 #include "./libraries/libBreeder.h"
 #include "./commons/classPacket.h"
@@ -57,7 +58,10 @@ int main ( int argc, char **argv ) {
         return EXIT_SUCCESS;
     }
     
-    configInitialization();
+    breederConfig::init();
+    boost::property_tree::ptree config = breederConfig::load();
+    
+    cout << config.get<std::string>("global.protocols") << endl;
     
     // TODO
 
