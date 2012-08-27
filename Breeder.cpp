@@ -30,6 +30,8 @@
 #include <string>
 #include <vector>
 #include <boost/regex.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/program_options.hpp>
 #include "./libraries/libBreeder.h"
@@ -45,13 +47,17 @@ int main ( int argc, char **argv ) {
     options_description desc ( "Breeder - Network TCP Flux Seletor" );
     desc.add_options()
     ( "help,h", "prints this" )
-    ( "filters,f", value<string>(), "specifies a list of protocols." )
+    ( "filters,f", value< vector<string> >(), "specifies a list of protocols." )
     ;
+
+    positional_options_description p;
+    p.add("filters", -1);
 
     variables_map vm;
 
     try {
-        store ( parse_command_line ( argc, argv, desc ), vm );
+        store(command_line_parser(argc, argv).
+              options(desc).positional(p).run(), vm);
         notify ( vm );
     } catch ( boost::program_options::unknown_option ex1 ) {
         cerr << "ERROR >> " << ex1.what() << "" << endl;
@@ -68,24 +74,29 @@ int main ( int argc, char **argv ) {
         return EXIT_SUCCESS;
     }
 
-    breederConfig::init();
+    if ( !vm.count ( "filters" ) || vm["filters"].as< vector<string> >().empty() ) {
+        std::cerr<<"ERROR >> You have not selected any protocol!"<<std::endl;
+        return EXIT_FAILURE;
+    }
+
+    if( !breederConfig::fexists() ) {
+        breederConfig::init();
+    }
+    
     boost::property_tree::ptree config = breederConfig::load();
 
-    cout << config.get<std::string>("global.protocols") << endl;
-
+    vector<string> pselect = vm["filters"].as< vector<string> >();
+    vector<string> pavailable;
+    string temp = config.get<std::string>("global.protocols");
+    boost::algorithm::split ( pavailable, temp, boost::algorithm::is_any_of ( " " ) );
     
-
+    
     // TODO
 
     list<std::string> regularexpressions;
 
     if ( vm.count ( "http" ) ) {
         regularexpressions.push_front ( ".*HTTP.*" );
-    }
-
-    if ( regularexpressions.empty() ) {
-        std::cerr<<"ERROR >> You have not selected any protocol!"<<std::endl;
-        return EXIT_FAILURE;
     }
 
 

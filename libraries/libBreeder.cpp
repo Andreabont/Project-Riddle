@@ -27,6 +27,7 @@
  */
 
 #include <string>
+#include <fstream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
 
@@ -63,8 +64,17 @@ boost::property_tree::ptree breederConfig::load()
 
     boost::property_tree::ptree config;
     boost::property_tree::ini_parser::read_ini( FILECONFIG, config );
-    
+
     return config;
 
 }
+
+bool breederConfig::fexists()
+{
+
+    std::ifstream ifile( FILECONFIG );
+    return ifile;
+
+}
+
 

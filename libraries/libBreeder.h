@@ -37,6 +37,7 @@ namespace breederConfig {
 
 void init();
 boost::property_tree::ptree load();
+bool fexists();
 
 }
 
