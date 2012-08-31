@@ -117,25 +117,25 @@ int main ( int argc, char **argv ) {
 
                 boost::regex pattern (regexp, boost::regex_constants::icase|boost::regex_constants::perl);
 
-                if(boost::regex_search (a_flux, pattern, boost::regex_constants::format_perl) || boost::regex_search (b_flux, pattern, boost::regex_constants::format_perl))
+                if(boost::regex_search (a_flux, pattern, boost::regex_constants::format_perl) || boost::regex_search (b_flux, pattern, boost::regex_constants::format_perl)) {
                     ok = true;
-                std::cerr<<"found!"<<std::endl;
-                break;
+                    break;
+                }
             }
 
 
-        if(ok) {
-            cout << flow->exportFlow() << endl;
+            if(ok) {
+                cout << flow->exportFlow() << endl;
+            }
+
+            delete flow;
+
         }
-
-        delete flow;
-
+        catch ( packet::Overflow ) {
+            std::cerr<<"Overflow! :-P"<<std::endl;
+            return EXIT_FAILURE;
+        }
     }
-    catch ( packet::Overflow ) {
-        std::cerr<<"Overflow! :-P"<<std::endl;
-        return EXIT_FAILURE;
-    }
-}
 
-return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
