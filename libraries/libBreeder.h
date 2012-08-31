@@ -31,6 +31,9 @@
 
 #define FILECONFIG "breeder.conf"
 
+#include <string>
+#include <list>
+#include <vector>
 #include <boost/property_tree/ptree.hpp>
 
 namespace breederConfig {
@@ -38,6 +41,7 @@ namespace breederConfig {
 void init();
 boost::property_tree::ptree load();
 bool fexists();
+std::list<std::string> protocolsValidation(std::vector<std::string> select, std::vector<std::string> available);
 
 }
 

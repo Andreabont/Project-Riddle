@@ -27,6 +27,8 @@
  */
 
 #include <string>
+#include <list>
+#include <vector>
 #include <fstream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
@@ -77,4 +79,25 @@ bool breederConfig::fexists()
 
 }
 
+std::list< std::string > breederConfig::protocolsValidation(std::vector< std::string > select, std::vector< std::string > available)
+{
+
+    std::list< std::string > out;
+
+    for (std::vector< std::string >::iterator it = select.begin(); it != select.end(); ++it) {
+
+        for (std::vector< std::string >::iterator it2 = available.begin(); it2 != available.end(); ++it2) {
+
+            if( (*it).compare(*it2) == 0 ) {
+                out.push_back(*it);
+                break;
+            }
+
+        }
+
+    }
+
+    return out;
+
+}
 

@@ -82,15 +82,21 @@ int main ( int argc, char **argv ) {
     if( !breederConfig::fexists() ) {
         breederConfig::init();
     }
-    
+
     boost::property_tree::ptree config = breederConfig::load();
 
-    vector<string> pselect = vm["filters"].as< vector<string> >();
-    vector<string> pavailable;
-    string temp = config.get<std::string>("global.protocols");
+    vector< string > pselect = vm["filters"].as< vector< string > >();
+    vector< string > pavailable;
+    string temp = config.get< std::string >("global.protocols");
     boost::algorithm::split ( pavailable, temp, boost::algorithm::is_any_of ( " " ) );
-    
-    
+
+    list< string > filters = breederConfig::protocolsValidation( pselect, pavailable );
+
+    if ( filters.empty() ) {
+        std::cerr<<"ERROR >> You have not selected any protocol!"<<std::endl;
+        return EXIT_FAILURE;
+    }
+
     // TODO
 
     list<std::string> regularexpressions;
