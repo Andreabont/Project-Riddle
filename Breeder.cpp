@@ -87,7 +87,7 @@ int main ( int argc, char **argv ) {
 
     vector< string > pselect = vm["filters"].as< vector< string > >();
     vector< string > pavailable;
-    string temp = config.get< std::string >("global.protocols");
+    string temp = config.get< string >("global.protocols");
     boost::algorithm::split ( pavailable, temp, boost::algorithm::is_any_of ( " " ) );
 
     list< string > filters = breederConfig::protocolsValidation( pselect, pavailable );
@@ -96,15 +96,6 @@ int main ( int argc, char **argv ) {
         std::cerr<<"ERROR >> You have not selected any protocol!"<<std::endl;
         return EXIT_FAILURE;
     }
-
-    // TODO
-
-    list<std::string> regularexpressions;
-
-    if ( vm.count ( "http" ) ) {
-        regularexpressions.push_front ( ".*HTTP.*" );
-    }
-
 
     while ( 1 ) {
         try {
@@ -118,19 +109,33 @@ int main ( int argc, char **argv ) {
             a_flux = libDump::decodeHexText ( flow->getFirstCharStream() );
             b_flux = libDump::decodeHexText ( flow->getSecondCharStream() );
 
-            boost::regex regexp ( ".*HTTP.*" ); // TODO
+            bool ok = false;
 
-            if ( boost::regex_match ( a_flux, regexp ) || boost::regex_match ( b_flux, regexp ) ) {
-                cout << flow->exportFlow() << endl;
+            for (list< string >::iterator it = filters.begin(); it != filters.end(); ++it) {
+
+                string regexp = config.get< string >( *it + ".regexp" );
+
+                boost::regex pattern (regexp, boost::regex_constants::icase|boost::regex_constants::perl);
+
+                if(boost::regex_search (a_flux, pattern, boost::regex_constants::format_perl) || boost::regex_search (b_flux, pattern, boost::regex_constants::format_perl))
+                    ok = true;
+                std::cerr<<"found!"<<std::endl;
+                break;
             }
 
-            delete flow;
 
-        } catch ( packet::Overflow ) {
-            std::cerr<<"Overflow! :-P"<<std::endl;
-            return EXIT_FAILURE;
+        if(ok) {
+            cout << flow->exportFlow() << endl;
         }
-    }
 
-    return EXIT_SUCCESS;
+        delete flow;
+
+    }
+    catch ( packet::Overflow ) {
+        std::cerr<<"Overflow! :-P"<<std::endl;
+        return EXIT_FAILURE;
+    }
+}
+
+return EXIT_SUCCESS;
 }
