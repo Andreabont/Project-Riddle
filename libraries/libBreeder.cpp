@@ -32,6 +32,9 @@
 #include <fstream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/ini_parser.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "libBreeder.h"
 
@@ -49,9 +52,13 @@ void breederConfig::init()
     );
 
     boost::property_tree::ptree http;
-    http.put( "description", "..." );
-    http.put( "regexp", "HTTP/[0-9]\\.[0-9]" );
-    http.put( "ports", "80 8080" );
+    http.put( "description", "The Hypertext Transfer Protocol (HTTP) is an application protocol for distributed, collaborative, hypermedia information systems. HTTP is the foundation of data communication for the World Wide Web." );
+    http.put( "regexp_content", "HTTP/[0-9]\\.[0-9]" );
+    http.put( "regexp_score", "80" );
+    http.put( "ports_content", "80 8080" );
+    http.put( "ports_score", "20" );
+
+    // TODO Aggiungi protocolli.
 
     root.push_back(
         boost::property_tree::ptree::value_type( "http", http )
@@ -79,7 +86,30 @@ bool breederConfig::fexists()
 
 }
 
-std::list< std::string > breederConfig::protocolsValidation(std::vector< std::string > select, std::vector< std::string > available)
+std::vector< std::string > breederConfig::getProtocolsAvailable(boost::property_tree::ptree config)
+{
+    std::vector< std::string > pavailable;
+    std::string temp = config.get< std::string >("global.protocols");
+    boost::algorithm::split ( pavailable, temp, boost::algorithm::is_any_of ( " " ) );
+    return pavailable;
+}
+
+std::vector< int > breederConfig::getPortsAvailable(boost::property_tree::ptree config, std::string filter)
+{
+    std::string temp = config.get< std::string >(filter+".ports_content");
+    std::vector< std::string > sports;
+    boost::algorithm::split ( sports, temp, boost::algorithm::is_any_of ( " " ) );
+    std::vector< int > ports( sports.size() );
+
+    for(int i = 0; i < sports.size(); i++) {
+        ports[i] = boost::lexical_cast<int> ( sports[i] );
+    }
+
+    return ports;
+
+}
+
+std::list< std::string > breederTools::protocolsValidation(std::vector< std::string > select, std::vector< std::string > available)
 {
 
     std::list< std::string > out;
@@ -101,3 +131,19 @@ std::list< std::string > breederConfig::protocolsValidation(std::vector< std::st
 
 }
 
+bool breederTools::portsValidation(int select, std::vector< int > available)
+{
+
+    for (std::vector< int >::iterator it = available.begin(); it != available.end(); ++it) {
+
+        if(*it == select) {
+
+            return true;
+
+        }
+
+    }
+
+    return false;
+
+}

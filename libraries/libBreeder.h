@@ -29,7 +29,7 @@
 #ifndef LIBBREEDER_H
 #define LIBBREEDER_H
 
-#define FILECONFIG "breeder.conf"
+#define FILECONFIG "/tmp/breeder.conf"
 
 #include <string>
 #include <list>
@@ -41,7 +41,16 @@ namespace breederConfig {
 void init();
 boost::property_tree::ptree load();
 bool fexists();
+
+std::vector< std::string > getProtocolsAvailable(boost::property_tree::ptree config);
+std::vector< int > getPortsAvailable(boost::property_tree::ptree config, std::string filter);
+
+}
+
+namespace breederTools {
+
 std::list<std::string> protocolsValidation(std::vector<std::string> select, std::vector<std::string> available);
+bool portsValidation(int select, std::vector< int > available);
 
 }
 

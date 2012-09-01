@@ -30,8 +30,6 @@
 #include <string>
 #include <vector>
 #include <boost/regex.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/program_options.hpp>
 #include "./libraries/libBreeder.h"
@@ -86,11 +84,9 @@ int main ( int argc, char **argv ) {
     boost::property_tree::ptree config = breederConfig::load();
 
     vector< string > pselect = vm["filters"].as< vector< string > >();
-    vector< string > pavailable;
-    string temp = config.get< string >("global.protocols");
-    boost::algorithm::split ( pavailable, temp, boost::algorithm::is_any_of ( " " ) );
+    vector< string > pavailable = breederConfig::getProtocolsAvailable( config );
 
-    list< string > filters = breederConfig::protocolsValidation( pselect, pavailable );
+    list< string > filters = breederTools::protocolsValidation( pselect, pavailable );
 
     if ( filters.empty() ) {
         std::cerr<<"ERROR >> You have not selected any protocol!"<<std::endl;
@@ -109,23 +105,29 @@ int main ( int argc, char **argv ) {
             a_flux = libDump::decodeHexText ( flow->getFirstCharStream() );
             b_flux = libDump::decodeHexText ( flow->getSecondCharStream() );
 
-            bool ok = false;
-
             for (list< string >::iterator it = filters.begin(); it != filters.end(); ++it) {
 
-                string regexp = config.get< string >( *it + ".regexp" );
+                int score = 0;
+
+                string regexp = config.get< string >( *it + ".regexp_content" );
 
                 boost::regex pattern (regexp, boost::regex_constants::icase|boost::regex_constants::perl);
 
                 if(boost::regex_search (a_flux, pattern, boost::regex_constants::format_perl) || boost::regex_search (b_flux, pattern, boost::regex_constants::format_perl)) {
-                    ok = true;
+                    score += config.get< int >( *it + ".regexp_score" );
+                }
+
+                vector< int > ports = breederConfig::getPortsAvailable( config, *it );
+
+                if(breederTools::portsValidation( flow->getFirstPort(), ports ) || breederTools::portsValidation( flow->getSecondPort(), ports ) ) {
+                    score += config.get< int >( *it + ".ports_score" );
+                }
+
+                if( score >= config.get< int >( "global.threshold" ) ) {
+                    cout << flow->exportFlow() << endl;
                     break;
                 }
-            }
 
-
-            if(ok) {
-                cout << flow->exportFlow() << endl;
             }
 
             delete flow;
