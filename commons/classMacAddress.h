@@ -50,10 +50,10 @@ public:
     }
 
     /** builds the object from a hexadecimal string (link to factory) */
-    mac_address ( const std::string& );
+    mac_address ( std::string );
 
     /** builds the object from a hexadecimal string */
-    void from_string ( const std::string& );
+    void from_string ( std::string );
 
     /** implements the comparison between mac address */
     bool operator== ( const mac_address& otherMac );

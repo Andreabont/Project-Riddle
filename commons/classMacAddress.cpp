@@ -29,17 +29,23 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 #include "classMacAddress.h"
 
 /** Costruttore */
-libNetwork::mac_address::mac_address(const std::string& rawData)
+libNetwork::mac_address::mac_address( std::string rawData )
 {
     this->from_string(rawData);
     return;
 }
 
-/** Inizializzatore da stringa */
-void libNetwork::mac_address::from_string ( const std::string& rawData ) {
+/** Inizializzatore da stringa (con o senza ':') */
+void libNetwork::mac_address::from_string ( std::string rawData ) {
+
+    if( rawData.find(':') != std::string::npos ) {
+        rawData.erase( std::remove( rawData.begin(), rawData.end(), ':' ), rawData.end() );
+    }
+
     int l = 0;
     std::string temp;
     temp.reserve ( 2 );

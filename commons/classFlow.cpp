@@ -84,13 +84,10 @@ void libNetwork::stream::factory ( std::string newflow ) {
 
     timeEpoch = boost::lexical_cast<uint64_t> ( section[0] );
     timeMillis = boost::lexical_cast<uint64_t> ( section[1] );
-
-    // FIXME
-
     macAddress[0].from_string( section[2] );
     macAddress[1].from_string( section[3] );
-    ipAddress[0].from_string( section[4] );
-    ipAddress[1].from_string( section[5] );
+    ipAddress[0] = boost::asio::ip::address::from_string( section[4] );
+    ipAddress[1] = boost::asio::ip::address::from_string( section[5] );
     port[0] =  boost::lexical_cast<uint16_t> ( section[6] );
     port[1] =  boost::lexical_cast<uint16_t> ( section[7] );
     charStream[0] = section[8];
