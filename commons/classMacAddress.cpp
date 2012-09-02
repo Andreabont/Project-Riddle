@@ -31,9 +31,15 @@
 #include <iomanip>
 #include "classMacAddress.h"
 
-
 /** Costruttore */
-libNetwork::mac_address::mac_address ( const std::string& rawData ) {
+libNetwork::mac_address::mac_address(const std::string& rawData)
+{
+    this->from_string(rawData);
+    return;
+}
+
+/** Inizializzatore da stringa */
+void libNetwork::mac_address::from_string ( const std::string& rawData ) {
     int l = 0;
     std::string temp;
     temp.reserve ( 2 );

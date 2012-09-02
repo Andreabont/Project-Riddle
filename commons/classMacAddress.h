@@ -49,8 +49,11 @@ public:
         std::memset ( byte,0,6 );
     }
 
-    /** builds the object from a hexadecimal string */
+    /** builds the object from a hexadecimal string (link to factory) */
     mac_address ( const std::string& );
+
+    /** builds the object from a hexadecimal string */
+    void from_string ( const std::string& );
 
     /** implements the comparison between mac address */
     bool operator== ( const mac_address& otherMac );
