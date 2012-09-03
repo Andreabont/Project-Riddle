@@ -45,6 +45,7 @@ int main ( int argc, char **argv ) {
     options_description desc ( "Breeder - Network TCP Flux Seletor" );
     desc.add_options()
     ( "help,h", "prints this" )
+    ( "list,l", "list the available protocols.")
     ( "filters,f", value< vector<string> >(), "specifies a list of protocols." )
     ;
 
@@ -72,20 +73,31 @@ int main ( int argc, char **argv ) {
         return EXIT_SUCCESS;
     }
 
+    if ( !breederConfig::fexists() ) {
+        breederConfig::init();
+    }
+
+    boost::property_tree::ptree config = breederConfig::load();
+    vector< string > pavailable = breederConfig::getProtocolsAvailable( config );
+
+    if ( vm.count ( "list" ) ) {
+
+        std::cerr << "Available protocols:" << std::endl;
+
+        for (vector< string >::iterator it = pavailable.begin(); it != pavailable.end(); ++it) {
+            std::cerr << "* " << *it << "\t" << config.get< string >( *it + ".description" ) << std::endl;
+        }
+
+        return EXIT_SUCCESS;
+
+    }
+
     if ( !vm.count ( "filters" ) || vm["filters"].as< vector<string> >().empty() ) {
         std::cerr<<"ERROR >> You have not selected any protocol!"<<std::endl;
         return EXIT_FAILURE;
     }
 
-    if( !breederConfig::fexists() ) {
-        breederConfig::init();
-    }
-
-    boost::property_tree::ptree config = breederConfig::load();
-
     vector< string > pselect = vm["filters"].as< vector< string > >();
-    vector< string > pavailable = breederConfig::getProtocolsAvailable( config );
-
     list< string > filters = breederTools::protocolsValidation( pselect, pavailable );
 
     if ( filters.empty() ) {

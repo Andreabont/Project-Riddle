@@ -45,23 +45,34 @@ void breederConfig::init()
 
     boost::property_tree::ptree global;
     global.put( "threshold", "90" );
-    global.put( "protocols", "http" );
+    global.put( "protocols", "http ftp" );
 
     root.push_front(
         boost::property_tree::ptree::value_type( "global", global )
     );
 
     boost::property_tree::ptree http;
-    http.put( "description", "The Hypertext Transfer Protocol (HTTP) is an application protocol for distributed, collaborative, hypermedia information systems. HTTP is the foundation of data communication for the World Wide Web." );
+    http.put( "description", "The Hypertext Transfer Protocol (HTTP) is an application protocol for distributed hypermedia information systems." );
     http.put( "regexp_content", "HTTP/[0-9]\\.[0-9]" );
     http.put( "regexp_score", "80" );
     http.put( "ports_content", "80 8080" );
     http.put( "ports_score", "20" );
 
+    boost::property_tree::ptree ftp;
+    ftp.put( "description", "File Transfer Protocol (FTP) is a standard network protocol used to transfer files from one host to another host over a TCP-based network." );
+    ftp.put( "regexp_content", "USER#.*?#.*?PASS" );
+    ftp.put( "regexp_score", "20" );
+    ftp.put( "ports_content", "21" );
+    ftp.put( "ports_score", "80" );
+
     // TODO Aggiungi protocolli.
 
     root.push_back(
         boost::property_tree::ptree::value_type( "http", http )
+    );
+
+    root.push_back(
+        boost::property_tree::ptree::value_type( "ftp", ftp )
     );
 
     boost::property_tree::ini_parser::write_ini( FILECONFIG, root );
