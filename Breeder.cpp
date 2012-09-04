@@ -46,7 +46,7 @@ int main ( int argc, char **argv ) {
     desc.add_options()
     ( "help,h", "prints this" )
     ( "list,l", "list the available protocols.")
-    ( "filters,f", value< vector<string> >(), "specifies a list of protocols." )
+    ( "filters,f", value< vector<string> >()->multitoken(), "specifies a list of protocols." )
     ;
 
     positional_options_description p;

@@ -48,10 +48,10 @@ int main ( int argc, char **argv ) {
     desc.add_options()
     ( "help,h", "prints this" )
     ( "dump,d", "enable dump mode" )
-    ( "iface,i", value<string>(), "interface to sniff from (not set = default device)" )
-    ( "input,I", value<string>(), "reads packets from a pcap file (disable iface input)" )
-    ( "filter,f", value<string>(), "use to filter packet with bpf" )
-    ( "limit,l", value<int>(), "set max number of packet" )
+    ( "iface,i", value< string >(), "interface to sniff from (not set = default device)" )
+    ( "input,I", value< string >(), "reads packets from a pcap file (disable iface input)" )
+    ( "filter,f", value< vector< string > >()->multitoken(), "use to filter packet with bpf" )
+    ( "limit,l", value< int >(), "set max number of packet" )
 #ifdef __linux__
     ( "secure,s", "Drop root privileges after initialization." )
 #endif
@@ -144,7 +144,15 @@ int main ( int argc, char **argv ) {
 #endif
 
     if ( vm.count ( "filter" ) ) {
-        string filter = vm["filter"].as<string>();
+        vector < string > filterraw = vm["filter"].as< vector < string > >();
+
+        string filter;
+
+        for ( int i = 0; i < filterraw.size(); i++ ) {
+            filter.append(filterraw[i]);
+            if( i != filterraw.size() - 1 ) filter.append(" ");
+        }
+
         struct bpf_program fp;
         bpf_u_int32 net;
 
