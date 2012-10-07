@@ -34,14 +34,6 @@
 #include "libRiddle.h"
 #include "../commons/libDump.h"
 
-// Non mettere using namespace generali in header file.
-
-void pcap_fatal ( const char *error_in, const char *error_buffer ) {
-    std::stringstream ss;
-    ss<<"Fatal Error in "<<error_in<<": "<<error_buffer;
-    throw ( std::runtime_error ( ss.str() ) );
-}
-
 static void memPrint ( const unsigned char *start, char len, int index ) {
     printf ( "0x%08x | ",index );
     int i;

@@ -109,11 +109,16 @@ int main ( int argc, char **argv ) {
     pcap_t *pcap_handle;
 
     if ( vm.count ( "input" ) ) {
+      
         pcap_handle = pcap_open_offline ( vm["input"].as<string>().c_str(), error_buffer );
+	
         if ( pcap_handle == NULL ) {
-            pcap_fatal ( "pcap_open_offline", error_buffer );
+            cerr << "ERROR >> pcap_open_offline: " << error_buffer << endl;
+            return EXIT_FAILURE;
         }
+        
         cerr << ">> Reading packets from " << vm["input"].as<string>() << endl;
+	
     } else {
 
         string pcap_device;
@@ -121,17 +126,26 @@ int main ( int argc, char **argv ) {
         if ( vm.count ( "iface" ) ) {
             pcap_device=vm["iface"].as<string>();
         } else {
+	  
             // Cerca e restituisce interfaccia
             char *dev=pcap_lookupdev ( error_buffer );
-            if ( dev!=NULL ) pcap_device = dev;
-            else pcap_fatal ( "pcap_lookupdev", error_buffer );
+            if ( dev!=NULL ) {
+                pcap_device = dev;
+            } else {
+                cerr << "ERROR >> pcap_lookupdev: " << error_buffer << endl;
+                return EXIT_FAILURE;
+            }
+            
         }
 
         // Apre il device in mod promiscua
         pcap_handle = pcap_open_live ( pcap_device.c_str(), 4096, 1, 0, error_buffer );
+	
         if ( pcap_handle == NULL ) {
-            pcap_fatal ( "pcap_open_live", error_buffer );
+            cerr << "ERROR >> pcap_open_live: " << error_buffer << endl;
+            return EXIT_FAILURE;
         }
+        
         cerr << ">> Sniffing on device " << pcap_device << endl;
     }
 
