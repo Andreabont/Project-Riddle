@@ -429,6 +429,42 @@ std::string libNetwork::TCPv4packet::getPayLoad() {
     return this->getHexString ( start, this->getPacketLength() - start );
 }
 
+bool libNetwork::TCPv4packet::isCWR() {
+    return ( this->getFlagsTCP() & 128 );
+}
+
+bool libNetwork::TCPv4packet::isECE() {
+    return ( this->getFlagsTCP() & 64 );
+}
+
+bool libNetwork::TCPv4packet::isURG() {
+    return ( this->getFlagsTCP() & 32 );
+}
+
+bool libNetwork::TCPv4packet::isACK() {
+    return ( this->getFlagsTCP() & 16 );
+}
+
+bool libNetwork::TCPv4packet::isPSH() {
+    return ( this->getFlagsTCP() & 8 );
+}
+
+bool libNetwork::TCPv4packet::isRST() {
+    return ( this->getFlagsTCP() & 4 );
+}
+
+bool libNetwork::TCPv4packet::isSYN() {
+    return ( this->getFlagsTCP() & 2 );
+}
+
+bool libNetwork::TCPv4packet::isFIN() {
+    return ( this->getFlagsTCP() & 1 );
+}
+
+bool libNetwork::TCPv4packet::isOption() {
+    return ( this->getHeaderLength() > TCP_STANDARD );
+}
+
 /* UDP */
 
 libNetwork::UDPv4packet::UDPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {

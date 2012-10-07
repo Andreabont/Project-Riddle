@@ -325,9 +325,7 @@ public:
     }
 
     /** true if there are additional options. */
-    inline bool isOption() {
-        return ( this->getHeaderLength() > TCP_STANDARD );
-    }
+    bool isOption();
 
 };
 
