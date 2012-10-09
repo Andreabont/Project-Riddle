@@ -33,7 +33,7 @@
 #include <limits>
 #include <pcap.h>
 #include <boost/program_options.hpp>
-#include "./libraries/libRiddle.h"
+#include "./commons/libDump.h"
 
 #ifdef __linux__
 #include <unistd.h>
@@ -109,16 +109,16 @@ int main ( int argc, char **argv ) {
     pcap_t *pcap_handle;
 
     if ( vm.count ( "input" ) ) {
-      
+
         pcap_handle = pcap_open_offline ( vm["input"].as<string>().c_str(), error_buffer );
-	
+
         if ( pcap_handle == NULL ) {
             cerr << "ERROR >> pcap_open_offline: " << error_buffer << endl;
             return EXIT_FAILURE;
         }
-        
+
         cerr << ">> Reading packets from " << vm["input"].as<string>() << endl;
-	
+
     } else {
 
         string pcap_device;
@@ -126,7 +126,7 @@ int main ( int argc, char **argv ) {
         if ( vm.count ( "iface" ) ) {
             pcap_device=vm["iface"].as<string>();
         } else {
-	  
+
             // Cerca e restituisce interfaccia
             char *dev=pcap_lookupdev ( error_buffer );
             if ( dev!=NULL ) {
@@ -135,17 +135,17 @@ int main ( int argc, char **argv ) {
                 cerr << "ERROR >> pcap_lookupdev: " << error_buffer << endl;
                 return EXIT_FAILURE;
             }
-            
+
         }
 
         // Apre il device in mod promiscua
         pcap_handle = pcap_open_live ( pcap_device.c_str(), 4096, 1, 0, error_buffer );
-	
+
         if ( pcap_handle == NULL ) {
             cerr << "ERROR >> pcap_open_live: " << error_buffer << endl;
             return EXIT_FAILURE;
         }
-        
+
         cerr << ">> Sniffing on device " << pcap_device << endl;
     }
 
@@ -189,9 +189,12 @@ int main ( int argc, char **argv ) {
         maxpacket=vm["limit"].as<int>();
     }
 
-    void ( *dumper ) ( const unsigned char*,struct pcap_pkthdr );
-    if ( vm.count ( "dump" ) ) dumper=hexDump;
-    else dumper=rawDump;
+    string ( *dumper ) ( string, uint64_t, uint32_t );
+    if ( vm.count ( "dump" ) ) {
+        dumper=libDump::classicDump;
+    } else {
+        dumper=libDump::riddleDump;
+    }
 
     const u_char *packet;
     pcap_pkthdr header;
@@ -202,7 +205,8 @@ int main ( int argc, char **argv ) {
             cerr << ">> Flow terminated" << endl;
             break;
         }
-        dumper ( packet, header );
+        
+        cout << dumper ( libDump::encodeHexText( packet, header.len ), header.ts.tv_sec, header.ts.tv_usec );
         if ( maxpacket!=numeric_limits<int>::max() ) maxpacket--;
     }
 

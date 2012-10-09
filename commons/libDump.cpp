@@ -33,8 +33,20 @@
 #include <string>
 #include <sstream>
 #include <stdint.h>
+#include <string.h>
 #include "libDump.h"
 
+
+std::string libDump::classicDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis  ) {
+ 
+    std::stringstream out;
+    
+    out << "[ epoch: " << timeEpoch << " ] -> " << timeMillis << "ms" << std::endl;
+    out << classicDump( input );
+    
+    return out.str();
+    
+}
 
 std::string libDump::classicDump ( std::string input ) {
 
@@ -105,6 +117,18 @@ std::string libDump::classicDump ( std::string input ) {
     return out.str();
 }
 
+std::string libDump::riddleDump( std::string input, uint64_t timeEpoch, uint32_t timeMillis ) {
+
+  std::stringstream out;
+  
+  out << timeEpoch << "!";
+  out << timeMillis << "!";
+  out << input << std::endl;
+  
+  return out.str();
+  
+}
+
 std::string libDump::decodeHexText ( std::string raw ) {
 
     std::string text;
@@ -121,4 +145,18 @@ std::string libDump::decodeHexText ( std::string raw ) {
 
     return text;
 
+}
+
+std::string libDump::encodeHexText ( const unsigned char* text, uint32_t size ) {
+
+  std::stringstream out;
+  
+  for ( int i = 0; i < size; i++ ) {
+    
+    out << std::setfill ( '0' ) << std::setw ( 2 ) << std::hex << (int) text[i];
+    
+  } 
+  
+  return out.str();
+  
 }

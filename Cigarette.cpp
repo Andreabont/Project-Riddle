@@ -82,7 +82,7 @@ int main ( int argc, char **argv ) {
             packet* pkg = packet::factory ( r_packet );
 
 
-            cout << "[" << std::dec << pkg->getEpoch() << " " << setfill ( '0' ) << std::setw ( 6 ) << pkg->getMillis() << "] Size: " << pkg->getPacketLength() << " byte" << endl;
+            cout << "[" << std::dec << pkg->getEpoch() << " " << setfill ( '0' ) << setw ( 6 ) << pkg->getMillis() << "] Size: " << pkg->getPacketLength() << " byte" << endl;
             cout << "                    From " << pkg->getSenderMac().to_string() << " to "<< pkg->getTargetMac().to_string() << endl;
             cout << "                    EtherType: 0x" << std::hex << pkg->getEtherType() << " ("<< ether_type_decode ( pkg->getEtherType() ) << ")" << endl;
             cout << endl;

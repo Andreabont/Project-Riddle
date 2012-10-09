@@ -6,7 +6,7 @@ add_subdirectory(libraries)
 
 set(LIBRARIES_DIR libraries)
 
-set(RIDDLE_SRCS ${LIBRARIES_DIR}/libRiddle.cpp ${LIBRARIES_DIR}/libRiddle.h Riddle.cpp)
+set(RIDDLE_SRCS Riddle.cpp)
 set(CIGARETTE_SRCS ${LIBRARIES_DIR}/libCigarette.cpp ${LIBRARIES_DIR}/libCigarette.h Cigarette.cpp)
 set(RANGING_SRCS ${LIBRARIES_DIR}/libRanging.h ${LIBRARIES_DIR}/libRanging.cpp Ranging.cpp)
 set(PURSUER_SRCS ${LIBRARIES_DIR}/libPursuer.h ${LIBRARIES_DIR}/libPursuer.cpp Pursuer.cpp)

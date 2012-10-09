@@ -32,14 +32,24 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <stdint.h>
 
 namespace libDump {
 
 /** print hex string in a format style "memory dump". */
+std::string classicDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis );
+
+/** print hex string in a format style "memory dump". overload */
 std::string classicDump ( std::string input );
+
+/** print data in riddle protocol */
+std::string riddleDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis );
 
 /** decode hex string using the ASCII table. */
 std::string decodeHexText ( std::string raw );
+
+/** enccoding to hex format */
+std::string encodeHexText ( const unsigned char *text, uint32_t size);
 
 }
 
