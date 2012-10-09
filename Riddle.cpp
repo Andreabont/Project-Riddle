@@ -49,6 +49,7 @@ int main ( int argc, char **argv ) {
     ( "help,h", "prints this" )
     ( "dump,d", "enable dump mode" )
     ( "iface,i", value< string >(), "interface to sniff from. [auto]" )
+    ( "iface-list,y", "prints all available devices." )
     ( "input,I", value< string >(), "reads packets from a pcap file (disable iface input)" )
     ( "filter,f", value< vector< string > >()->multitoken(), "use to filter packet with bpf" )
     ( "limit,l", value< int >(), "set max number of packet" )
@@ -66,15 +67,38 @@ int main ( int argc, char **argv ) {
     } catch ( boost::program_options::unknown_option ex1 ) {
         cerr << "ERROR >> " << ex1.what() << "" << endl;
         cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
-        return EXIT_SUCCESS;
+        return EXIT_FAILURE;
     } catch ( boost::program_options::invalid_command_line_syntax ex2 ) {
         cerr << "ERROR >> " << ex2.what() << "" << endl;
         cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
-        return EXIT_SUCCESS;
+        return EXIT_FAILURE;
     }
 
     if ( vm.count ( "help" ) ) {
         cout << desc << endl;
+        return EXIT_SUCCESS;
+    }
+    
+    if ( vm.count ( "iface-list" ) ) {
+      
+	pcap_if_t *alldevsp, *device;
+	char error_buffer[100];
+      
+	cerr << ">> Finding available devices ... " << endl;
+	if( pcap_findalldevs( &alldevsp , error_buffer) ) {
+	  cerr << "ERROR >> pcap_findalldevs: " << error_buffer << endl;
+	  return EXIT_FAILURE;
+	}
+	
+	cerr << ">> I found these devices: ";
+        
+        for(device = alldevsp ; device != NULL ; device = device->next)
+	{
+	  cerr << device->name << " ";
+	}
+	
+	cerr << endl;
+ 
         return EXIT_SUCCESS;
     }
 
