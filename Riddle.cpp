@@ -48,12 +48,13 @@ int main ( int argc, char **argv ) {
     desc.add_options()
     ( "help,h", "prints this" )
     ( "dump,d", "enable dump mode" )
-    ( "iface,i", value< string >(), "interface to sniff from (not set = default device)" )
+    ( "iface,i", value< string >(), "interface to sniff from. [auto]" )
     ( "input,I", value< string >(), "reads packets from a pcap file (disable iface input)" )
     ( "filter,f", value< vector< string > >()->multitoken(), "use to filter packet with bpf" )
     ( "limit,l", value< int >(), "set max number of packet" )
+    ( "snaplen,m", value< int >(), "maximum amount of data to be captured. [65536]")
 #ifdef __linux__
-    ( "secure,s", "Drop root privileges after initialization." )
+    ( "secure,s", "drop root privileges after initialization." )
 #endif
     ;
 
@@ -137,9 +138,16 @@ int main ( int argc, char **argv ) {
             }
 
         }
+        
+        int snaplen = 65536;
+	
+	if ( vm.count ( "snaplen" ) ) {
+            snaplen=vm["snaplen"].as<int>();
+	    cerr << ">> Capture maximum " << vm["snaplen"].as<int>() << " bytes." << endl;
+        }
 
         // Apre il device in mod promiscua
-        pcap_handle = pcap_open_live ( pcap_device.c_str(), 4096, 1, 0, error_buffer );
+        pcap_handle = pcap_open_live ( pcap_device.c_str(), snaplen, 1, 0, error_buffer );
 
         if ( pcap_handle == NULL ) {
             cerr << "ERROR >> pcap_open_live: " << error_buffer << endl;
