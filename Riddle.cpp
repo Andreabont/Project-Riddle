@@ -30,7 +30,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
-#include <limits>
 #include <pcap.h>
 #include <boost/program_options.hpp>
 #include "./commons/libDump.h"
@@ -42,6 +41,15 @@
 
 using namespace std;
 using namespace boost::program_options;
+
+string ( *dumper ) ( string, uint64_t, uint32_t );
+
+void process_packet ( u_char *useless, const struct pcap_pkthdr* header, const u_char* packet ) {
+
+     cout << dumper ( libDump::encodeHexText( packet, header->len ), header->ts.tv_sec, header->ts.tv_usec );
+     cout.flush();
+        
+}
 
 int main ( int argc, char **argv ) {
     options_description desc ( "Riddle - Network Sniffer" );
@@ -215,35 +223,22 @@ int main ( int argc, char **argv ) {
         }
     }
 
-    int maxpacket = numeric_limits<int>::max();
+    int maxpacket = -1;
 
     if ( vm.count ( "limit" ) ) {
         maxpacket=vm["limit"].as<int>();
     }
 
-    string ( *dumper ) ( string, uint64_t, uint32_t );
     if ( vm.count ( "dump" ) ) {
         dumper=libDump::classicDump;
     } else {
         dumper=libDump::riddleDump;
     }
-
-    const u_char *packet;
-    pcap_pkthdr header;
-
-    for ( ; maxpacket > 0; ) {
-        packet = pcap_next ( pcap_handle, &header );
-        if ( packet == NULL ) {
-            cerr << ">> Flow terminated" << endl;
-            break;
-        }
-        
-        cout << dumper ( libDump::encodeHexText( packet, header.len ), header.ts.tv_sec, header.ts.tv_usec );
-	cout.flush();
-        if ( maxpacket!=numeric_limits<int>::max() ) maxpacket--;
-    }
+    
+    pcap_loop( pcap_handle , maxpacket , process_packet , NULL );
 
     cerr << ">> I finished the job, goodbye!" << endl;
+    
     pcap_close ( pcap_handle );
 
     return EXIT_SUCCESS;
