@@ -88,7 +88,7 @@ std::string libDump::classicDump ( std::string input ) {
                 std::stringstream convert ( comp );
                 int temp;
                 convert >> std::hex >> temp;
-                if ( ( temp>32 ) && ( temp<128 ) ) {
+                if ( ( temp >= 32 ) && ( temp <= 126 ) ) {
                     out << ( char ) temp;
                 } else {
                     out << ".";
