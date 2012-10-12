@@ -239,6 +239,7 @@ int main ( int argc, char **argv ) {
         }
         
         cout << dumper ( libDump::encodeHexText( packet, header.len ), header.ts.tv_sec, header.ts.tv_usec );
+	cout.flush();
         if ( maxpacket!=numeric_limits<int>::max() ) maxpacket--;
     }
 
