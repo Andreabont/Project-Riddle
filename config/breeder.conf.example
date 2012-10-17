@@ -1,0 +1,15 @@
+[global]
+threshold=90
+protocols=http ftp
+[http]
+description=The Hypertext Transfer Protocol (HTTP) is an application protocol for distributed hypermedia information systems.
+regexp_content=HTTP/[0-9]\.[0-9]
+regexp_score=80
+ports_content=80 8080
+ports_score=20
+[ftp]
+description=File Transfer Protocol (FTP) is a standard network protocol used to transfer files from one host to another host over a TCP-based network.
+regexp_content=USER#.*?#.*?PASS
+regexp_score=20
+ports_content=21
+ports_score=80
