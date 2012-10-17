@@ -12,6 +12,7 @@ add_subdirectory(libraries)
 add_subdirectory(config)
 
 set(LIBRARIES_DIR libraries)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/commons/)
 
 set(RIDDLE_SRCS Riddle.cpp)
 set(CIGARETTE_SRCS ${LIBRARIES_DIR}/libCigarette.cpp ${LIBRARIES_DIR}/libCigarette.h Cigarette.cpp)

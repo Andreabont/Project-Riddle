@@ -29,12 +29,12 @@
 #ifndef LIBBREEDER_H
 #define LIBBREEDER_H
 
-#define FILECONFIG "/etc/ProjectRiddle/breeder.conf"
-
 #include <string>
 #include <list>
 #include <vector>
 #include <boost/property_tree/ptree.hpp>
+
+#include "config.h"
 
 namespace breederConfig {
 
