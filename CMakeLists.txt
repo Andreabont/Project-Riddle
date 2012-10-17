@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(SNIFFER)
+project(ProjectRiddle)
 
 set(SYSCONF_INSTALL_DIR 
     "/etc"
@@ -63,3 +63,18 @@ target_link_libraries(breeder libDump)
 #Install binaries
 install(TARGETS riddle DESTINATION sbin)
 install(TARGETS breeder cigarette pursuer ranging DESTINATION bin)
+
+#Generate packages
+INCLUDE(InstallRequiredSystemLibraries)
+
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Riddle is a modular network sniffer")
+SET(CPACK_PACKAGE_VENDOR "Andrea Bontempi")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README")
+SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+SET(CPACK_PACKAGE_VERSION_MAJOR "0")
+SET(CPACK_PACKAGE_VERSION_MINOR "1")
+SET(CPACK_PACKAGE_VERSION_PATCH "0")
+SET(CPACK_PACKAGE_INSTALL_DIRECTORY "CMake ${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
+SET(CPACK_PACKAGE_CONTACT "Andrea Bontempi <andreabont@yahoo.it>")
+SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Andrea Bontempi")
+INCLUDE(CPack)
