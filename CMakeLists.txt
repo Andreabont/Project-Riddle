@@ -6,10 +6,9 @@ set(SYSCONF_INSTALL_DIR
     CACHE PATH "Path where to install configuration")
 
 
-add_subdirectory(commons)
-add_subdirectory(libraries)
-#Configuration example files
-add_subdirectory(config)
+add_subdirectory(commons)	# Commons libraries.
+add_subdirectory(libraries)	# Libraries for a single executable
+add_subdirectory(config)	# Configuration example files
 
 set(LIBRARIES_DIR libraries)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/commons/)

@@ -75,7 +75,7 @@ void breederConfig::init()
         boost::property_tree::ptree::value_type( "ftp", ftp )
     );
 
-    boost::property_tree::ini_parser::write_ini( FILECONFIG, root );
+    boost::property_tree::ini_parser::write_ini( BREEDERCONFIG, root );
 
 }
 
@@ -83,7 +83,7 @@ boost::property_tree::ptree breederConfig::load()
 {
 
     boost::property_tree::ptree config;
-    boost::property_tree::ini_parser::read_ini( FILECONFIG, config );
+    boost::property_tree::ini_parser::read_ini( BREEDERCONFIG, config );
 
     return config;
 
@@ -92,7 +92,7 @@ boost::property_tree::ptree breederConfig::load()
 bool breederConfig::fexists()
 {
 
-    std::ifstream ifile( FILECONFIG );
+    std::ifstream ifile( BREEDERCONFIG );
     return ifile;
 
 }

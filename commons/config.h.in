@@ -1,1 +1,1 @@
-#define FILECONFIG "@SYSCONF_INSTALL_DIR@/ProjectRiddle/breeder.conf"
+#define BREEDERCONFIG "@SYSCONF_INSTALL_DIR@/ProjectRiddle/breeder.conf"
