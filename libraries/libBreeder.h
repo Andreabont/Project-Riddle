@@ -29,7 +29,7 @@
 #ifndef LIBBREEDER_H
 #define LIBBREEDER_H
 
-#define FILECONFIG "/tmp/breeder.conf"
+#define FILECONFIG "/etc/ProjectRiddle/breeder.conf"
 
 #include <string>
 #include <list>
