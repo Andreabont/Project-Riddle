@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 2.6)
 project(SNIFFER)
 
+set(SYSCONF_INSTALL_DIR 
+    "/etc"
+    CACHE PATH "Path where to install configuration")
+
+
 add_subdirectory(commons)
 add_subdirectory(libraries)
+#Configuration example files
+add_subdirectory(config)
 
 set(LIBRARIES_DIR libraries)
 
@@ -51,3 +58,7 @@ target_link_libraries(breeder ${Boost_LIBRARIES})
 target_link_libraries(breeder ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(breeder libNetwork)
 target_link_libraries(breeder libDump)
+
+#Install binaries
+install(TARGETS riddle DESTINATION sbin)
+install(TARGETS breeder cigarette pursuer ranging DESTINATION bin)
