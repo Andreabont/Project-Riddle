@@ -40,7 +40,7 @@ class mac_address
 {
 
 private:
-    uint16_t byte[6];
+    uint16_t byte[6]; // FIXME Dovrebbe essere un uint8_t
 
 public:
 
