@@ -6,7 +6,7 @@ pkgdesc="Modular Network Packet Sniffer"
 arch=('i686' 'x86_64')
 url="http://github.com/Andreabont/Project-Riddle"
 license=('GPL')
-depends=('boost','libpcap')
+depends=('boost' 'libpcap')
 makedepends=('git')
 
 _gitroot=git://github.com/Andreabont/Project-Riddle.git
