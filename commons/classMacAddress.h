@@ -46,7 +46,7 @@ public:
 
     /** builds the object with null mac address */
     mac_address() {
-        std::memset ( byte,0,6 );
+        std::memset ( byte, 0, 12 );
     }
 
     /** builds the object from a hexadecimal string (link to factory) */
