@@ -47,7 +47,8 @@ string ( *dumper ) ( string, uint64_t, uint32_t );
 void process_packet ( u_char *useless, const struct pcap_pkthdr* header, const u_char* packet ) {
 
      cout << dumper ( libDump::encodeHexText( packet, header->len ), header->ts.tv_sec, header->ts.tv_usec );
-     cout.flush();
+     
+     // cout.flush();
         
 }
 
@@ -61,7 +62,7 @@ int main ( int argc, char **argv ) {
     ( "input,I", value< string >(), "reads packets from a pcap file (disable iface input)" )
     ( "filter,f", value< vector< string > >()->multitoken(), "use to filter packet with bpf" )
     ( "limit,l", value< int >(), "set max number of packet" )
-    ( "snaplen,m", value< int >(), "maximum amount of data to be captured. [65536]")
+    ( "snaplen,m", value< int >(), "maximum amount of data to be captured. [1500]")
 #ifdef __linux__
     ( "secure,s", "drop root privileges after initialization." )
 #endif
@@ -171,7 +172,7 @@ int main ( int argc, char **argv ) {
 
         }
         
-        int snaplen = 65536;
+        int snaplen = 1500;
 	
 	if ( vm.count ( "snaplen" ) ) {
             snaplen=vm["snaplen"].as<int>();
