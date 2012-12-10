@@ -58,8 +58,8 @@ int main ( int argc, char **argv ) {
     ( "help,h", "prints this" )
     ( "dump,d", "enable dump mode" )
     ( "iface,i", value< string >(), "interface to sniff from. [auto]" )
-    ( "iface-list,y", "prints all available devices." )
-    ( "input,I", value< string >(), "reads packets from a pcap file (disable iface input)" )
+    ( "iface-list,I", "prints all available devices." )
+    ( "pcap,p", value< string >(), "reads packets from a pcap file (disable iface input)" )
     ( "filter,f", value< vector< string > >()->multitoken(), "use to filter packet with bpf" )
     ( "limit,l", value< int >(), "set max number of packet" )
     ( "snaplen,m", value< int >(), "maximum amount of data to be captured. [1500]")
@@ -142,9 +142,9 @@ int main ( int argc, char **argv ) {
 
     pcap_t *pcap_handle;
 
-    if ( vm.count ( "input" ) ) {
+    if ( vm.count ( "pcap" ) ) {
 
-        pcap_handle = pcap_open_offline ( vm["input"].as<string>().c_str(), error_buffer );
+        pcap_handle = pcap_open_offline ( vm["pcap"].as<string>().c_str(), error_buffer );
 
         if ( pcap_handle == NULL ) {
             cerr << "ERROR >> pcap_open_offline: " << error_buffer << endl;
