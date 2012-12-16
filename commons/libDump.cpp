@@ -37,15 +37,15 @@
 #include "libDump.h"
 
 
-std::string libDump::classicDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis  ) {
- 
+std::string libDump::classicDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis ) {
+
     std::stringstream out;
-    
+
     out << "[ epoch: " << timeEpoch << " ] -> " << timeMillis << "ms" << std::endl;
-    out << classicDump( input );
-    
+    out << classicDump ( input );
+
     return out.str();
-    
+
 }
 
 std::string libDump::classicDump ( std::string input ) {
@@ -117,46 +117,14 @@ std::string libDump::classicDump ( std::string input ) {
     return out.str();
 }
 
-std::string libDump::riddleDump( std::string input, uint64_t timeEpoch, uint32_t timeMillis ) {
+std::string libDump::riddleDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis ) {
 
-  std::stringstream out;
-  
-  out << timeEpoch << "!";
-  out << timeMillis << "!";
-  out << input << std::endl;
-  
-  return out.str();
-  
-}
+    std::stringstream out;
 
-std::string libDump::decodeHexText ( std::string raw ) {
+    out << timeEpoch << "!";
+    out << timeMillis << "!";
+    out << input << std::endl;
 
-    std::string text;
+    return out.str();
 
-    for ( int i = 0; i <= raw.size(); i += 2 ) {
-        std::string comp;
-        comp += ( char ) raw[i];
-        comp += ( char ) raw[i+1];
-        std::stringstream convert ( comp );
-        int temp;
-        convert >> std::hex >> temp;
-        text += ( char ) temp;
-    }
-
-    return text;
-
-}
-
-std::string libDump::encodeHexText ( const unsigned char* text, uint32_t size ) {
-
-  std::stringstream out;
-  
-  for ( int i = 0; i < size; i++ ) {
-    
-    out << std::setfill ( '0' ) << std::setw ( 2 ) << std::hex << (int) text[i];
-    
-  } 
-  
-  return out.str();
-  
 }

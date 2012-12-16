@@ -30,26 +30,55 @@
 #define LIBDUMP_H
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <sstream>
 #include <stdint.h>
 
 namespace libDump {
 
-/** print hex string in a format style "memory dump". */
-std::string classicDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis );
+    /** print hex string in a format style "memory dump". */
+    std::string classicDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis );
 
-/** print hex string in a format style "memory dump". overload */
-std::string classicDump ( std::string input );
+    /** print hex string in a format style "memory dump". overload */
+    std::string classicDump ( std::string input );
 
-/** print data in riddle protocol */
-std::string riddleDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis );
+    /** print data in riddle protocol */
+    std::string riddleDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis );
 
-/** decode hex string using the ASCII table. */
-std::string decodeHexText ( std::string raw );
+    /** decode hex string using the ASCII table. */
+    inline std::string decodeHexText ( std::string raw ) {
 
-/** enccoding to hex format */
-std::string encodeHexText ( const unsigned char *text, uint32_t size);
+        std::string text;
+
+        for ( int i = 0; i <= raw.size(); i += 2 ) {
+            std::string comp;
+            comp += ( char ) raw[i];
+            comp += ( char ) raw[i+1];
+            std::stringstream convert ( comp );
+            int temp;
+            convert >> std::hex >> temp;
+            text += ( char ) temp;
+        }
+
+        return text;
+
+    }
+
+    /** enccoding to hex format */
+    inline std::string encodeHexText ( const unsigned char *text, uint32_t size ) {
+
+        std::stringstream out;
+
+        for ( int i = 0; i < size; i++ ) {
+
+            out << std::setfill ( '0' ) << std::setw ( 2 ) << std::hex << ( int ) text[i];
+
+        }
+
+        return out.str();
+
+    }
 
 }
 

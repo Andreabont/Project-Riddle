@@ -44,12 +44,13 @@ using namespace boost::program_options;
 
 string ( *dumper ) ( string, uint64_t, uint32_t );
 
-void process_packet ( u_char *useless, const struct pcap_pkthdr* header, const u_char* packet ) {
+void process_packet ( u_char* useless, const struct pcap_pkthdr* header, const u_char* packet ) {
 
-     cout << dumper ( libDump::encodeHexText( packet, header->len ), header->ts.tv_sec, header->ts.tv_usec );
-     
-     // cout.flush();
-        
+    cout << dumper ( libDump::encodeHexText ( packet, header->len ), header->ts.tv_sec, header->ts.tv_usec );
+
+    // Flushing the standard output will decrease the performance.
+    // cout.flush();
+
 }
 
 int main ( int argc, char **argv ) {
@@ -62,7 +63,7 @@ int main ( int argc, char **argv ) {
     ( "pcap,p", value< string >(), "reads packets from a pcap file (disable iface input)" )
     ( "filter,f", value< vector< string > >()->multitoken(), "use to filter packet with bpf" )
     ( "limit,l", value< int >(), "set max number of packet" )
-    ( "snaplen,m", value< int >(), "maximum amount of data to be captured. [1500]")
+    ( "snaplen,m", value< int >(), "maximum amount of data to be captured. [1500]" )
 #ifdef __linux__
     ( "secure,s", "drop root privileges after initialization." )
 #endif
@@ -87,27 +88,26 @@ int main ( int argc, char **argv ) {
         cout << desc << endl;
         return EXIT_SUCCESS;
     }
-    
+
     if ( vm.count ( "iface-list" ) ) {
-      
-	pcap_if_t *alldevsp, *device;
-	char error_buffer[100];
-      
-	cerr << ">> Finding available devices ... " << endl;
-	if( pcap_findalldevs( &alldevsp , error_buffer) ) {
-	  cerr << "ERROR >> pcap_findalldevs: " << error_buffer << endl;
-	  return EXIT_FAILURE;
-	}
-	
-	cerr << ">> I found these devices: ";
-        
-        for(device = alldevsp ; device != NULL ; device = device->next)
-	{
-	  cerr << device->name << " ";
-	}
-	
-	cerr << endl;
- 
+
+        pcap_if_t *alldevsp, *device;
+        char error_buffer[100];
+
+        cerr << ">> Finding available devices ... " << endl;
+        if ( pcap_findalldevs ( &alldevsp , error_buffer ) ) {
+            cerr << "ERROR >> pcap_findalldevs: " << error_buffer << endl;
+            return EXIT_FAILURE;
+        }
+
+        cerr << ">> I found these devices: ";
+
+        for ( device = alldevsp ; device != NULL ; device = device->next ) {
+            cerr << device->name << " ";
+        }
+
+        cerr << endl;
+
         return EXIT_SUCCESS;
     }
 
@@ -171,12 +171,12 @@ int main ( int argc, char **argv ) {
             }
 
         }
-        
+
         int snaplen = 1500;
-	
-	if ( vm.count ( "snaplen" ) ) {
+
+        if ( vm.count ( "snaplen" ) ) {
             snaplen=vm["snaplen"].as<int>();
-	    cerr << ">> Capture maximum " << vm["snaplen"].as<int>() << " bytes." << endl;
+            cerr << ">> Capture maximum " << vm["snaplen"].as<int>() << " bytes." << endl;
         }
 
         // Apre il device in mod promiscua
@@ -204,8 +204,8 @@ int main ( int argc, char **argv ) {
         string filter;
 
         for ( int i = 0; i < filterraw.size(); i++ ) {
-            filter.append(filterraw[i]);
-            if( i != filterraw.size() - 1 ) filter.append(" ");
+            filter.append ( filterraw[i] );
+            if ( i != filterraw.size() - 1 ) filter.append ( " " );
         }
 
         struct bpf_program fp;
@@ -235,11 +235,11 @@ int main ( int argc, char **argv ) {
     } else {
         dumper=libDump::riddleDump;
     }
-    
-    pcap_loop( pcap_handle , maxpacket , process_packet , NULL );
+
+    pcap_loop ( pcap_handle , maxpacket , process_packet , NULL );
 
     cerr << ">> I finished the job, goodbye!" << endl;
-    
+
     pcap_close ( pcap_handle );
 
     return EXIT_SUCCESS;
