@@ -116,15 +116,3 @@ std::string libDump::classicDump ( std::string input ) {
 
     return out.str();
 }
-
-std::string libDump::riddleDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis ) {
-
-    std::stringstream out;
-
-    out << timeEpoch << "!";
-    out << timeMillis << "!";
-    out << input << std::endl;
-
-    return out.str();
-
-}

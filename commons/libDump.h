@@ -44,7 +44,15 @@ namespace libDump {
     std::string classicDump ( std::string input );
 
     /** print data in riddle protocol */
-    std::string riddleDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis );
+    inline std::string riddleDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis ) {
+
+        std::stringstream out;
+
+        out << timeEpoch << "!" << timeMillis << "!" << input << std::endl;
+
+        return out.str();
+
+    }
 
     /** decode hex string using the ASCII table. */
     inline std::string decodeHexText ( std::string raw ) {
