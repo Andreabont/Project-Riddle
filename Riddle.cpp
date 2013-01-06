@@ -63,7 +63,9 @@ int main ( int argc, char **argv ) {
     ( "pcap,p", value< string >(), "reads packets from a pcap file (disable iface input)" )
     ( "filter,f", value< vector< string > >()->multitoken(), "use to filter packet with bpf" )
     ( "limit,l", value< int >(), "set max number of packet" )
-    ( "snaplen,m", value< int >(), "maximum amount of data to be captured. [1500]" )
+    ( "snaplen,a", value< int >(), "maximum amount of data to be captured. [1500]" )
+    ( "rfmon,m", "enable monitor mode. (disable promiscuous mode)" )
+    ( "no-promisc,n", "disable promiscuous mode." )
 #ifdef __linux__
     ( "secure,s", "drop root privileges after initialization." )
 #endif
@@ -172,6 +174,15 @@ int main ( int argc, char **argv ) {
 
         }
 
+        pcap_handle = pcap_create ( pcap_device.c_str(), error_buffer );
+
+        if ( pcap_handle == NULL ) {
+            cerr << "ERROR >> pcap_create: " << error_buffer << endl;
+            return EXIT_FAILURE;
+        }
+
+        int status = 0;
+
         int snaplen = 1500;
 
         if ( vm.count ( "snaplen" ) ) {
@@ -179,15 +190,74 @@ int main ( int argc, char **argv ) {
             cerr << ">> Capture maximum " << vm["snaplen"].as<int>() << " bytes." << endl;
         }
 
-        // Apre il device in mod promiscua
-        pcap_handle = pcap_open_live ( pcap_device.c_str(), snaplen, 1, 0, error_buffer );
+        status = pcap_set_snaplen ( pcap_handle, snaplen );
 
-        if ( pcap_handle == NULL ) {
-            cerr << "ERROR >> pcap_open_live: " << error_buffer << endl;
+        if ( status != 0 ) {
             return EXIT_FAILURE;
         }
 
-        cerr << ">> Sniffing on device " << pcap_device << endl;
+        if ( vm.count ( "rfmon" ) ) {
+            status = pcap_set_rfmon ( pcap_handle, 1 );
+            if ( status != 0 ) {
+                return EXIT_FAILURE;
+            }
+            cerr << ">> Monitor mode enabled." << endl;
+        }
+
+        int promisc = 1;
+
+        if ( vm.count ( "no-promisc" ) || vm.count ( "rfmon" ) ) {
+            promisc = 0;
+            cerr << ">> Promiscuous mode disabled." << endl;
+        }
+
+        status = pcap_set_promisc ( pcap_handle, promisc );
+
+        if ( status != 0 ) {
+            return EXIT_FAILURE;
+        }
+
+        status = pcap_set_timeout ( pcap_handle, 0 );
+
+        if ( status != 0 ) {
+            return EXIT_FAILURE;
+        }
+
+        status = pcap_activate ( pcap_handle );
+
+        if ( status != 0 ) {
+
+            switch ( status ) {
+
+            case PCAP_ERROR_PERM_DENIED :
+                cerr << "ERROR >> You do not have permission to open the device." << endl;
+                break;
+
+            case PCAP_ERROR_IFACE_NOT_UP:
+                cerr << "ERROR >> The device \"" << pcap_device.c_str() << "\" isn't up." << endl;
+                break;
+
+            case PCAP_ERROR_NO_SUCH_DEVICE:
+                cerr << "ERROR >> The device \"" << pcap_device.c_str() << "\" does not exist." << endl;
+                cerr << ">> Try '" << argv[0] << " --iface-list' for more information." << endl;
+                break;
+
+            case PCAP_ERROR_PROMISC_PERM_DENIED:
+                cerr << "ERROR >> You do not have permission to open the device \"" << pcap_device.c_str() << "\" in promiscuous mode." << endl;
+                break;
+
+            case PCAP_ERROR_RFMON_NOTSUP :
+                cerr << "ERROR >> The device \"" << pcap_device.c_str() << "\" doesn't support monitor mode." << endl;
+                break;
+
+            default:
+                cerr << "ERROR >> ID: " << status << "" << endl;
+            }
+
+            return EXIT_FAILURE;
+        }
+
+        cerr << ">> Sniffing on device: " << pcap_device << endl;
     }
 
 #ifdef __linux__
