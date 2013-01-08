@@ -59,8 +59,10 @@ void process_packet ( u_char* useless, const struct pcap_pkthdr* header, const u
 #ifdef __linux__
 void exit_signal ( int id ) {
     cout << ">> Exit signal detected. (" << id << ")" << endl;
-    pcap_breakloop ( pcap_handle );
-    pcap_close ( pcap_handle );
+    if ( pcap_handle != NULL ) {
+        pcap_breakloop ( pcap_handle );
+        pcap_close ( pcap_handle );
+    }
     exit ( 0 );
 }
 #endif
