@@ -43,6 +43,7 @@ std::string libDump::classicDump ( std::string input, uint64_t timeEpoch, uint32
 
     out << "[ epoch: " << timeEpoch << " ] -> " << timeMillis << "ms" << std::endl;
     out << classicDump ( input );
+    out << std::endl;
 
     return out.str();
 

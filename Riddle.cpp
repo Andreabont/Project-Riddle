@@ -307,6 +307,8 @@ int main ( int argc, char **argv ) {
     }
 
     pcap_loop ( pcap_handle , maxpacket , process_packet , NULL );
+    
+    // TODO Gesisci segnale di terminazione e usa pcap_breakloop.
 
     cerr << ">> I finished the job, goodbye!" << endl;
 
