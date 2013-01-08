@@ -37,10 +37,13 @@
 #ifdef __linux__
 #include <unistd.h>
 #include <sys/types.h>
+#include <signal.h>
 #endif
 
 using namespace std;
 using namespace boost::program_options;
+
+pcap_t *pcap_handle;
 
 string ( *dumper ) ( string, uint64_t, uint32_t );
 
@@ -53,7 +56,21 @@ void process_packet ( u_char* useless, const struct pcap_pkthdr* header, const u
 
 }
 
+#ifdef __linux__
+void exit_signal ( int id ) {
+    cout << ">> Exit signal detected. (" << id << ")" << endl;
+    pcap_breakloop ( pcap_handle );
+    pcap_close ( pcap_handle );
+    exit ( 0 );
+}
+#endif
+
 int main ( int argc, char **argv ) {
+
+#ifdef __linux__
+    signal ( SIGINT, exit_signal ); // Ctrl-C
+#endif
+
     options_description desc ( "Riddle - Network Sniffer" );
     desc.add_options()
     ( "help,h", "prints this" )
@@ -141,8 +158,6 @@ int main ( int argc, char **argv ) {
 #endif
 
     char error_buffer[PCAP_ERRBUF_SIZE];
-
-    pcap_t *pcap_handle;
 
     if ( vm.count ( "pcap" ) ) {
 
@@ -307,7 +322,7 @@ int main ( int argc, char **argv ) {
     }
 
     pcap_loop ( pcap_handle , maxpacket , process_packet , NULL );
-    
+
     // TODO Gesisci segnale di terminazione e usa pcap_breakloop.
 
     cerr << ">> I finished the job, goodbye!" << endl;
