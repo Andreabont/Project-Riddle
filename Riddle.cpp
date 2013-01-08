@@ -70,7 +70,8 @@ void exit_signal ( int id ) {
 int main ( int argc, char **argv ) {
 
 #ifdef __linux__
-    signal ( SIGINT, exit_signal ); // Ctrl-C
+    signal ( SIGINT, exit_signal );     /* Ctrl-C */
+    signal ( SIGQUIT, exit_signal );    /* Ctrl-\ */
 #endif
 
     options_description desc ( "Riddle - Network Sniffer" );
