@@ -38,6 +38,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <sys/resource.h>
+#define MIN_NICE -15
 #endif
 
 using namespace std;
@@ -88,6 +90,7 @@ int main ( int argc, char **argv ) {
     ( "no-promisc,n", "disable promiscuous mode." )
 #ifdef __linux__
     ( "secure,s", "drop root privileges after initialization." )
+    ( "renice,r", value< int >(), "renice the process. [default 0]" )
 #endif
     ;
 
@@ -158,6 +161,7 @@ int main ( int argc, char **argv ) {
         }
 
     }
+
 #endif
 
     char error_buffer[PCAP_ERRBUF_SIZE];
@@ -283,6 +287,17 @@ int main ( int argc, char **argv ) {
         cerr << ">> Drop root privileges. Set Real UID to '" << realuid << "' and Real GID to '" << realgid << "'." << endl;
         seteuid ( realuid );
         setegid ( realgid );
+    }
+
+    if ( vm.count ( "renice" ) ) {
+        int id;
+        int prior = vm["renice"].as<int>();
+        if ( prior < MIN_NICE ) {
+            prior = MIN_NICE;
+            cerr << ">> The limit for renice is " << MIN_NICE << "." << endl;
+        }
+        cerr << ">> Renice process to " << prior << "." << endl;
+        id = setpriority ( PRIO_PROCESS, getpid(), -15 );
     }
 #endif
 
