@@ -283,12 +283,6 @@ int main ( int argc, char **argv ) {
     }
 
 #ifdef __linux__
-    if ( vm.count ( "secure" ) ) {
-        cerr << ">> Drop root privileges. Set Real UID to '" << realuid << "' and Real GID to '" << realgid << "'." << endl;
-        seteuid ( realuid );
-        setegid ( realgid );
-    }
-
     if ( vm.count ( "renice" ) ) {
         int id;
         int prior = vm["renice"].as<int>();
@@ -298,6 +292,12 @@ int main ( int argc, char **argv ) {
         }
         cerr << ">> Renice process to " << prior << "." << endl;
         id = setpriority ( PRIO_PROCESS, getpid(), -15 );
+    }
+
+    if ( vm.count ( "secure" ) ) {
+        cerr << ">> Drop root privileges. Set Real UID to '" << realuid << "' and Real GID to '" << realgid << "'." << endl;
+        seteuid ( realuid );
+        setegid ( realgid );
     }
 #endif
 
