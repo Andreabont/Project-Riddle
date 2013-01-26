@@ -48,15 +48,21 @@ using namespace boost::program_options;
 pcap_t *pcap_handle;
 
 string ( *dumper ) ( string, uint64_t, uint32_t );
+void ( *process_packet ) ( u_char*, const struct pcap_pkthdr*, const u_char* );
 
-void process_packet ( u_char* useless, const struct pcap_pkthdr* header, const u_char* packet ) {
+void fast_process_packet ( u_char* useless, const struct pcap_pkthdr* header, const u_char* packet ) {
 
     cout << dumper ( libDump::encodeHexText ( packet, header->len ), header->ts.tv_sec, header->ts.tv_usec );
 
-    // Flushing the standard output will decrease the performance.
-    // cout.flush();
+}
+
+void precise_process_packet ( u_char* useless, const struct pcap_pkthdr* header, const u_char* packet ) {
+
+    cout << dumper ( libDump::encodeHexText ( packet, header->len ), header->ts.tv_sec, header->ts.tv_usec );
+    cout.flush();  // Flushing the standard output will decrease the performance.
 
 }
+
 
 #ifdef __linux__
 void exit_signal ( int id ) {
@@ -81,13 +87,14 @@ int main ( int argc, char **argv ) {
     ( "help,h", "prints this" )
     ( "dump,d", "enable dump mode" )
     ( "iface,i", value< string >(), "interface to sniff from. [auto]" )
-    ( "iface-list,I", "prints all available devices." )
+    ( "iface-list,y", "prints all available devices." )
     ( "pcap,p", value< string >(), "reads packets from a pcap file (disable iface input)" )
     ( "filter,f", value< vector< string > >()->multitoken(), "use to filter packet with bpf" )
     ( "limit,l", value< int >(), "set max number of packet" )
     ( "snaplen,a", value< int >(), "maximum amount of data to be captured. [1500]" )
     ( "rfmon,m", "enable monitor mode. (disable promiscuous mode)" )
     ( "no-promisc,n", "disable promiscuous mode." )
+    ( "rapid,j", "enable mode for fast connections." )
 #ifdef __linux__
     ( "secure,s", "drop root privileges after initialization." )
     ( "renice,r", value< int >(), "renice the process. [default 0]" )
@@ -334,9 +341,16 @@ int main ( int argc, char **argv ) {
     }
 
     if ( vm.count ( "dump" ) ) {
-        dumper=libDump::classicDump;
+        dumper = libDump::classicDump;
     } else {
-        dumper=libDump::riddleDump;
+        dumper = libDump::riddleDump;
+    }
+
+    if ( vm.count ( "rapid" ) ) {
+        process_packet = fast_process_packet;
+        cerr << ">> Rapid mode enabled." << endl;
+    } else {
+        process_packet = precise_process_packet;
     }
 
     pcap_loop ( pcap_handle , maxpacket , process_packet , NULL );
