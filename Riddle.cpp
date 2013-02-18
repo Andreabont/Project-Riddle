@@ -298,7 +298,7 @@ int main ( int argc, char **argv ) {
             cerr << ">> The limit for renice is " << MIN_NICE << "." << endl;
         }
         cerr << ">> Renice process to " << prior << "." << endl;
-        id = setpriority ( PRIO_PROCESS, getpid(), -15 );
+        id = setpriority ( PRIO_PROCESS, getpid(), prior );
     }
 
     if ( vm.count ( "secure" ) ) {
