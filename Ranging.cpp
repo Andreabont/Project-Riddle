@@ -44,7 +44,7 @@
 #include "./commons/classPacket.h"
 #include "./libraries/libRanging.h"
 
-#define TIMETOLIVE 50
+#define TIMETOLIVE 120
 
 int rows; // number of rows in window
 int cols; // number of columns in window
