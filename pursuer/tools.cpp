@@ -35,13 +35,13 @@
 #include <string>
 #include <vector>
 #include <ios>
-#include "../commons/classPacket.h"
-#include "../commons/classMacAddress.h"
-#include "../commons/classFlow.h"
-#include "../commons/libDump.h"
-#include "libPursuer.h"
+#include "commons/packet.h"
+#include "commons/macaddress.h"
+#include "commons/tcpflow.h"
+#include "commons/dumptools.h"
+#include "tools.h"
 
-void writeout ( libNetwork::stream* stream, bool tofile ) {
+void writeout ( network::TcpStream* stream, bool tofile ) {
     if ( tofile ) {
         std::stringstream filename;
         char buffer[10];
@@ -61,7 +61,7 @@ void writeout ( libNetwork::stream* stream, bool tofile ) {
     }
 }
 
-std::string exportFormattedRawFlow ( libNetwork::stream* stream ) {
+std::string exportFormattedRawFlow ( network::TcpStream* stream ) {
 
     uint16_t first_port = stream->getFirstPort();
     uint16_t second_port = stream->getSecondPort();
@@ -69,13 +69,13 @@ std::string exportFormattedRawFlow ( libNetwork::stream* stream ) {
     std::stringstream stdstring;
     stdstring << ">> Two-way flow between " << stream->getFirstIpAddress().to_string() << ":" << first_port << " and " << stream->getSecondIpAddress().to_string() << ":" << second_port << std::endl;
     stdstring << ">> " << stream->getFirstIpAddress().to_string() << ":" << first_port << " -> " << stream->getSecondIpAddress().to_string() << ":" << second_port << std::endl;
-    stdstring << libDump::decodeHexText ( stream->getFirstCharStream() ) << std::endl;
+    stdstring << dump::decodeHexText ( stream->getFirstCharStream() ) << std::endl;
     stdstring << ">> " << stream->getSecondIpAddress().to_string() << ":" << second_port << " -> " << stream->getFirstIpAddress().to_string() << ":" << first_port << std::endl;
-    stdstring << libDump::decodeHexText ( stream->getSecondCharStream() ) << std::endl;
+    stdstring << dump::decodeHexText ( stream->getSecondCharStream() ) << std::endl;
     return stdstring.str();
 }
 
-bool isStream ( std::list< libNetwork::stream* >::iterator iter, libNetwork::TCPv4packet *pkg ) {
+bool isStream ( std::list< network::TcpStream* >::iterator iter, network::TCPv4packet *pkg ) {
     return ( ( ( *iter )->getFirstIpAddress() == pkg->getSenderIp() && ( *iter )->getFirstPort() == pkg->getSenderPort() ) &&
              ( ( *iter )->getSecondIpAddress() == pkg->getTargetIp() && ( *iter )->getSecondPort() == pkg->getTargetPort() ) ) ||
            ( ( ( *iter )->getFirstIpAddress() == pkg->getTargetIp() && ( *iter )->getFirstPort() == pkg->getTargetPort() ) &&

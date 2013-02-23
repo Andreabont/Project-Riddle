@@ -32,7 +32,7 @@
 #include <string>
 #include <pcap.h>
 #include <boost/program_options.hpp>
-#include "./commons/libDump.h"
+#include "commons/dumptools.h"
 
 #ifdef __linux__
 #include <unistd.h>
@@ -52,13 +52,13 @@ void ( *process_packet ) ( u_char*, const struct pcap_pkthdr*, const u_char* );
 
 void fast_process_packet ( u_char* useless, const struct pcap_pkthdr* header, const u_char* packet ) {
 
-    cout << dumper ( libDump::encodeHexText ( packet, header->len ), header->ts.tv_sec, header->ts.tv_usec );
+    cout << dumper ( dump::encodeHexText ( packet, header->len ), header->ts.tv_sec, header->ts.tv_usec );
 
 }
 
 void precise_process_packet ( u_char* useless, const struct pcap_pkthdr* header, const u_char* packet ) {
 
-    cout << dumper ( libDump::encodeHexText ( packet, header->len ), header->ts.tv_sec, header->ts.tv_usec );
+    cout << dumper ( dump::encodeHexText ( packet, header->len ), header->ts.tv_sec, header->ts.tv_usec );
     cout.flush();  // Flushing the standard output will decrease the performance.
 
 }
@@ -341,9 +341,9 @@ int main ( int argc, char **argv ) {
     }
 
     if ( vm.count ( "dump" ) ) {
-        dumper = libDump::classicDump;
+        dumper = dump::classicDump;
     } else {
-        dumper = libDump::riddleDump;
+        dumper = dump::riddleDump;
     }
 
     if ( vm.count ( "rapid" ) ) {

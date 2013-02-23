@@ -26,42 +26,18 @@
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
-#ifndef LIBADDRESS_H
-#define LIBADDRESS_H
+#ifndef LIBPURSUER_H
+#define LIBPURSUER_H
 
+#include <list>
 #include <string>
-#include <cstring>
-#include <stdint.h>
+#include <list>
+#include "commons/macaddress.h"
+#include "commons/packet.h"
+#include "commons/tcpflow.h"
 
-namespace libNetwork {
+void writeout ( network::TcpStream* stream, bool tofile );
+std::string exportFormattedRawFlow ( network::TcpStream* stream );
+bool isStream ( std::list< network::TcpStream* >::iterator iter, network::TCPv4packet* pkg );
 
-/* Class for managing MAC address */
-class mac_address
-{
-
-private:
-    uint16_t byte[6]; // FIXME Dovrebbe essere un uint8_t
-
-public:
-
-    /** builds the object with null mac address */
-    mac_address() {
-        std::memset ( byte, 0, 12 );
-    }
-
-    /** builds the object from a hexadecimal string (link to factory) */
-    mac_address ( std::string );
-
-    /** builds the object from a hexadecimal string */
-    void from_string ( std::string );
-
-    /** implements the comparison between mac address */
-    bool operator== ( const mac_address& otherMac );
-
-    /** build printable mac address */
-    std::string to_string();
-};
-
-}
-
-#endif //LIBADDRESS_H
+#endif //LIBPURSUER_H

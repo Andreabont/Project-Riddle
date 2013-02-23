@@ -30,7 +30,7 @@
 #define LIBCIGARETTE_H
 
 #include <string>
-#include "../commons/classPacket.h"
+#include "commons/packet.h"
 
 std::string ether_type_decode ( uint16_t  start );
 std::string ipv4_type_decode ( uint16_t  start );

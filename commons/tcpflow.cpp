@@ -33,11 +33,11 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <map>
-#include "classFlow.h"
-#include "classMacAddress.h"
-#include "classPacket.h"
+#include "tcpflow.h"
+#include "macaddress.h"
+#include "packet.h"
 
-bool libNetwork::stream::factory ( libNetwork::TCPv4packet *packet ) {
+bool network::TcpStream::factory ( network::TCPv4packet *packet ) {
 
     if ( packet->isSYN() ) {
 
@@ -77,7 +77,7 @@ bool libNetwork::stream::factory ( libNetwork::TCPv4packet *packet ) {
 
 }
 
-void libNetwork::stream::factory ( std::string newflow ) {
+void network::TcpStream::factory ( std::string newflow ) {
 
     std::vector< std::string > section;
     boost::algorithm::split ( section, newflow, boost::algorithm::is_any_of ( "!" ) );
@@ -95,7 +95,7 @@ void libNetwork::stream::factory ( std::string newflow ) {
 
 }
 
-bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
+bool network::TcpStream::addPacket ( network::TCPv4packet *newPacket ) {
 
     int a,b;
 
@@ -118,10 +118,10 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
         } else return false; // Buffer non identificato.
 
 
-        if ( newPacket->isACK() ) { // Se c'è ACK setto il flag sul pacchetto corrispondente, se c'è.
+        if ( newPacket->isACK() ) { // Se c'ï¿½ ACK setto il flag sul pacchetto corrispondente, se c'ï¿½.
 
 
-            std::map<uint32_t, libNetwork::TCPv4packet*>::iterator iter = ackExpBuffer[a].find ( newPacket->getAcknowledgmentNumber() );
+            std::map<uint32_t, network::TCPv4packet*>::iterator iter = ackExpBuffer[a].find ( newPacket->getAcknowledgmentNumber() );
 
             if ( iter != ackExpBuffer[a].end() ) {
 
@@ -133,7 +133,7 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
                 while ( !endLoop ) {
 
-                    std::map<uint32_t, libNetwork::TCPv4packet*>::iterator subIter = ackExpBuffer[a].find ( ackExpToFind );
+                    std::map<uint32_t, network::TCPv4packet*>::iterator subIter = ackExpBuffer[a].find ( ackExpToFind );
 
                     if ( subIter != ackExpBuffer[a].end() && ( *subIter ).second->public_flag == false ) {
 
@@ -153,10 +153,10 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
         if ( newPacket->getPayloadLength() != 0 ) { // Salvo il pacchetto solo se ha del payload.
 
-            // Sovrascrivo se è ritrasmissione.
+            // Sovrascrivo se ï¿½ ritrasmissione.
 
-            std::map<uint32_t, libNetwork::TCPv4packet*>::iterator searchIter1 = snBuffer[b].find ( newPacket->getSequenceNumber() );
-            std::map<uint32_t, libNetwork::TCPv4packet*>::iterator searchIter2 = ackExpBuffer[b].find ( newPacket->getExpectedAcknowledgmentNumber() );
+            std::map<uint32_t, network::TCPv4packet*>::iterator searchIter1 = snBuffer[b].find ( newPacket->getSequenceNumber() );
+            std::map<uint32_t, network::TCPv4packet*>::iterator searchIter2 = ackExpBuffer[b].find ( newPacket->getExpectedAcknowledgmentNumber() );
 
             if(searchIter1 != snBuffer[b].end()) {
                 snBuffer[b].erase(searchIter1);
@@ -186,10 +186,10 @@ bool libNetwork::stream::addPacket ( libNetwork::TCPv4packet *newPacket ) {
 
 }
 
-void libNetwork::stream::delPacket ( uint32_t sn, int bufferNumber ) {
+void network::TcpStream::delPacket ( uint32_t sn, int bufferNumber ) {
 
-    std::map<uint32_t, libNetwork::TCPv4packet*>::iterator iter1 = snBuffer[bufferNumber].find ( sn );
-    std::map<uint32_t, libNetwork::TCPv4packet*>::iterator iter2 = ackExpBuffer[bufferNumber].find ( sn );
+    std::map<uint32_t, network::TCPv4packet*>::iterator iter1 = snBuffer[bufferNumber].find ( sn );
+    std::map<uint32_t, network::TCPv4packet*>::iterator iter2 = ackExpBuffer[bufferNumber].find ( sn );
 
     if ( iter1 != snBuffer[bufferNumber].end() ) {
         snBuffer[bufferNumber].erase ( iter1 );
@@ -202,11 +202,11 @@ void libNetwork::stream::delPacket ( uint32_t sn, int bufferNumber ) {
 }
 
 
-void libNetwork::stream::flushBuffer ( int number ) {
+void network::TcpStream::flushBuffer ( int number ) {
 
     while ( true ) {
 
-        std::map<uint32_t, libNetwork::TCPv4packet*>::iterator iter = snBuffer[number].find ( snPointer[number] );
+        std::map<uint32_t, network::TCPv4packet*>::iterator iter = snBuffer[number].find ( snPointer[number] );
 
         if ( iter == snBuffer[number].end() ) {
             break;
@@ -220,16 +220,16 @@ void libNetwork::stream::flushBuffer ( int number ) {
 
 }
 
-void libNetwork::stream::flushFirstBuffer() {
+void network::TcpStream::flushFirstBuffer() {
     flushBuffer ( 0 );
 }
 
-void libNetwork::stream::flushSecondBuffer() {
+void network::TcpStream::flushSecondBuffer() {
     flushBuffer ( 1 );
 }
 
 
-std::string libNetwork::stream::exportFlow() {
+std::string network::TcpStream::exportFlow() {
     std::stringstream stdstring;
     stdstring << timeEpoch << "!" << timeMillis << "!";
     stdstring << macAddress[0].to_string() << "!" << macAddress[1].to_string() << "!";
@@ -239,11 +239,11 @@ std::string libNetwork::stream::exportFlow() {
     return stdstring.str();;
 }
 
-uint64_t libNetwork::stream::getFirstBufferLength() {
+uint64_t network::TcpStream::getFirstBufferLength() {
 
     uint64_t bufferlenght = 0;
 
-    for ( std::map<uint32_t, libNetwork::TCPv4packet*>::iterator it = snBuffer[0].begin(); it != snBuffer[0].end(); it++ ) {
+    for ( std::map<uint32_t, network::TCPv4packet*>::iterator it = snBuffer[0].begin(); it != snBuffer[0].end(); it++ ) {
 
         bufferlenght += ( *it ).second->getPayloadLength();
 
@@ -253,11 +253,11 @@ uint64_t libNetwork::stream::getFirstBufferLength() {
     return bufferlenght;
 }
 
-uint64_t libNetwork::stream::getSecondBufferLength() {
+uint64_t network::TcpStream::getSecondBufferLength() {
 
     uint64_t bufferlenght = 0;
 
-    for ( std::map<uint32_t, libNetwork::TCPv4packet*>::iterator it = snBuffer[1].begin(); it != snBuffer[1].end(); it++ ) {
+    for ( std::map<uint32_t, network::TCPv4packet*>::iterator it = snBuffer[1].begin(); it != snBuffer[1].end(); it++ ) {
 
         bufferlenght += ( *it ).second->getPayloadLength();
 
@@ -265,62 +265,62 @@ uint64_t libNetwork::stream::getSecondBufferLength() {
 
 }
 
-uint64_t libNetwork::stream::getFlowLength() {
+uint64_t network::TcpStream::getFlowLength() {
     return ( charStream[0].length() + charStream[1].length() ) /2;
 }
 
-uint64_t libNetwork::stream::getTimeEpoch() {
+uint64_t network::TcpStream::getTimeEpoch() {
     return timeEpoch;
 }
 
-uint32_t libNetwork::stream::getTimeMillis() {
+uint32_t network::TcpStream::getTimeMillis() {
     return timeMillis;
 }
 
-libNetwork::mac_address libNetwork::stream::getFirstMacAddress() {
+network::mac_address network::TcpStream::getFirstMacAddress() {
     return macAddress[0];
 }
 
-libNetwork::mac_address libNetwork::stream::getSecondMacAddress() {
+network::mac_address network::TcpStream::getSecondMacAddress() {
     return macAddress[1];
 }
 
-boost::asio::ip::address libNetwork::stream::getFirstIpAddress() {
+boost::asio::ip::address network::TcpStream::getFirstIpAddress() {
     return ipAddress[0];
 }
 
-boost::asio::ip::address libNetwork::stream::getSecondIpAddress() {
+boost::asio::ip::address network::TcpStream::getSecondIpAddress() {
     return ipAddress[1];
 }
 
-uint16_t libNetwork::stream::getFirstPort() {
+uint16_t network::TcpStream::getFirstPort() {
     return port[0];
 }
 
-uint16_t libNetwork::stream::getSecondPort() {
+uint16_t network::TcpStream::getSecondPort() {
     return port[1];
 }
 
-uint32_t libNetwork::stream::getFirstSN() {
+uint32_t network::TcpStream::getFirstSN() {
     return snPointer[0];
 }
 
-uint32_t libNetwork::stream::getSecondSN() {
+uint32_t network::TcpStream::getSecondSN() {
     return snPointer[1];
 }
 
-bool libNetwork::stream::firstFIN() {
+bool network::TcpStream::firstFIN() {
     return fluxFIN[0];
 }
 
-bool libNetwork::stream::secondFIN() {
+bool network::TcpStream::secondFIN() {
     return fluxFIN[1];
 }
 
-std::string libNetwork::stream::getFirstCharStream() {
+std::string network::TcpStream::getFirstCharStream() {
     return charStream[0];
 }
 
-std::string libNetwork::stream::getSecondCharStream() {
+std::string network::TcpStream::getSecondCharStream() {
     return charStream[1];
 }

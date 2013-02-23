@@ -36,20 +36,19 @@
 #include <boost/thread/thread.hpp>
 #include <boost/date_time.hpp>
 #include <sys/time.h>
-#include "./libraries/libCigarette.h"
-#include "./commons/classMacAddress.h"
-#include "./commons/classPacket.h"
-#include "./libraries/libPursuer.h"
+#include "commons/macaddress.h"
+#include "commons/packet.h"
+#include "tools.h"
 
 using namespace std;
 using namespace boost;
 using namespace boost::program_options;
-using namespace libNetwork;
+using namespace network;
 
 boost::mutex mymutex;
 
 /** Hello, my job is clean up and finalize the flows */
-void dustman ( std::list<stream*> *packet_stream, bool tofile ) {
+void dustman ( std::list<TcpStream*> *packet_stream, bool tofile ) {
 
     static boost::posix_time::seconds delay ( 2 );
     static int maxBufferLength = 512;		// byte
@@ -60,8 +59,8 @@ void dustman ( std::list<stream*> *packet_stream, bool tofile ) {
 
         boost::mutex::scoped_lock mylock ( mymutex );
 
-        for ( list<stream*>::iterator element = packet_stream->begin(); element != packet_stream->end(); ) {
-            list<stream*>::iterator temp;
+        for ( list<TcpStream*>::iterator element = packet_stream->begin(); element != packet_stream->end(); ) {
+            list<TcpStream*>::iterator temp;
             bool mustRemove = false;
 
             if ( ! ( *element )->firstFIN() && ( *element )->getFirstBufferLength() > maxBufferLength ) {
@@ -99,7 +98,7 @@ void dustman ( std::list<stream*> *packet_stream, bool tofile ) {
 }
 
 /** Hello, my job is read and sort packets */
-void scribe ( std::list<stream*> *packet_stream ) {
+void scribe ( std::list<TcpStream*> *packet_stream ) {
 
     string r_packet;
 
@@ -124,13 +123,13 @@ void scribe ( std::list<stream*> *packet_stream ) {
 
                     if ( pkg_tcpv4->isSYN() && !pkg_tcpv4->isACK() ) {
 
-                        stream *temp = new stream();
+                        TcpStream *temp = new TcpStream();
                         temp->factory ( pkg_tcpv4 );
                         packet_stream->push_back ( temp );
 
                     } else {
 
-                        for ( list<stream*>::iterator it = packet_stream->begin(); it != packet_stream->end(); it++ ) {
+                        for ( list<TcpStream*>::iterator it = packet_stream->begin(); it != packet_stream->end(); it++ ) {
 
                             if ( isStream ( it, pkg_tcpv4 ) ) {
 
@@ -187,7 +186,7 @@ int main ( int argc, char **argv ) {
         return EXIT_SUCCESS;
     }
 
-    std::list<stream*> packet_stream;
+    std::list<TcpStream*> packet_stream;
 
     boost::thread dustman_t ( dustman, &packet_stream, vm.count ( "tofile" ) );
     boost::thread scribe_t ( scribe, &packet_stream );
@@ -201,7 +200,7 @@ int main ( int argc, char **argv ) {
 
     while ( !packet_stream.empty() ) {
 
-        list<stream*>::iterator it3 = packet_stream.begin();
+        list<TcpStream*>::iterator it3 = packet_stream.begin();
         ( *it3 )->flushFirstBuffer();
         ( *it3 )->flushSecondBuffer();
         writeout ( ( *it3 ), vm.count ( "tofile" ) );

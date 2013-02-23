@@ -30,17 +30,17 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-#include "classMacAddress.h"
+#include "macaddress.h"
 
 /** Costruttore */
-libNetwork::mac_address::mac_address( std::string rawData )
+network::mac_address::mac_address( std::string rawData )
 {
     this->from_string(rawData);
     return;
 }
 
 /** Inizializzatore da stringa (con o senza ':') */
-void libNetwork::mac_address::from_string ( std::string rawData ) {
+void network::mac_address::from_string ( std::string rawData ) {
 
     if( rawData.find(':') != std::string::npos ) {
         rawData.erase( std::remove( rawData.begin(), rawData.end(), ':' ), rawData.end() );
@@ -64,7 +64,7 @@ void libNetwork::mac_address::from_string ( std::string rawData ) {
 }
 
 /** Restituisce indirizzo stampabile */
-std::string libNetwork::mac_address::to_string() {
+std::string network::mac_address::to_string() {
     std::string stamp;
     std::stringstream temp;
 
@@ -79,7 +79,7 @@ std::string libNetwork::mac_address::to_string() {
 }
 
 /** Overload, definisco confronto tra indirizzi */
-bool libNetwork::mac_address::operator== ( const mac_address& otherMac ) {
+bool network::mac_address::operator== ( const mac_address& otherMac ) {
     for ( int i=0; i<=5; i++ ) {
         if ( byte[i] != otherMac.byte[i] ) {
             return false;

@@ -32,14 +32,14 @@
 #include <boost/regex.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/program_options.hpp>
-#include "./libraries/libBreeder.h"
-#include "./commons/classPacket.h"
-#include "./commons/classFlow.h"
-#include "./commons/libDump.h"
+#include "tools.h"
+#include "commons/packet.h"
+#include "commons/tcpflow.h"
+#include "commons/dumptools.h"
 
 using namespace std;
 using namespace boost::program_options;
-using namespace libNetwork;
+using namespace network;
 
 int main ( int argc, char **argv ) {
     options_description desc ( "Breeder - Network TCP Flux Seletor" );
@@ -111,11 +111,11 @@ int main ( int argc, char **argv ) {
             getline ( cin,r_flux );
             if ( cin.eof() ) break;
 
-            stream * flow = new stream();
+            TcpStream * flow = new TcpStream();
             flow->factory ( r_flux );
 
-            a_flux = libDump::decodeHexText ( flow->getFirstCharStream() );
-            b_flux = libDump::decodeHexText ( flow->getSecondCharStream() );
+            a_flux = dump::decodeHexText ( flow->getFirstCharStream() );
+            b_flux = dump::decodeHexText ( flow->getSecondCharStream() );
 
             for (list< string >::iterator it = filters.begin(); it != filters.end(); ++it) {
 

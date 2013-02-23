@@ -40,9 +40,9 @@
 #include <sys/time.h>
 
 #include <curses.h>
-#include "./commons/classMacAddress.h"
-#include "./commons/classPacket.h"
-#include "./libraries/libRanging.h"
+#include "commons/macaddress.h"
+#include "commons/packet.h"
+#include "tools.h"
 
 #define TIMETOLIVE 120
 
@@ -54,7 +54,7 @@ using namespace boost;
 using namespace boost::program_options;
 using namespace boost::gregorian;
 using namespace boost::posix_time;
-using namespace libNetwork;
+using namespace network;
 
 boost::mutex mymutex;
 int maxttl = TIMETOLIVE;

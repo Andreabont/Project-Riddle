@@ -30,7 +30,7 @@
 #include <cstdlib>
 #include <stdio.h>
 #include <string>
-#include "libCigarette.h"
+#include "tools.h"
 
 std::string ether_type_decode ( uint16_t  start ) {
     // Maggiore o uguale di 1536(0x0600) per Ethernet v2, minore per versione

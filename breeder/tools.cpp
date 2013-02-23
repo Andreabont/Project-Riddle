@@ -36,7 +36,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "libBreeder.h"
+#include "tools.h"
 
 void breederConfig::init()
 {

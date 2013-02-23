@@ -34,10 +34,10 @@
 #include <sstream>
 #include <stdint.h>
 #include <string.h>
-#include "libDump.h"
+#include "dumptools.h"
 
 
-std::string libDump::classicDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis ) {
+std::string dump::classicDump ( std::string input, uint64_t timeEpoch, uint32_t timeMillis ) {
 
     std::stringstream out;
 
@@ -49,7 +49,7 @@ std::string libDump::classicDump ( std::string input, uint64_t timeEpoch, uint32
 
 }
 
-std::string libDump::classicDump ( std::string input ) {
+std::string dump::classicDump ( std::string input ) {
 
     std::stringstream out;
     int stringlen = input.length();

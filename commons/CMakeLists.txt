@@ -1,7 +1,7 @@
 project (commons)
 
-add_library (libNetwork STATIC classMacAddress.h classMacAddress.cpp classPacket.h classPacket.cpp classFlow.h classFlow.cpp)
-add_library (libDump STATIC libDump.h libDump.cpp)
+add_library (network STATIC macaddress.h macaddress.cpp packet.h packet.cpp tcpflow.h tcpflow.cpp)
+add_library (dump STATIC dumptools.h dumptools.cpp)
 
-target_link_libraries (libNetwork)
-target_link_libraries (libDump)
+target_link_libraries (network)
+target_link_libraries (dump)

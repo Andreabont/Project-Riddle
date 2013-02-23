@@ -26,12 +26,12 @@
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
-#ifndef LIBHEADER_H
-#define LIBHEADER_H
+#ifndef PACKET_H
+#define PACKET_H
 
 /* EtherType */
 
-#define ETHER_V2_CODE		0x0600	/** Più alto è ethertype, più basso è dimensione */
+#define ETHER_V2_CODE		0x0600	/** Piï¿½ alto ï¿½ ethertype, piï¿½ basso ï¿½ dimensione */
 #define ETHER_TYPE_IPV4		0x0800	/** EtherType IPv4 */
 #define ETHER_TYPE_ARP		0x0806	/** EtherType ARP */
 #define ETHER_TYPE_IEEE802	0x8100	/** EtherType IEEE 802 */
@@ -72,9 +72,9 @@
 #include <string>
 #include <boost/asio.hpp>
 #include <stdint.h>
-#include "classMacAddress.h"
+#include "macaddress.h"
 
-namespace libNetwork {
+namespace network {
 
 /** Class for managing packets */
 class packet
@@ -93,7 +93,7 @@ protected:
     /** Legge IPv4 dal byte voluto e restituisce in formato decimale. */
     inline std::string getDecimalIP ( int string_cursor );
 
-    /** Salva MAC address a partire da un punto (n° del byte) della stringa rawData */
+    /** Salva MAC address a partire da un punto (nï¿½ del byte) della stringa rawData */
     inline mac_address getMacAddress ( int string_cursor );
 
 public:
@@ -378,4 +378,4 @@ public:
 
 }
 
-#endif //LIBHEADER_H
+#endif //PACKET_H

@@ -26,23 +26,29 @@
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
  */
 
-#ifndef LIBRANGING_H
-#define LIBRANGING_H
+#include <sys/time.h>
+#include "tools.h"
 
-#include <boost/asio.hpp>
-#include "../commons/classMacAddress.h"
+device::device ( network::mac_address newMac, boost::asio::ip::address newIp) {
+    mac = newMac;
+    ip = newIp;
+    timeEpoch = time ( NULL );
+    return;
+}
 
-class device {
-    private:
-    libNetwork::mac_address mac;
-    boost::asio::ip::address ip;
-    long int timeEpoch;
-    public:
-    device ( libNetwork::mac_address newMac, boost::asio::ip::address newIp);
-    libNetwork::mac_address getMacAddress();
-    boost::asio::ip::address getIpAddress();
-    long int getEpoch();
-    void setEpoch ( long int newEpoch );
-};
+boost::asio::ip::address device::getIpAddress() {
+    return ip;
+}
 
-#endif //LIBRANGING_H
+network::mac_address device::getMacAddress() {
+    return mac;
+}
+
+long int device::getEpoch() {
+    return timeEpoch;
+}
+
+void device::setEpoch ( long int newEpoch ) {
+    timeEpoch = newEpoch;
+    return;
+}

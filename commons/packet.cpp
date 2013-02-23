@@ -38,12 +38,12 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
-#include "classMacAddress.h"
-#include "classPacket.h"
+#include "macaddress.h"
+#include "packet.h"
 
 /* PACKET */
 
-libNetwork::packet* libNetwork::packet::factory ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
+network::packet* network::packet::factory ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
 
     uint16_t protocol_type;
 
@@ -74,7 +74,7 @@ libNetwork::packet* libNetwork::packet::factory ( uint64_t timeEpoch_i, uint32_t
     return p;
 }
 
-libNetwork::packet* libNetwork::packet::factory ( std::string packetLine ) {
+network::packet* network::packet::factory ( std::string packetLine ) {
     std::vector< std::string > section;
     boost::algorithm::split ( section, packetLine, boost::algorithm::is_any_of ( "!" ) );
 
@@ -83,19 +83,19 @@ libNetwork::packet* libNetwork::packet::factory ( std::string packetLine ) {
     return pkg;
 }
 
-uint32_t libNetwork::packet::getPacketLength() {
+uint32_t network::packet::getPacketLength() {
     return pkgLength;
 }
 
-uint64_t libNetwork::packet::getEpoch() {
+uint64_t network::packet::getEpoch() {
     return timeEpoch;
 }
 
-uint32_t libNetwork::packet::getMillis() {
+uint32_t network::packet::getMillis() {
     return timeMillis;
 }
 
-inline std::string libNetwork::packet::getHexString ( int string_cursor, int read_byte ) {
+inline std::string network::packet::getHexString ( int string_cursor, int read_byte ) {
     std::string temp;
     temp.reserve ( read_byte * 2 );
 
@@ -108,7 +108,7 @@ inline std::string libNetwork::packet::getHexString ( int string_cursor, int rea
     return temp;
 }
 
-inline std::string libNetwork::packet::getDecimalIP ( int string_cursor ) {
+inline std::string network::packet::getDecimalIP ( int string_cursor ) {
     std::string temp;
     std::string stamp;
     temp.reserve ( 2 );
@@ -127,20 +127,20 @@ inline std::string libNetwork::packet::getDecimalIP ( int string_cursor ) {
     return stamp;
 }
 
-inline libNetwork::mac_address libNetwork::packet::getMacAddress ( int string_cursor ) {
+inline network::mac_address network::packet::getMacAddress ( int string_cursor ) {
     mac_address mac_temp ( this->getHexString ( string_cursor, 6 ) );
     return mac_temp;
 }
 
-libNetwork::mac_address libNetwork::packet::getSenderMac() {
+network::mac_address network::packet::getSenderMac() {
     return this->getMacAddress ( 6 );
 }
 
-libNetwork::mac_address libNetwork::packet::getTargetMac() {
+network::mac_address network::packet::getTargetMac() {
     return this->getMacAddress ( 0 );
 }
 
-uint16_t libNetwork::packet::getEtherType() {
+uint16_t network::packet::getEtherType() {
     uint16_t protocol_type;
 
     std::stringstream convert ( this->getHexString ( 12, 2 ) );
@@ -152,7 +152,7 @@ uint16_t libNetwork::packet::getEtherType() {
 
 /* ARP */
 
-libNetwork::ARPpacket::ARPpacket ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
+network::ARPpacket::ARPpacket ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
 
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;
@@ -161,7 +161,7 @@ libNetwork::ARPpacket::ARPpacket ( uint64_t timeEpoch_i, uint32_t timeMillis_i, 
     return;
 }
 
-uint16_t libNetwork::ARPpacket::getOpCode() {
+uint16_t network::ARPpacket::getOpCode() {
     uint16_t opcode;
 
     std::stringstream convert ( this->getHexString ( ARP_OFFSET+6, 2 ) );
@@ -171,19 +171,19 @@ uint16_t libNetwork::ARPpacket::getOpCode() {
 }
 
 
-boost::asio::ip::address libNetwork::ARPpacket::getSenderIp() {
+boost::asio::ip::address network::ARPpacket::getSenderIp() {
     boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( ARP_OFFSET+14 ) );
     return newaddr;
 }
 
-boost::asio::ip::address libNetwork::ARPpacket::getTargetIp() {
+boost::asio::ip::address network::ARPpacket::getTargetIp() {
     boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( ARP_OFFSET+24 ) );
     return newaddr;
 }
 
 /* IPV4 */
 
-libNetwork::packet* libNetwork::IPv4packet::factory ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
+network::packet* network::IPv4packet::factory ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
     uint16_t protocol_type;
 
     std::string temp;
@@ -217,17 +217,17 @@ libNetwork::packet* libNetwork::IPv4packet::factory ( uint64_t timeEpoch_i, uint
     return p;
 }
 
-boost::asio::ip::address libNetwork::IPv4packet::getSenderIp() {
+boost::asio::ip::address network::IPv4packet::getSenderIp() {
     boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( IPv4_OFFSET+12 ) );
     return newaddr;
 }
 
-boost::asio::ip::address libNetwork::IPv4packet::getTargetIp() {
+boost::asio::ip::address network::IPv4packet::getTargetIp() {
     boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( IPv4_OFFSET+16 ) );
     return newaddr;
 }
 
-uint16_t libNetwork::IPv4packet::getIdentity() {
+uint16_t network::IPv4packet::getIdentity() {
     uint16_t id;
 
     std::stringstream convert ( this->getHexString ( IPv4_OFFSET+4, 2 ) );
@@ -236,7 +236,7 @@ uint16_t libNetwork::IPv4packet::getIdentity() {
     return id;
 }
 
-uint16_t libNetwork::IPv4packet::getTTL() {
+uint16_t network::IPv4packet::getTTL() {
     uint16_t ttl;
 
     std::stringstream convert ( this->getHexString ( IPv4_OFFSET+8, 1 ) );
@@ -245,7 +245,7 @@ uint16_t libNetwork::IPv4packet::getTTL() {
     return ttl;
 }
 
-uint16_t libNetwork::IPv4packet::getProtocolType() {
+uint16_t network::IPv4packet::getProtocolType() {
     uint16_t protocol_type;
 
     std::stringstream convert ( this->getHexString ( IPv4_OFFSET+9, 1 ) );
@@ -254,14 +254,14 @@ uint16_t libNetwork::IPv4packet::getProtocolType() {
     return protocol_type;
 }
 
-uint16_t libNetwork::IPv4packet::getIPChecksum() {
+uint16_t network::IPv4packet::getIPChecksum() {
     uint16_t cs;
     std::stringstream convert ( this->getHexString ( IPv4_OFFSET+10, 2 ) );
     convert>>std::hex>>cs;
     return cs;
 }
 
-bool libNetwork::IPv4packet::verifyIPChecksum() {
+bool network::IPv4packet::verifyIPChecksum() {
 
     int sum = 0;
 
@@ -277,7 +277,7 @@ bool libNetwork::IPv4packet::verifyIPChecksum() {
     return ( ( sum & 0xFFFF ) + ( sum >>= 16 ) == 0xFFFF );
 }
 
-int libNetwork::IPv4packet::getFlagsIP() {
+int network::IPv4packet::getFlagsIP() {
     int flag;
     std::stringstream convert ( this->getHexString ( IPv4_OFFSET+6, 1 ) );
     convert>>std::hex>>flag;
@@ -286,7 +286,7 @@ int libNetwork::IPv4packet::getFlagsIP() {
 
 /* ICMP */
 
-libNetwork::ICMPv4packet::ICMPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
+network::ICMPv4packet::ICMPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;
     rawData = rawData_i;
@@ -294,7 +294,7 @@ libNetwork::ICMPv4packet::ICMPv4packet ( uint64_t timeEpoch_i, uint32_t timeMill
     return;
 }
 
-uint16_t libNetwork::ICMPv4packet::getMessageType() {
+uint16_t network::ICMPv4packet::getMessageType() {
     uint16_t  message_type;
 
     std::stringstream convert ( this->getHexString ( ICMPV4_OFFSET, 1 ) );
@@ -303,7 +303,7 @@ uint16_t libNetwork::ICMPv4packet::getMessageType() {
     return message_type;
 }
 
-uint16_t libNetwork::ICMPv4packet::getMessageCode() {
+uint16_t network::ICMPv4packet::getMessageCode() {
     uint16_t  message_code;
 
     std::stringstream convert ( this->getHexString ( ICMPV4_OFFSET+1, 1 ) );
@@ -314,7 +314,7 @@ uint16_t libNetwork::ICMPv4packet::getMessageCode() {
 
 /* TCP */
 
-libNetwork::TCPv4packet::TCPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
+network::TCPv4packet::TCPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;
     rawData = rawData_i;
@@ -323,39 +323,39 @@ libNetwork::TCPv4packet::TCPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis
     return;
 }
 
-uint16_t libNetwork::TCPv4packet::getSenderPort() {
+uint16_t network::TCPv4packet::getSenderPort() {
     uint16_t port;
     std::stringstream convert ( this->getHexString ( TCP_OFFSET, 2 ) );
     convert>>std::hex>>port;
     return port;
 }
 
-uint16_t libNetwork::TCPv4packet::getTargetPort() {
+uint16_t network::TCPv4packet::getTargetPort() {
     uint16_t port;
     std::stringstream convert ( this->getHexString ( TCP_OFFSET+2, 2 ) );
     convert>>std::hex>>port;
     return port;
 }
 
-uint32_t libNetwork::TCPv4packet::getSequenceNumber() {
+uint32_t network::TCPv4packet::getSequenceNumber() {
     uint32_t sn;
     std::stringstream convert ( this->getHexString ( TCP_OFFSET+4, 4 ) );
     convert>>std::hex>>sn;
     return sn;
 }
 
-uint32_t libNetwork::TCPv4packet::getAcknowledgmentNumber() {
+uint32_t network::TCPv4packet::getAcknowledgmentNumber() {
     uint32_t an;
     std::stringstream convert ( this->getHexString ( TCP_OFFSET+8, 4 ) );
     convert>>std::hex>>an;
     return an;
 }
 
-uint32_t libNetwork::TCPv4packet::getExpectedAcknowledgmentNumber() {
+uint32_t network::TCPv4packet::getExpectedAcknowledgmentNumber() {
     return this->getSequenceNumber() + this->getPayloadLength();
 }
 
-unsigned int libNetwork::TCPv4packet::getHeaderLength() {
+unsigned int network::TCPv4packet::getHeaderLength() {
     /*
      * Sono utilizzati solo i primi 8 bit del byte, necessita traslazione.
      * Indica i gruppi da 32 bit contenuti, necessita conversione.
@@ -368,43 +368,43 @@ unsigned int libNetwork::TCPv4packet::getHeaderLength() {
     return hl;
 }
 
-unsigned int libNetwork::TCPv4packet::getPayloadLength() {
+unsigned int network::TCPv4packet::getPayloadLength() {
     return ( this->getPayLoad().length() ) /2;
 }
 
-int libNetwork::TCPv4packet::getFlagsTCP() {
+int network::TCPv4packet::getFlagsTCP() {
     int flag;
     std::stringstream convert ( this->getHexString ( TCP_OFFSET+13, 1 ) );
     convert>>std::hex>>flag;
     return flag;
 }
 
-unsigned int libNetwork::TCPv4packet::getWindowSize() {
+unsigned int network::TCPv4packet::getWindowSize() {
     unsigned int ws;
     std::stringstream convert ( this->getHexString ( TCP_OFFSET+14, 2 ) );
     convert>>std::hex>>ws;
     return ws;
 }
 
-unsigned int libNetwork::TCPv4packet::getTCPChecksum() {
+unsigned int network::TCPv4packet::getTCPChecksum() {
     unsigned int cs;
     std::stringstream convert ( this->getHexString ( TCP_OFFSET+16, 2 ) );
     convert>>std::hex>>cs;
     return cs;
 }
 
-unsigned int libNetwork::TCPv4packet::getUrgentPointer() {
+unsigned int network::TCPv4packet::getUrgentPointer() {
     unsigned int up;
     std::stringstream convert ( this->getHexString ( TCP_OFFSET+18, 2 ) );
     convert>>std::hex>>up;
     return up;
 }
 
-std::string libNetwork::TCPv4packet::getOptionRaw() {
+std::string network::TCPv4packet::getOptionRaw() {
     return this->getHexString ( TCP_OFFSET + TCP_STANDARD, this->getHeaderLength() - TCP_STANDARD );
 }
 
-std::map< int, std::string > libNetwork::TCPv4packet::getOptionMap() {
+std::map< int, std::string > network::TCPv4packet::getOptionMap() {
     std::map<int, std::string> tempMap;
     if ( this->isOption() && !this->isSYN() ) { // FIXME - SYN usa altro protocollo???
         for ( int i=0; i < ( this->getHeaderLength() - TCP_STANDARD ); i++ ) {
@@ -424,14 +424,14 @@ std::map< int, std::string > libNetwork::TCPv4packet::getOptionMap() {
     return tempMap;
 }
 
-std::string libNetwork::TCPv4packet::getPayLoad() {
+std::string network::TCPv4packet::getPayLoad() {
     int start = TCP_OFFSET + this->getHeaderLength();
     return this->getHexString ( start, this->getPacketLength() - start );
 }
 
 /* UDP */
 
-libNetwork::UDPv4packet::UDPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
+network::UDPv4packet::UDPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;
     rawData = rawData_i;
@@ -439,14 +439,14 @@ libNetwork::UDPv4packet::UDPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis
     return;
 }
 
-uint16_t libNetwork::UDPv4packet::getSenderPort() {
+uint16_t network::UDPv4packet::getSenderPort() {
     uint16_t port;
     std::stringstream convert ( this->getHexString ( UDP_OFFSET, 2 ) );
     convert>>std::hex>>port;
     return port;
 }
 
-uint16_t libNetwork::UDPv4packet::getTargetPort() {
+uint16_t network::UDPv4packet::getTargetPort() {
     uint16_t port;
     std::stringstream convert ( this->getHexString ( UDP_OFFSET+2, 2 ) );
     convert>>std::hex>>port;
@@ -455,7 +455,7 @@ uint16_t libNetwork::UDPv4packet::getTargetPort() {
 
 /* UNKNOWN */
 
-libNetwork::UnknownPacket::UnknownPacket ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
+network::UnknownPacket::UnknownPacket ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;
     rawData = rawData_i;

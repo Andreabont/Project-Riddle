@@ -33,15 +33,15 @@
 #include <iomanip>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
-#include "./libraries/libCigarette.h"
-#include "./commons/classMacAddress.h"
-#include "./commons/classPacket.h"
-#include "./commons/libDump.h"
+#include "tools.h"
+#include "commons/macaddress.h"
+#include "commons/packet.h"
+#include "commons/dumptools.h"
 
 using namespace std;
 using namespace boost;
 using namespace boost::program_options;
-using namespace libNetwork;
+using namespace network;
 
 int main ( int argc, char **argv ) {
     options_description desc ( "Cigarette - Network Packet Parser" );
@@ -165,7 +165,7 @@ int main ( int argc, char **argv ) {
 
                     if ( vm.count ( "payload" ) ) {
                         cout << "                    + Payload:" << endl;
-                        cout << libDump::classicDump ( pkg_tcpv4->getPayLoad() ) << endl;
+                        cout << dump::classicDump ( pkg_tcpv4->getPayLoad() ) << endl;
                     }
 
 

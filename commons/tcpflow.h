@@ -27,31 +27,31 @@
  */
 
 
-#ifndef CLASSFLOW_H
-#define CLASSFLOW_H
+#ifndef TCPFLOW_H
+#define TCPFLOW_H
 
 #include <stdint.h>
 #include <list>
 #include <string>
 #include <boost/asio.hpp>
-#include "classMacAddress.h"
-#include "classPacket.h"
+#include "macaddress.h"
+#include "packet.h"
 
-namespace libNetwork {
+namespace network {
 
 /** Class for managing TCP flow. */
-class stream
+class TcpStream
 {
 private:
     uint64_t timeEpoch;
     uint32_t timeMillis;
 
-    libNetwork::mac_address macAddress[2];
+    network::mac_address macAddress[2];
     boost::asio::ip::address ipAddress[2];
     uint16_t port[2];
 
-    std::map<uint32_t, libNetwork::TCPv4packet*> snBuffer[2];
-    std::map<uint32_t, libNetwork::TCPv4packet*> ackExpBuffer[2];
+    std::map<uint32_t, network::TCPv4packet*> snBuffer[2];
+    std::map<uint32_t, network::TCPv4packet*> ackExpBuffer[2];
     uint32_t snPointer[2];
 
     std::string charStream[2];
@@ -63,14 +63,14 @@ private:
 
 public:
     /** Initialize flow with the first packet of the TCP handshake (SYN) */
-    bool factory ( libNetwork::TCPv4packet *packet );
+    bool factory ( network::TCPv4packet *packet );
 
     /** Initialize flow with string (classFlow protocol) */
     void factory ( std::string flow );
 
 
     /** Put new packet in the flow */
-    bool addPacket ( libNetwork::TCPv4packet *newPacket );
+    bool addPacket ( network::TCPv4packet *newPacket );
 
     /**
      * Read the first packet buffer and save the payload in the first char stream.
@@ -97,10 +97,10 @@ public:
     uint32_t getTimeMillis();
 
     /** return first mac address */
-    libNetwork::mac_address getFirstMacAddress();
+    network::mac_address getFirstMacAddress();
 
     /** return second mac address */
-    libNetwork::mac_address getSecondMacAddress();
+    network::mac_address getSecondMacAddress();
 
     /** return first ip address */
     boost::asio::ip::address getFirstIpAddress();
@@ -142,4 +142,4 @@ public:
 
 }
 
-#endif // CLASSFLOW_H
+#endif // TCPFLOW_H
