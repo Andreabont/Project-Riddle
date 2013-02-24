@@ -1,3 +1,7 @@
 *.kdev4
+*.tar.xz
+*.deb
+*.rpm
 .kdev4/*
 build/*
+src/*

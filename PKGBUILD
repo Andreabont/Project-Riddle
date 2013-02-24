@@ -1,6 +1,6 @@
 # Maintainer: Andrea Bontempi <andreabont@yahoo.it>
 pkgname=projectriddle-git
-pkgver=0.1.0
+pkgver=20130224
 pkgrel=1
 pkgdesc="Modular Network Packet Sniffer"
 arch=('i686' 'x86_64')
