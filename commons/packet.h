@@ -357,11 +357,8 @@ namespace network {
         /** final constructor. */
         ICMPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
-        /** return message type. */
+        /** return message type + code */
         uint16_t getMessageType();
-
-        /** return message code. */
-        uint16_t getMessageCode();
 
     };
 

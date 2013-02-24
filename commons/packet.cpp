@@ -297,19 +297,10 @@ network::ICMPv4packet::ICMPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_
 uint16_t network::ICMPv4packet::getMessageType() {
     uint16_t  message_type;
 
-    std::stringstream convert ( this->getHexString ( offset::ICMPV4, 1 ) );
+    std::stringstream convert ( this->getHexString ( offset::ICMPV4, 2 ) );
     convert>>std::hex>>message_type;
 
     return message_type;
-}
-
-uint16_t network::ICMPv4packet::getMessageCode() {
-    uint16_t  message_code;
-
-    std::stringstream convert ( this->getHexString ( offset::ICMPV4 + 1, 1 ) );
-    convert>>std::hex>>message_code;
-
-    return message_code;
 }
 
 /* TCP */
