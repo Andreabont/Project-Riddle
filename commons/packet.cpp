@@ -57,11 +57,11 @@ network::packet* network::packet::factory ( uint64_t timeEpoch_i, uint32_t timeM
     convert>>std::hex>>protocol_type;
 
     packet *p;
-    if ( protocol_type == ETHER_TYPE_ARP ) {
+    if ( protocol_type == (int) ethertype::ARP ) {
 
         p = new ARPpacket ( timeEpoch_i, timeMillis_i, rawData_i );
 
-    } else if ( protocol_type == ETHER_TYPE_IPV4 ) {
+    } else if ( protocol_type == (int) ethertype::IPV4 ) {
 
         p = IPv4packet::factory ( timeEpoch_i, timeMillis_i, rawData_i );
 
@@ -164,7 +164,7 @@ network::ARPpacket::ARPpacket ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std
 uint16_t network::ARPpacket::getOpCode() {
     uint16_t opcode;
 
-    std::stringstream convert ( this->getHexString ( ARP_OFFSET+6, 2 ) );
+    std::stringstream convert ( this->getHexString ( (int) offset::ARP + 6, 2 ) );
     convert>>std::hex>>opcode;
 
     return opcode;
@@ -172,12 +172,12 @@ uint16_t network::ARPpacket::getOpCode() {
 
 
 boost::asio::ip::address network::ARPpacket::getSenderIp() {
-    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( ARP_OFFSET+14 ) );
+    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( offset::ARP + 14 ) );
     return newaddr;
 }
 
 boost::asio::ip::address network::ARPpacket::getTargetIp() {
-    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( ARP_OFFSET+24 ) );
+    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( offset::ARP + 24 ) );
     return newaddr;
 }
 
@@ -196,15 +196,15 @@ network::packet* network::IPv4packet::factory ( uint64_t timeEpoch_i, uint32_t t
     convert>>std::hex>>protocol_type;
 
     packet *p;
-    if ( protocol_type == IPV4_TYPE_TCP ) {
+    if ( protocol_type == ipv4type::TCP ) {
 
         p = new TCPv4packet ( timeEpoch_i, timeMillis_i, rawData_i );
 
-    } else if ( protocol_type == IPV4_TYPE_UDP ) {
+    } else if ( protocol_type == ipv4type::UDP ) {
 
         p = new UDPv4packet ( timeEpoch_i, timeMillis_i, rawData_i );
 
-    } else if ( protocol_type == IPV4_TYPE_ICMP ) {
+    } else if ( protocol_type == ipv4type::ICMP ) {
 
         p = new ICMPv4packet ( timeEpoch_i, timeMillis_i, rawData_i );
 
@@ -218,19 +218,19 @@ network::packet* network::IPv4packet::factory ( uint64_t timeEpoch_i, uint32_t t
 }
 
 boost::asio::ip::address network::IPv4packet::getSenderIp() {
-    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( IPv4_OFFSET+12 ) );
+    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( offset::IPV4 + 12 ) );
     return newaddr;
 }
 
 boost::asio::ip::address network::IPv4packet::getTargetIp() {
-    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( IPv4_OFFSET+16 ) );
+    boost::asio::ip::address newaddr = boost::asio::ip::address::from_string ( this->getDecimalIP ( offset::IPV4 + 16 ) );
     return newaddr;
 }
 
 uint16_t network::IPv4packet::getIdentity() {
     uint16_t id;
 
-    std::stringstream convert ( this->getHexString ( IPv4_OFFSET+4, 2 ) );
+    std::stringstream convert ( this->getHexString ( offset::IPV4 + 4, 2 ) );
     convert>>std::hex>>id;
 
     return id;
@@ -239,7 +239,7 @@ uint16_t network::IPv4packet::getIdentity() {
 uint16_t network::IPv4packet::getTTL() {
     uint16_t ttl;
 
-    std::stringstream convert ( this->getHexString ( IPv4_OFFSET+8, 1 ) );
+    std::stringstream convert ( this->getHexString ( offset::IPV4 + 8, 1 ) );
     convert>>std::hex>>ttl;
 
     return ttl;
@@ -248,7 +248,7 @@ uint16_t network::IPv4packet::getTTL() {
 uint16_t network::IPv4packet::getProtocolType() {
     uint16_t protocol_type;
 
-    std::stringstream convert ( this->getHexString ( IPv4_OFFSET+9, 1 ) );
+    std::stringstream convert ( this->getHexString ( offset::IPV4 + 9, 1 ) );
     convert>>std::hex>>protocol_type;
 
     return protocol_type;
@@ -256,7 +256,7 @@ uint16_t network::IPv4packet::getProtocolType() {
 
 uint16_t network::IPv4packet::getIPChecksum() {
     uint16_t cs;
-    std::stringstream convert ( this->getHexString ( IPv4_OFFSET+10, 2 ) );
+    std::stringstream convert ( this->getHexString ( offset::IPV4 + 10, 2 ) );
     convert>>std::hex>>cs;
     return cs;
 }
@@ -268,7 +268,7 @@ bool network::IPv4packet::verifyIPChecksum() {
     for ( int i = 0; i < 20; i += 2 ) {
 
         short unsigned int temp;
-        std::stringstream convert ( this->getHexString ( IPv4_OFFSET+i,2 ) );
+        std::stringstream convert ( this->getHexString ( offset::IPV4 + i, 2 ) );
         convert >> std::hex >> temp;
         sum += temp;
 
@@ -279,7 +279,7 @@ bool network::IPv4packet::verifyIPChecksum() {
 
 int network::IPv4packet::getFlagsIP() {
     int flag;
-    std::stringstream convert ( this->getHexString ( IPv4_OFFSET+6, 1 ) );
+    std::stringstream convert ( this->getHexString ( offset::IPV4 + 6, 1 ) );
     convert>>std::hex>>flag;
     return flag;
 }
@@ -297,7 +297,7 @@ network::ICMPv4packet::ICMPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_
 uint16_t network::ICMPv4packet::getMessageType() {
     uint16_t  message_type;
 
-    std::stringstream convert ( this->getHexString ( ICMPV4_OFFSET, 1 ) );
+    std::stringstream convert ( this->getHexString ( offset::ICMPV4, 1 ) );
     convert>>std::hex>>message_type;
 
     return message_type;
@@ -306,7 +306,7 @@ uint16_t network::ICMPv4packet::getMessageType() {
 uint16_t network::ICMPv4packet::getMessageCode() {
     uint16_t  message_code;
 
-    std::stringstream convert ( this->getHexString ( ICMPV4_OFFSET+1, 1 ) );
+    std::stringstream convert ( this->getHexString ( offset::ICMPV4 + 1, 1 ) );
     convert>>std::hex>>message_code;
 
     return message_code;
@@ -325,28 +325,28 @@ network::TCPv4packet::TCPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i,
 
 uint16_t network::TCPv4packet::getSenderPort() {
     uint16_t port;
-    std::stringstream convert ( this->getHexString ( TCP_OFFSET, 2 ) );
+    std::stringstream convert ( this->getHexString ( offset::TCP, 2 ) );
     convert>>std::hex>>port;
     return port;
 }
 
 uint16_t network::TCPv4packet::getTargetPort() {
     uint16_t port;
-    std::stringstream convert ( this->getHexString ( TCP_OFFSET+2, 2 ) );
+    std::stringstream convert ( this->getHexString ( offset::TCP + 2, 2 ) );
     convert>>std::hex>>port;
     return port;
 }
 
 uint32_t network::TCPv4packet::getSequenceNumber() {
     uint32_t sn;
-    std::stringstream convert ( this->getHexString ( TCP_OFFSET+4, 4 ) );
+    std::stringstream convert ( this->getHexString ( offset::TCP + 4, 4 ) );
     convert>>std::hex>>sn;
     return sn;
 }
 
 uint32_t network::TCPv4packet::getAcknowledgmentNumber() {
     uint32_t an;
-    std::stringstream convert ( this->getHexString ( TCP_OFFSET+8, 4 ) );
+    std::stringstream convert ( this->getHexString ( offset::TCP + 8, 4 ) );
     convert>>std::hex>>an;
     return an;
 }
@@ -361,7 +361,7 @@ unsigned int network::TCPv4packet::getHeaderLength() {
      * Indica i gruppi da 32 bit contenuti, necessita conversione.
      */
     unsigned int hl;
-    std::stringstream convert ( this->getHexString ( TCP_OFFSET+12, 1 ) );
+    std::stringstream convert ( this->getHexString ( offset::TCP + 12, 1 ) );
     convert>>std::hex>>hl;
     hl >>= 4;
     hl = ( hl * 32 ) / 8;
@@ -374,34 +374,34 @@ unsigned int network::TCPv4packet::getPayloadLength() {
 
 int network::TCPv4packet::getFlagsTCP() {
     int flag;
-    std::stringstream convert ( this->getHexString ( TCP_OFFSET+13, 1 ) );
+    std::stringstream convert ( this->getHexString ( offset::TCP + 13, 1 ) );
     convert>>std::hex>>flag;
     return flag;
 }
 
 unsigned int network::TCPv4packet::getWindowSize() {
     unsigned int ws;
-    std::stringstream convert ( this->getHexString ( TCP_OFFSET+14, 2 ) );
+    std::stringstream convert ( this->getHexString ( offset::TCP + 14, 2 ) );
     convert>>std::hex>>ws;
     return ws;
 }
 
 unsigned int network::TCPv4packet::getTCPChecksum() {
     unsigned int cs;
-    std::stringstream convert ( this->getHexString ( TCP_OFFSET+16, 2 ) );
+    std::stringstream convert ( this->getHexString ( offset::TCP + 16, 2 ) );
     convert>>std::hex>>cs;
     return cs;
 }
 
 unsigned int network::TCPv4packet::getUrgentPointer() {
     unsigned int up;
-    std::stringstream convert ( this->getHexString ( TCP_OFFSET+18, 2 ) );
+    std::stringstream convert ( this->getHexString ( offset::TCP + 18, 2 ) );
     convert>>std::hex>>up;
     return up;
 }
 
 std::string network::TCPv4packet::getOptionRaw() {
-    return this->getHexString ( TCP_OFFSET + TCP_STANDARD, this->getHeaderLength() - TCP_STANDARD );
+    return this->getHexString ( offset::TCP + TCP_STANDARD, this->getHeaderLength() - TCP_STANDARD );
 }
 
 std::map< int, std::string > network::TCPv4packet::getOptionMap() {
@@ -409,14 +409,14 @@ std::map< int, std::string > network::TCPv4packet::getOptionMap() {
     if ( this->isOption() && !this->isSYN() ) { // FIXME - SYN usa altro protocollo???
         for ( int i=0; i < ( this->getHeaderLength() - TCP_STANDARD ); i++ ) {
             int read;
-            std::stringstream convert ( this->getHexString ( TCP_OFFSET+TCP_STANDARD+i, 1 ) );
+            std::stringstream convert ( this->getHexString ( offset::TCP + TCP_STANDARD+i, 1 ) );
             convert >> std::hex >> read;
 
             if ( read != 1 ) {
-                std::stringstream convert2 ( this->getHexString ( TCP_OFFSET+TCP_STANDARD+i+1, 1 ) );
+                std::stringstream convert2 ( this->getHexString ( offset::TCP + TCP_STANDARD+i+1, 1 ) );
                 int optionLength;
                 convert2 >> std::hex >> optionLength;
-                tempMap[read] = this->getHexString ( TCP_OFFSET+TCP_STANDARD+i+2, optionLength-2 );
+                tempMap[read] = this->getHexString ( offset::TCP + TCP_STANDARD+i+2, optionLength-2 );
                 i += optionLength;
             }
         }
@@ -425,7 +425,7 @@ std::map< int, std::string > network::TCPv4packet::getOptionMap() {
 }
 
 std::string network::TCPv4packet::getPayLoad() {
-    int start = TCP_OFFSET + this->getHeaderLength();
+    int start = offset::TCP + this->getHeaderLength();
     return this->getHexString ( start, this->getPacketLength() - start );
 }
 
@@ -441,14 +441,14 @@ network::UDPv4packet::UDPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i,
 
 uint16_t network::UDPv4packet::getSenderPort() {
     uint16_t port;
-    std::stringstream convert ( this->getHexString ( UDP_OFFSET, 2 ) );
+    std::stringstream convert ( this->getHexString ( offset::UDP, 2 ) );
     convert>>std::hex>>port;
     return port;
 }
 
 uint16_t network::UDPv4packet::getTargetPort() {
     uint16_t port;
-    std::stringstream convert ( this->getHexString ( UDP_OFFSET+2, 2 ) );
+    std::stringstream convert ( this->getHexString ( offset::UDP + 2, 2 ) );
     convert>>std::hex>>port;
     return port;
 }

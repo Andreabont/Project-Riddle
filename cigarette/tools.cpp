@@ -32,48 +32,48 @@
 #include <string>
 #include "tools.h"
 
-std::string ether_type_decode ( uint16_t  start ) {
+std::string ether_type_decode(uint16_t start) {
     // Maggiore o uguale di 1536(0x0600) per Ethernet v2, minore per versione
 
-    if ( start >= ETHER_V2_CODE ) {
-        switch ( start ) {
-        case ( ETHER_TYPE_IPV4 ) :
-            return "IPv4";
-        case ( ETHER_TYPE_ARP ) :
-            return "ARP";
-        case ( ETHER_TYPE_IPV6 ) :
-            return "IPv6";
-        case ( ETHER_TYPE_PPP ) :
-            return "PPP";
-        case ( ETHER_TYPE_IEEE802 ) :
-            return "IEEE 802.1Q";
-        default:
-            return "UNDEFINED";
+    if (start >= (int) ethertype::V2_CODE) {
+        switch (start) {
+            case ( (int) ethertype::IPV4):
+                return "IPv4";
+            case ( (int) ethertype::ARP):
+                return "ARP";
+            case ( (int) ethertype::IPV6):
+                return "IPv6";
+            case ( (int) ethertype::PPP):
+                return "PPP";
+            case ( (int) ethertype::IEEE802):
+                return "IEEE 802.1Q";
+            default:
+                return "UNDEFINED";
         }
     } else return "Ethernet IEEE 802.3";
 }
 
-std::string ipv4_type_decode ( uint16_t  start ) {
-    switch ( start ) {
-    case ( IPV4_TYPE_TCP ) :
-        return "TCP";
-    case ( IPV4_TYPE_UDP ) :
-        return "UDP";
-    case ( IPV4_TYPE_ICMP ) :
-        return "ICMP";
-    default:
-        return "UNDEFINED";
+std::string ipv4_type_decode(uint16_t start) {
+    switch (start) {
+        case ( ipv4type::TCP):
+            return "TCP";
+        case ( ipv4type::UDP):
+            return "UDP";
+        case ( ipv4type::ICMP):
+            return "ICMP";
+        default:
+            return "UNDEFINED";
     }
 }
 
-std::string icmpv4_type_decode ( uint16_t  start ) {
-    switch ( start ) {
-    case ( ICMPV4_ECHO_REQ ) :
-        return "ECHO Request";
-    case ( ICMPV4_ECHO_REP ) :
-        return "ECHO Reply";
-    default:
-        return "UNDEFINED";
+std::string icmpv4_type_decode(uint16_t start) {
+    switch (start) {
+        case ( icmpv4type::ECHO_REQUEST ):
+            return "ECHO Request";
+        case ( icmpv4type::ECHO_REPLY ):
+            return "ECHO Reply";
+        default:
+            return "UNDEFINED";
     }
 }
 
