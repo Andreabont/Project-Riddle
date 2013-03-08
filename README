@@ -25,68 +25,6 @@ cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc
 make
 make install 
 
-------
-Riddle
-------
-
-Restituisce pacchetti ricevuti su standard output uno per riga nel formato:
-
-<epoch>!<millisecondi da epoch>!<pacchetto in formato hex>
-
-Accetta i seguenti parametri:
-
---help		Scrive un messaggio di help.
---dump		Scrive in formato umanamente comprensibile (piu' o meno)
---limit	<x>	Impone massimo numero di pacchetti ricevibili.
---input <x>	Legge da un file pcap al posto del device.
---iface <x>	Impone sniffing su una interfaccia specifica (se non presente usa standard)
---filter <x>	Visualizza solo pacchetti voluti (non filtra a livello applicativo)
---secure	Solo per utenti linux, cambia UID e GID dopo l'inizializzazione togliendo i permessi di root.
-
-NB: E' la sola parte da eseguire con permessi di root!!
-
----------
-Cigarette
----------
-
-Legge output di Riddle e restituisce a video informazioni in tempo reale sui pacchetti ricevuti. (Solo Ethernet)
-
-Accetta i seguenti parametri:
-
---help		Scrive un messaggio di help.
---ipv4		Espande opzioni IPv4
---tcp		Espande opzioni TCP
---icmp		Espande opzioni ICMP
---payload	Scrive il dump del payload dei pacchetti.
-
--------
-Ranging
--------
-
-Analizza pacchetti ARP per elencare le macchine connesse (scanner passivo).
-
-TODO --> Aggiungere analisi DHCP
-
-Accetta i seguenti parametri:
-
---help		Scrive un messaggio di help.
---ttl <x>	Permette di modificare il timeout per il match mac-ip.
-
--------
-Pursuer
--------
-
-Segue i flussi TCP e li restituisce in standard output o salvati in file.
-
-Accetta i seguenti parametri:
-
---help		Scrive un messaggio di help.
---tofile	Scrive i flussi in una serie di file al posto che sullo stdout.
-
-Restituisce flussi ricostruiti su standard output uno per riga nel formato:
-
-<epoch>!<millisecondi da epoch>!<mac primo flusso>!<mac secondo flusso>!<ip primo flusso>!<ip secondo flusso>!<porta primo flusso>!<porta secondo flusso>!<dump primo flusso>!<dump secondo flusso>
-
 -------------
 Esempio d'uso
 -------------
@@ -94,10 +32,3 @@ Esempio d'uso
 sudo ./riddle --iface eth0 --filter arp --dump 	--> Visualizza i pacchetti ARP di eth0.
 sudo ./riddle --iface wlan0 | ./cigarette	--> Stampa a schermo informazioni sui pacchetti di wlan0.
 sudo ./riddle --iface wlan0 | ./ranging		--> Visualizza macchine (MAC + IP) connesse alla rete.
-
-----
-TODO
-----
-
-- Filtro pacchetti avanzato (piu' potente del filtro pcap) con anche filtro livello applicativo.
-- Follower TCP: ricostruzione file.

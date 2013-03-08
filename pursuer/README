@@ -1,0 +1,14 @@
+-------
+Pursuer
+-------
+
+Segue i flussi TCP e li restituisce in standard output o salvati in file.
+
+Accetta i seguenti parametri:
+
+--help		Scrive un messaggio di help.
+--tofile	Scrive i flussi in una serie di file al posto che sullo stdout.
+
+Restituisce flussi ricostruiti su standard output uno per riga nel formato:
+
+<epoch>!<millisecondi da epoch>!<mac primo flusso>!<mac secondo flusso>!<ip primo flusso>!<ip secondo flusso>!<porta primo flusso>!<porta secondo flusso>!<dump primo flusso>!<dump secondo flusso>

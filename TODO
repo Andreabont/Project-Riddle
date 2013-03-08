@@ -1,0 +1,6 @@
+----
+TODO
+----
+
+- Filtro pacchetti avanzato (piu' potente del filtro pcap) con anche filtro livello applicativo.
+- Follower TCP: ricostruzione file.

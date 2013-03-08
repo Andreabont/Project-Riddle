@@ -1,0 +1,12 @@
+-------
+Ranging
+-------
+
+Analizza pacchetti ARP per elencare le macchine connesse (scanner passivo).
+
+TODO --> Aggiungere analisi DHCP
+
+Accetta i seguenti parametri:
+
+--help		Scrive un messaggio di help.
+--ttl <x>	Permette di modificare il timeout per il match mac-ip.

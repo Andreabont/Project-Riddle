@@ -1,0 +1,13 @@
+---------
+Cigarette
+---------
+
+Legge output di Riddle e restituisce a video informazioni in tempo reale sui pacchetti ricevuti. (Solo Ethernet)
+
+Accetta i seguenti parametri:
+
+--help		Scrive un messaggio di help.
+--ipv4		Espande opzioni IPv4
+--tcp		Espande opzioni TCP
+--icmp		Espande opzioni ICMP
+--payload	Scrive il dump del payload dei pacchetti.
