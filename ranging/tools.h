@@ -30,19 +30,30 @@
 #define LIBRANGING_H
 
 #include <boost/asio.hpp>
+#include <string>
+#include <list>
 #include "commons/macaddress.h"
 
+typedef struct _win_size {
+    int rows; // number of rows in window
+    int cols; // number of columns in window
+} win_size;
+
 class device {
-    private:
+private:
     network::mac_address mac;
     boost::asio::ip::address ip;
     long int timeEpoch;
-    public:
-    device ( network::mac_address newMac, boost::asio::ip::address newIp);
+public:
+    device(network::mac_address newMac, boost::asio::ip::address newIp);
     network::mac_address getMacAddress();
     boost::asio::ip::address getIpAddress();
     long int getEpoch();
-    void setEpoch ( long int newEpoch );
+    void setEpoch(long int newEpoch);
 };
+
+void setHead(win_size);
+
+void printLine(win_size winxy, int countLine, int maxttl, std::list<device>::iterator dev);
 
 #endif //LIBRANGING_H

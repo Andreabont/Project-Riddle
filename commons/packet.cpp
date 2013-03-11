@@ -57,11 +57,11 @@ network::packet* network::packet::factory ( uint64_t timeEpoch_i, uint32_t timeM
     convert>>std::hex>>protocol_type;
 
     packet *p;
-    if ( protocol_type == (int) ethertype::ARP ) {
+    if ( protocol_type == ethertype::ARP ) {
 
         p = new ARPpacket ( timeEpoch_i, timeMillis_i, rawData_i );
 
-    } else if ( protocol_type == (int) ethertype::IPV4 ) {
+    } else if ( protocol_type == ethertype::IPV4 ) {
 
         p = IPv4packet::factory ( timeEpoch_i, timeMillis_i, rawData_i );
 
@@ -164,7 +164,7 @@ network::ARPpacket::ARPpacket ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std
 uint16_t network::ARPpacket::getOpCode() {
     uint16_t opcode;
 
-    std::stringstream convert ( this->getHexString ( (int) offset::ARP + 6, 2 ) );
+    std::stringstream convert ( this->getHexString ( offset::ARP + 6, 2 ) );
     convert>>std::hex>>opcode;
 
     return opcode;

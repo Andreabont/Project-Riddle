@@ -46,9 +46,6 @@
 
 #define TIMETOLIVE 120
 
-int rows; // number of rows in window
-int cols; // number of columns in window
-
 using namespace std;
 using namespace boost;
 using namespace boost::program_options;
@@ -59,35 +56,102 @@ using namespace network;
 boost::mutex mymutex;
 int maxttl = TIMETOLIVE;
 
-void setHead();
-void printLine ( int countLine, string mac, string ip, long int epoch );
+/** The thread "printer" manages the display. */
+void printer(list<device> *found, win_size winxy);
 
-void printer ( list<device> *found ) {
+/** The thread "scribe" listens to incoming packets. */
+void scribe(list<device> *found);
 
-    static boost::posix_time::seconds delay ( 1 );
+int main(int argc, char **argv) {
 
-    while ( 1 ) {
+    options_description desc("Ranging - Network Passive Scanner");
+    desc.add_options()
+            ("help,h", "prints this")
+            ("ttl,t", value<int>(), "sets the deadline (in seconds) for each match (default = 50)")
+            ;
 
-        boost::mutex::scoped_lock mylock ( mymutex );
+    variables_map vm;
+
+    try {
+        store(parse_command_line(argc, argv, desc), vm);
+        notify(vm);
+    } catch (boost::program_options::unknown_option ex1) {
+        cerr << "ERROR >> " << ex1.what() << "" << endl;
+        cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
+        return EXIT_SUCCESS;
+    } catch (boost::program_options::invalid_command_line_syntax ex2) {
+        cerr << "ERROR >> " << ex2.what() << "" << endl;
+        cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
+        return EXIT_SUCCESS;
+    }
+
+    if (vm.count("help")) {
+        cout << desc << "\n";
+        return EXIT_SUCCESS;
+    }
+
+    if (vm.count("ttl")) {
+        maxttl = vm["ttl"].as<int>();
+    }
+
+    WINDOW *wnd;
+
+    wnd = initscr(); // curses call to initialize window
+
+    if (!has_colors()) {
+        endwin();
+        cerr << "FAIL: Your terminal does not support color." << endl;
+        return EXIT_FAILURE;
+    }
+
+    start_color(); // start color mode.
+    cbreak(); // curses call to set no waiting for Enter key
+    noecho(); // curses call to set no echoin
+    clear(); // curses call to clear screen, send cursor to position (0,0)
+
+    win_size winxy;
+    getmaxyx(wnd, winxy.rows, winxy.cols);
+    
+    setHead(winxy);
+
+    list<device> found;
+
+    boost::thread scribe_t(scribe, &found);
+    boost::thread printer_t(printer, &found, winxy);
+
+    scribe_t.join();
+    printer_t.join();
+
+    endwin();
+    return EXIT_SUCCESS;
+}
+
+void printer(list<device> *found, win_size winxy) {
+
+    static boost::posix_time::seconds delay(1);
+
+    while (1) {
+
+        boost::mutex::scoped_lock mylock(mymutex);
 
         clear();
-        setHead();
+        setHead(winxy);
 
         int countLine = 1;
 
         list<device>::iterator r = found->begin();
 
-        while ( r != found->end() ) {
+        while (r != found->end()) {
 
-            if ( time ( NULL ) > r->getEpoch() + maxttl ) {
+            if (time(NULL) > r->getEpoch() + maxttl) {
 
                 list<device>::iterator ex = r;
                 r++;
-                found->erase ( ex );
+                found->erase(ex);
 
             } else {
 
-                printLine ( countLine, r->getMacAddress().to_string(), r->getIpAddress().to_string(), r->getEpoch() );
+                printLine(winxy, countLine, maxttl, r);
                 r++;
 
             }
@@ -98,37 +162,37 @@ void printer ( list<device> *found ) {
 
         mylock.unlock();
 
-        boost::this_thread::sleep ( delay );
+        boost::this_thread::sleep(delay);
 
     }
 
 }
 
-void scribe ( list<device> *found ) {
+void scribe(list<device> *found) {
 
     string r_packet;
-    getline ( cin,r_packet );
-    if ( cin.eof() ) return;
+    getline(cin, r_packet);
+    if (cin.eof()) return;
 
-    while ( 1 ) {
+    while (1) {
         try {
 
-            packet* pkg = packet::factory ( r_packet );
+            packet* pkg = packet::factory(r_packet);
 
-            if ( pkg->isArp() ) {
+            if (pkg->isArp()) {
 
-                boost::mutex::scoped_lock mylock ( mymutex );
+                boost::mutex::scoped_lock mylock(mymutex);
 
-                ARPpacket *pkg_arp = dynamic_cast<ARPpacket*> ( pkg );
+                ARPpacket *pkg_arp = dynamic_cast<ARPpacket*> (pkg);
 
                 bool isFound = false;
 
                 list<device>::iterator p = found->begin();
 
-                while ( p != found->end() ) {
+                while (p != found->end()) {
 
-                    if ( p->getMacAddress() == pkg_arp->getSenderMac() && p->getIpAddress() == pkg_arp->getSenderIp() ) {
-                        p->setEpoch ( pkg_arp->getEpoch() );
+                    if (p->getMacAddress() == pkg_arp->getSenderMac() && p->getIpAddress() == pkg_arp->getSenderIp()) {
+                        p->setEpoch(pkg_arp->getEpoch());
                         isFound = true;
                         break;
                     }
@@ -136,9 +200,9 @@ void scribe ( list<device> *found ) {
                     p++;
                 }
 
-                if ( !isFound ) {
-                    device newDevice ( pkg_arp->getSenderMac(), pkg_arp->getSenderIp() );
-                    found->push_back ( newDevice );
+                if (!isFound) {
+                    device newDevice(pkg_arp->getSenderMac(), pkg_arp->getSenderIp());
+                    found->push_back(newDevice);
                 }
 
                 mylock.unlock();
@@ -146,10 +210,10 @@ void scribe ( list<device> *found ) {
             }
 
             delete pkg;
-            getline ( cin,r_packet );
-            if ( cin.eof() ) return;
+            getline(cin, r_packet);
+            if (cin.eof()) return;
 
-        } catch ( packet::Overflow ) {
+        } catch (packet::Overflow) {
             cerr << "Overflow! :-P" << endl;
             endwin();
             return;
@@ -158,150 +222,4 @@ void scribe ( list<device> *found ) {
 
     }
 
-}
-
-int main ( int argc, char **argv ) {
-
-    options_description desc ( "Ranging - Network Passive Scanner" );
-    desc.add_options()
-    ( "help,h", "prints this" )
-    ( "ttl,t", value<int>(), "sets the deadline (in seconds) for each match (default = 50)" )
-    ;
-
-    variables_map vm;
-
-    try {
-        store ( parse_command_line ( argc, argv, desc ), vm );
-        notify ( vm );
-    } catch ( boost::program_options::unknown_option ex1 ) {
-        cerr << "ERROR >> " << ex1.what() << "" << endl;
-        cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
-        return EXIT_SUCCESS;
-    } catch ( boost::program_options::invalid_command_line_syntax ex2 ) {
-        cerr << "ERROR >> " << ex2.what() << "" << endl;
-        cerr << ">> Try '" << argv[0] << " --help' for more information." << endl;
-        return EXIT_SUCCESS;
-    }
-
-    if ( vm.count ( "help" ) ) {
-        cout<<desc<<"\n";
-        return EXIT_SUCCESS;
-    }
-
-    if ( vm.count ( "ttl" ) ) {
-        maxttl = vm["ttl"].as<int>();
-    }
-
-    WINDOW *wnd;
-
-    wnd = initscr();	// curses call to initialize window
-
-    if ( !has_colors() ) {
-        endwin();
-        cerr << "FAIL: Your terminal does not support color." << endl;
-        return EXIT_FAILURE;
-    }
-
-    start_color();                          // start color mode.
-    cbreak();                               // curses call to set no waiting for Enter key
-    noecho();                               // curses call to set no echoin
-    clear();                                // curses call to clear screen, send cursor to position (0,0)
-
-    getmaxyx ( wnd, rows, cols );
-    setHead();
-
-    list<device> found;
-
-    boost::thread scribe_t ( scribe, &found );
-    boost::thread printer_t ( printer, &found );
-
-    scribe_t.join();
-    printer_t.join();
-
-    endwin();
-    return EXIT_SUCCESS;
-}
-
-void setHead() {
-
-    char *head;
-    int ind1;
-    int ind2;
-
-    if ( head = ( char* ) malloc ( cols * sizeof ( char ) ) ) {
-
-        snprintf ( head, cols, " Mac address       | IP address      | Epoch      | TTL" );
-
-        ind2 = strlen ( head );
-
-        for ( ind1 = ind2; ind1 < cols; ind1++ ) {
-            head[ind1] = ( int ) ' ';
-        }
-
-        head[cols] = ( int ) '\0';
-    } else {
-        printf ( "FAIL: Memory Allocation Failure\n" );
-        return;
-    }
-
-    move ( 0, 0 );
-
-    init_pair ( 1, COLOR_BLACK, COLOR_GREEN );
-
-    attron ( COLOR_PAIR ( 1 ) );	// set color for title
-
-    addstr ( head );
-
-    free ( head );
-
-    refresh();
-
-    return;
-}
-
-void printLine ( int countLine, string mac, string ip, long int epoch ) {
-
-    int ip_length = ip.length();
-
-    if ( ip_length < 15 ) {
-
-        for ( int ip_filler = 15 - ip_length; ip_filler > 0; ip_filler-- ) {
-            ip += ' ';
-        }
-
-    }
-
-    char *head;
-    int ind1;
-    int ind2;
-
-    if ( head = ( char* ) malloc ( cols * sizeof ( char ) ) ) {
-        int ttl = maxttl - ( time ( NULL ) - epoch );
-        snprintf ( head, cols, " %s | %s | %d | %d", mac.c_str(), ip.c_str(), epoch, ttl );
-
-        ind2 = strlen ( head );
-
-        for ( ind1 = ind2; ind1 < cols; ind1++ ) {
-            head[ind1] = ( int ) ' ';
-        }
-
-        head[cols] = ( int ) '\0';
-    } else {
-        printf ( "FAIL: Memory Allocation Failure\n" );
-        return;
-    }
-
-    move ( countLine, 0 );
-
-    init_pair ( 2, COLOR_WHITE, COLOR_BLACK );
-
-    attron ( COLOR_PAIR ( 2 ) );	// set color for title
-
-    addstr ( head );
-
-    free ( head );
-
-    refresh();
-
-    return;
 }
