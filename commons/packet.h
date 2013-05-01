@@ -3,7 +3,6 @@
  *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
- * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
  *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
@@ -29,8 +28,9 @@
 #ifndef PACKET_H
 #define PACKET_H
 
-/** Offset */
-
+/** 
+ * Position of the header from the beginning of the packet.
+ */
 namespace offset {
     const uint8_t ARP           = 14; /** ARP Offset */
     const uint8_t IPV4          = 14; /** IPv4 Offset */
@@ -39,8 +39,9 @@ namespace offset {
     const uint8_t ICMPV4        = 34; /** ICMPv4 Offsets */
 }
 
-/* EtherType */
-
+/**
+ * Translation of "EtherType" codes.
+ */
 namespace ethertype {
     const uint16_t V2_CODE      = 0x0600; /** EtherType: Below this value means "length" */
     const uint16_t IPV4         = 0x0800; /** EtherType: IPv4 */
@@ -53,8 +54,9 @@ namespace ethertype {
     const uint16_t PTP          = 0x88F7; /** EtherType: Precision Time Protocol */
 }
 
-/* IPv4 */
-
+/**
+ * Translation of "IPv4" codes.
+ */
 namespace ipv4type {
     const uint8_t ICMP          = 0x01; /** IPv4 Type ICMP */
     const uint8_t TCP           = 0x06; /** IPv4 Type TCP */
@@ -65,8 +67,9 @@ namespace ipv4type {
 
 #define TCP_STANDARD		20 	/** Standard header lenght (byte) */
 
-/* ICMP */
-
+/**
+ * Translation of "ICMP" codes.
+ */
 namespace icmpv4type {
     const uint16_t ECHO_REPLY    = 0x0000; /** Echo reply (used to ping) */
     const uint16_t NETW_UNREACH  = 0x0300; /** Network unreachable */
@@ -96,13 +99,26 @@ namespace network {
         uint32_t pkgLength; /** Packet length */
         std::string rawData; /** Raw packet recived from riddle */
 
-        /** Legge n byte a partire dal byte voluto e li restituisce in stringa. */
+	/**
+	 * Extracts in hexadecimal format a portion of the captured packet.
+	 * \param string_cursor indicates where to start to extract the data.
+	 * \param read_byte indicates how much data are extracted.
+	 * \return a string containing the extracted data in hexadecimal format.
+	 */
         inline std::string getHexString(int string_cursor, int read_byte);
 
-        /** Legge IPv4 dal byte voluto e restituisce in formato decimale. */
+        /**
+	 * Extracts an IP address in the specified location and puts it in a human-readable format.
+	 * \param string_cursor indicates where to start to extract the data.
+	 * \return a string containing the IP address in dot-decimal notation.
+	 */
         inline std::string getDecimalIP(int string_cursor);
 
-        /** Salva MAC address a partire da un punto (n� del byte) della stringa rawData */
+        /**
+	 * Extracts an MAC address in the specified location and puts it in the object "mac_address".
+	 * \param string_cursor indicates where to start to extract the data.
+	 * \return a mac_address object.
+	 */
         inline mac_address getMacAddress(int string_cursor);
 
     public:
@@ -111,10 +127,20 @@ namespace network {
         class Overflow {
         };
 
-        /** Class constructor with delayed instantiation*/
+        /** 
+	 * Class constructor with delayed instantiation.
+	 * \param timeEpoch_i is the date and time of capture expressed in POSIX time.
+	 * \param timeMillis_i are the milliseconds passed since Epoch.
+	 * \param rawData_i is the raw packet in hexadecimal format.
+	 * \return an instance of "packet".
+	 */
         static packet* factory(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
-        /** Class constructor with delayed instantiation, auto-split mode*/
+        /** 
+	 * Class constructor with delayed instantiation, auto-split mode.
+	 * \param packetLine is the packet in "Riddle" format.
+	 * \return an instance of "packet".
+	 */
         static packet* factory(std::string packetLine);
 
         /** Virtual destructor */
@@ -123,39 +149,57 @@ namespace network {
 
         /* GENERAL FUNCTIONS */
 
-        /** Returns the packet length in bytes. */
+        /**
+	 * \return the packet length in bytes.
+	 */
         uint32_t getPacketLength();
 
-        /** Returns packet epoch */
+        /**
+	 * \return packet Epoch.
+	 */
         uint64_t getEpoch();
 
-        /** Returns milliseconds passed from epoch */
+        /**
+	 * \return milliseconds passed since Epoch.
+	 */
         uint32_t getMillis();
 
-        /** true if this is an ARP packet. */
+        /**
+	 * \return true if this is an ARP packet.
+	 */
         inline bool isArp() {
             return ( this->getEtherType() == ethertype::ARP);
         }
 
-        /** true if this is an IPv4 packet. */
+        /**
+	 * \return true if this is an IPv4 packet.
+	 */
         inline bool isIPv4() {
             return ( this->getEtherType() == ethertype::IPV4);
         }
 
-        /** true if this is an IPv6 packet. */
+        /**
+	 * \return true if this is an IPv6 packet.
+	 */
         inline bool isIPv6() {
             return ( this->getEtherType() == ethertype::IPV6);
         }
 
         /* ETHERNET FUNCTIONS */
 
-        /** returns the mac address of the sender. */
+        /**
+	 * \return the sender mac_address.
+	 */
         mac_address getSenderMac();
 
-        /** returns the mac address of the destination. */
+        /**
+	 * \return the destination mac_address.
+	 */
         mac_address getTargetMac();
 
-        /** returns ethertype */
+        /**
+	 * \return the ethertype code.
+	 */
         uint16_t getEtherType();
 
     };
@@ -167,13 +211,19 @@ namespace network {
         /** final constructor. */
         ARPpacket(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
-        /** returns OpCode */
+        /**
+	 * \return OpCode.
+	 */
         uint16_t getOpCode();
 
-        /** returns the ip address of the sender. */
+        /** 
+	 * \return the sender IP address.
+	 */
         boost::asio::ip::address getSenderIp();
 
-        /** returns the ip address of the destination. */
+        /** 
+	 * \return the destination IP address.
+	 */
         boost::asio::ip::address getTargetIp();
 
     };
@@ -185,51 +235,77 @@ namespace network {
         /** Class constructor with delayed instantiation */
         static packet* factory(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
-        /** returns the ip address of the sender. */
+        /** 
+	 * \return the sender IP address.
+	 */
         boost::asio::ip::address getSenderIp();
 
-        /** returns the ip address of the destination. */
+        /** 
+	 * \return the destination IP address.
+	 */
         boost::asio::ip::address getTargetIp();
 
-        /** returns identity **/
+        /**
+	 * \return identity.
+	 */
         uint16_t getIdentity();
 
-        /** returns Time To Live **/
+        /**
+	 * \return Time To Live.
+	 */
         uint16_t getTTL();
 
-        /** returns protocol type */
+        /**
+	 * \return protocol type.
+	 */
         uint16_t getProtocolType();
 
-        /** returns checksum */
+        /**
+	 * \return checksum. 
+	 */
         uint16_t getIPChecksum();
 
-        /** verify checksum **/
+        /**
+	 * \return true if checksum is correct.
+	 */
         bool verifyIPChecksum();
 
-        /** returns raw flags. */
+        /**
+	 * \return raw flags.
+	 */
         int getFlagsIP();
 
-        /** true if "Don't Fragment" flag is up */
+        /** 
+	 * \return true if "Don't Fragment" flag is up.
+	 */
         inline bool isDF() {
             return ( this->getFlagsIP() & 64);
         }
 
-        /** true if "More Fragments" flag is up */
+        /** 
+	 * \return true if "More Fragments" flag is up.
+	 */
         inline bool isMF() {
             return ( this->getFlagsIP() & 32);
         }
 
-        /** true if the packet encapsulates a packet TCP. */
+        /**
+	 * \return true if the packet encapsulates a packet TCP.
+	 */
         inline bool isTCP() {
             return ( this->getProtocolType() == ipv4type::TCP);
         }
 
-        /** true if the packet encapsulates a packet UDP. */
+        /**
+	 * \return true if the packet encapsulates a packet UDP.
+	 */
         inline bool isUDP() {
             return ( this->getProtocolType() == ipv4type::UDP);
         }
 
-        /** true if the packet encapsulates a packet ICMP. */
+        /**
+	 * \return true if the packet encapsulates a packet ICMP.
+	 */
         inline bool isICMP() {
             return ( this->getProtocolType() == ipv4type::ICMP);
         }
@@ -246,89 +322,135 @@ namespace network {
         /** final constructor. */
         TCPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
-        /** return the port of the sender. */
+        /**
+	 * \return the port of the sender.
+	 */
         uint16_t getSenderPort();
 
-        /** return the port of the destination. */
+        /**
+	 * \return the port of the destination.
+	 */
         uint16_t getTargetPort();
 
-        /** return sequence number. */
+        /**
+	 * \return sequence number.
+	 */
         uint32_t getSequenceNumber();
 
-        /** return acknowledgment number. */
+        /**
+	 * \return acknowledgment number.
+	 */
         uint32_t getAcknowledgmentNumber();
 
-        /** return expected acknowledgment number. */
+        /**
+	 * \return expected acknowledgment number.
+	 */
         uint32_t getExpectedAcknowledgmentNumber();
 
-        /** return the TCP header size in bytes. */
+        /**
+	 * \return the TCP header size in bytes.
+	 */
         unsigned int getHeaderLength();
 
-        /** return the TCP payload size in bytes. */
+        /**
+	 * \return the TCP payload size in bytes.
+	 */
         unsigned int getPayloadLength();
 
-        /** returns raw flags. */
+        /**
+	 * \return raw flags.
+	 */
         int getFlagsTCP();
 
-        /** return size of the receive window in bytes. */
+        /**
+	 * \return size of the receive window in bytes.
+	 */
         unsigned int getWindowSize();
 
-        /** return checksum. */
+        /**
+	 * \return checksum.
+	 */
         unsigned int getTCPChecksum();
 
-        /** return the urgent pointer. */
+        /**
+	 * \return the urgent pointer.
+	 */
         unsigned int getUrgentPointer();
 
-        /** return raw TCP option. */
+        /**
+	 * \return raw TCP option.
+	 */
         std::string getOptionRaw();
 
-        /** return TCP option in a std::map */
+        /**
+	 * \return TCP option in a std::map.
+	 */
         std::map<int, std::string> getOptionMap();
 
-        /** return packet payload. */
+        /**
+	 * \return packet payload.
+	 */
         std::string getPayLoad();
 
-        /** true if flag FIN is set. */
+        /**
+	 * \return true if flag FIN is set.
+	 */
         inline bool isFIN() {
             return ( this->getFlagsTCP() & 1);
         }
 
-        /** true if flag SYN is set. */
+        /**
+	 * \return true if flag SYN is set.
+	 */
         inline bool isSYN() {
             return ( this->getFlagsTCP() & 2);
         }
 
-        /** true if flag RST is set. */
+        /**
+	 * \return true if flag RST is set.
+	 */
         inline bool isRST() {
             return ( this->getFlagsTCP() & 4);
         }
 
-        /** true if flag PSH is set. */
+        /**
+	 * \return true if flag PSH is set.
+	 */
         inline bool isPSH() {
             return ( this->getFlagsTCP() & 8);
         }
 
-        /** true if flag ACK is set. */
+        /**
+	 * \return true if flag ACK is set.
+	 */
         inline bool isACK() {
             return ( this->getFlagsTCP() & 16);
         }
 
-        /** true if flag URG is set. */
+        /**
+	 * \return true if flag URG is set.
+	 */
         inline bool isURG() {
             return ( this->getFlagsTCP() & 32);
         }
 
-        /** true if flag ECE is set. */
+        /**
+	 * \return true if flag ECE is set.
+	 */
         inline bool isECE() {
             return ( this->getFlagsTCP() & 64);
         }
 
-        /** true if flag CWR is set. */
+        /**
+	 * \return true if flag CWR is set.
+	 */
         inline bool isCWR() {
             return ( this->getFlagsTCP() & 128);
         }
 
-        /** true if there are additional options. */
+        /**
+	 * \return true if there are additional options.
+	 */
         inline bool isOption() {
             return ( this->getHeaderLength() > TCP_STANDARD);
         }
@@ -342,10 +464,14 @@ namespace network {
         /** final constructor. */
         UDPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
-        /** return the port of the sender. */
+        /**
+	 * \return the port of the sender.
+	 */
         uint16_t getSenderPort();
 
-        /** return the port of the destination. */
+        /**
+	 * \return the port of the destination.
+	 */
         uint16_t getTargetPort();
 
     };
@@ -357,7 +483,9 @@ namespace network {
         /** final constructor. */
         ICMPv4packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
-        /** return message type + code */
+        /**
+	 * \return message type + code.
+	 */
         uint16_t getMessageType();
 
     };
