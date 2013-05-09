@@ -44,22 +44,40 @@ private:
 
 public:
 
-    /** builds the object with null mac address */
+    /**
+     * Builds the object with null mac address.
+     * \return an instance of "macaddress".
+     */
     mac_address() {
         std::memset ( byte, 0, 12 );
     }
 
-    /** builds the object from a hexadecimal string (link to factory) */
-    mac_address ( std::string );
+    /**
+     * Builds the object from a hexadecimal string (link to factory)
+     * \param rawData is a mac address in hexadecimal notation. (Colons are optional)
+     * \return an instance of "macaddress".
+     */
+    mac_address ( std::string rawData );
 
-    /** builds the object from a hexadecimal string */
+    /**
+     * Override the object from a hexadecimal string.
+     * \param rawData is a mac address in hexadecimal notation. (Colons are optional)
+     */
     void from_string ( std::string );
 
-    /** implements the comparison between mac address */
+    /**
+     * Build printable mac address in hexadecimal notation with colons.
+     * \return a string with the mac address in hexadecimal notation.
+     */
+    std::string to_string();
+
+    /**
+     * Override - Implements the comparison between mac address
+     * \param otherMac This is the other mac address to be compared with the local one.
+     * \return true if the two addresses match.
+     */
     bool operator== ( const mac_address& otherMac );
 
-    /** build printable mac address */
-    std::string to_string();
 };
 
 }
