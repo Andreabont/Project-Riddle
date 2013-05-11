@@ -54,7 +54,9 @@ void network::mac_address::from_string ( std::string rawData ) {
         temp += rawData[i];
         if ( i%2 != 0 ) {
             std::stringstream convert ( temp );
-            convert>>std::hex>>byte[l];
+            int tempInt;
+            convert>>std::hex>>tempInt;
+            byte[l]=tempInt;
             l++;
             temp = "";
         }
@@ -76,15 +78,4 @@ std::string network::mac_address::to_string() {
     }
 
     return stamp;
-}
-
-/** Overload, definisco confronto tra indirizzi */
-bool network::mac_address::operator== ( const mac_address& otherMac ) {
-    for ( int i=0; i<=5; i++ ) {
-        if ( byte[i] != otherMac.byte[i] ) {
-            return false;
-        }
-    }
-
-    return true;
 }

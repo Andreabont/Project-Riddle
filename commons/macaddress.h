@@ -40,7 +40,7 @@ class mac_address
 {
 
 private:
-    uint16_t byte[6]; // FIXME Dovrebbe essere un uint8_t
+    uint8_t byte[6];
 
 public:
 
@@ -49,7 +49,7 @@ public:
      * \return an instance of "macaddress".
      */
     mac_address() {
-        std::memset ( byte, 0, 12 );
+        std::memset ( byte, 0, sizeof(byte) );
     }
 
     /**
@@ -76,7 +76,10 @@ public:
      * \param otherMac This is the other mac address to be compared with the local one.
      * \return true if the two addresses match.
      */
-    bool operator== ( const mac_address& otherMac );
+    bool operator== ( const mac_address& otherMac )
+    {
+        return memcmp(byte,otherMac.byte,sizeof(byte))==0;
+    }
 
 };
 
