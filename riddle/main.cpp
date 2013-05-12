@@ -271,13 +271,13 @@ int main ( int argc, char **argv ) {
                 cerr << ">> Try '" << argv[0] << " --iface-list' for more information." << endl;
                 break;
 
-            #ifdef PCAP_ERROR_PROMISC_PERM_DENIED
+#ifdef PCAP_ERROR_PROMISC_PERM_DENIED
             case PCAP_ERROR_PROMISC_PERM_DENIED:
                 cerr << "ERROR >> You do not have permission to open the device \"" << pcap_device.c_str() << "\" in promiscuous mode." << endl;
                 break;
-            #else
-            #warning "PCAP_ERROR_PROMISC_PERM_DENIED undefined, you're using an old libpcap"
-            #endif
+#else
+#warning "PCAP_ERROR_PROMISC_PERM_DENIED undefined, you're using an old libpcap"
+#endif
 
             case PCAP_ERROR_RFMON_NOTSUP :
                 cerr << "ERROR >> The device \"" << pcap_device.c_str() << "\" doesn't support monitor mode." << endl;
