@@ -31,6 +31,7 @@
 #define TCPFLOW_H
 
 #include <stdint.h>
+#include <memory>
 #include <list>
 #include <string>
 #include <boost/asio.hpp>
@@ -50,8 +51,8 @@ private:
     boost::asio::ip::address ipAddress[2];
     uint16_t port[2];
 
-    std::map<uint32_t, network::TCPv4packet*> snBuffer[2];
-    std::map<uint32_t, network::TCPv4packet*> ackExpBuffer[2];
+    std::map<uint32_t, std::shared_ptr<network::TCPv4packet>> snBuffer[2];
+    std::map<uint32_t, std::shared_ptr<network::TCPv4packet>> ackExpBuffer[2];
     uint32_t snPointer[2];
 
     std::string charStream[2];
@@ -63,14 +64,14 @@ private:
 
 public:
     /** Initialize flow with the first packet of the TCP handshake (SYN) */
-    bool factory ( network::TCPv4packet *packet );
+    bool factory ( std::shared_ptr<network::TCPv4packet> packet );
 
     /** Initialize flow with string (classFlow protocol) */
     void factory ( std::string flow );
 
 
     /** Put new packet in the flow */
-    bool addPacket ( network::TCPv4packet *newPacket );
+    bool addPacket ( std::shared_ptr<network::TCPv4packet> newPacket );
 
     /**
      * Read the first packet buffer and save the payload in the first char stream.

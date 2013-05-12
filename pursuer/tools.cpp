@@ -75,7 +75,7 @@ std::string exportFormattedRawFlow ( network::TcpStream* stream ) {
     return stdstring.str();
 }
 
-bool isStream ( std::list< network::TcpStream* >::iterator iter, network::TCPv4packet *pkg ) {
+bool isStream ( std::list< network::TcpStream* >::iterator iter, std::shared_ptr<network::TCPv4packet> pkg ) {
     return ( ( ( *iter )->getFirstIpAddress() == pkg->getSenderIp() && ( *iter )->getFirstPort() == pkg->getSenderPort() ) &&
              ( ( *iter )->getSecondIpAddress() == pkg->getTargetIp() && ( *iter )->getSecondPort() == pkg->getTargetPort() ) ) ||
            ( ( ( *iter )->getFirstIpAddress() == pkg->getTargetIp() && ( *iter )->getFirstPort() == pkg->getTargetPort() ) &&

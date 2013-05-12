@@ -26,12 +26,10 @@
 */
 
 #include <cstdio>
-#include <stdint.h>
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
 #include <stdexcept>
-#include <string>
 #include <ios>
 #include <map>
 #include <boost/lexical_cast.hpp>
@@ -42,7 +40,7 @@
 
 /* PACKET */
 
-network::packet* network::packet::factory ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
+std::shared_ptr<network::packet> network::packet::factory ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
 
     uint16_t protocol_type;
 
@@ -70,14 +68,14 @@ network::packet* network::packet::factory ( uint64_t timeEpoch_i, uint32_t timeM
 
     }
 
-    return p;
+    return std::shared_ptr<packet>(p);
 }
 
-network::packet* network::packet::factory ( std::string packetLine ) {
+std::shared_ptr<network::packet> network::packet::factory ( std::string packetLine ) {
     std::vector< std::string > section;
     boost::algorithm::split ( section, packetLine, boost::algorithm::is_any_of ( "!" ) );
 
-    packet* pkg = packet::factory ( boost::lexical_cast<int> ( section[0] ), boost::lexical_cast<int> ( section[1] ), section[2] );
+    std::shared_ptr<network::packet> pkg = packet::factory ( boost::lexical_cast<int> ( section[0] ), boost::lexical_cast<int> ( section[1] ), section[2] );
 
     return pkg;
 }

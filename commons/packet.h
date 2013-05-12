@@ -28,6 +28,12 @@
 #ifndef PACKET_H
 #define PACKET_H
 
+#include <string>
+#include <memory>
+#include <cstdint>
+#include <boost/asio.hpp>
+#include "macaddress.h"
+
 /** 
  * Position of the header from the beginning of the packet.
  */
@@ -81,13 +87,6 @@ namespace icmpv4type {
     const uint16_t TTL_EXPIRED   = 0x1100; /** TTL expired in transit */
 }
 
-/* INCLUDE */
-
-#include <string>
-#include <boost/asio.hpp>
-#include <stdint.h>
-#include "macaddress.h"
-
 namespace network {
 
     /** Class for managing packets */
@@ -134,14 +133,14 @@ namespace network {
 	 * \param rawData_i is the raw packet in hexadecimal format.
 	 * \return an instance of "packet".
 	 */
-        static packet* factory(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
+        static std::shared_ptr<network::packet> factory(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
         /** 
 	 * Class constructor with delayed instantiation, auto-split mode.
 	 * \param packetLine is the packet in "Riddle" format.
 	 * \return an instance of "packet".
 	 */
-        static packet* factory(std::string packetLine);
+        static std::shared_ptr<network::packet> factory(std::string packetLine);
 
         /** Virtual destructor */
         virtual ~packet() {

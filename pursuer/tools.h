@@ -38,6 +38,6 @@
 
 void writeout ( network::TcpStream* stream, bool tofile );
 std::string exportFormattedRawFlow ( network::TcpStream* stream );
-bool isStream ( std::list< network::TcpStream* >::iterator iter, network::TCPv4packet* pkg );
+bool isStream ( std::list< network::TcpStream* >::iterator iter, std::shared_ptr<network::TCPv4packet> pkg );
 
 #endif //LIBPURSUER_H

@@ -41,7 +41,6 @@
 #include "tools.h"
 
 using namespace std;
-using namespace boost;
 using namespace boost::program_options;
 using namespace network;
 
@@ -109,15 +108,15 @@ void scribe ( std::list<TcpStream*> *packet_stream ) {
             getline ( cin,r_packet );
             if ( cin.eof() ) break;
 
-            packet* pkg = packet::factory ( r_packet );
+	    shared_ptr<packet> pkg = packet::factory ( r_packet );
 
             if ( pkg->isIPv4() ) {
 
-                IPv4packet *pkg_ipv4 = dynamic_cast<IPv4packet*> ( pkg );
+		shared_ptr<IPv4packet> pkg_ipv4 = dynamic_pointer_cast< IPv4packet > ( pkg );
 
                 if ( pkg_ipv4->isTCP() ) {
 
-                    TCPv4packet *pkg_tcpv4 = dynamic_cast<TCPv4packet*> ( pkg );
+		    shared_ptr<TCPv4packet> pkg_tcpv4 = dynamic_pointer_cast< TCPv4packet > ( pkg );
 
                     boost::mutex::scoped_lock mylock ( mymutex );
 

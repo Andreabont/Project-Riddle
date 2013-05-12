@@ -47,7 +47,6 @@
 #define TIMETOLIVE 120
 
 using namespace std;
-using namespace boost;
 using namespace boost::program_options;
 using namespace boost::gregorian;
 using namespace boost::posix_time;
@@ -177,13 +176,13 @@ void scribe(list<device> *found) {
     while (1) {
         try {
 
-            packet* pkg = packet::factory(r_packet);
+	    shared_ptr<packet> pkg = packet::factory ( r_packet );
 
             if (pkg->isArp()) {
 
                 boost::mutex::scoped_lock mylock(mymutex);
 
-                ARPpacket *pkg_arp = dynamic_cast<ARPpacket*> (pkg);
+		shared_ptr<ARPpacket> pkg_arp = dynamic_pointer_cast< ARPpacket > ( pkg );
 
                 bool isFound = false;
 
@@ -209,7 +208,6 @@ void scribe(list<device> *found) {
 
             }
 
-            delete pkg;
             getline(cin, r_packet);
             if (cin.eof()) return;
 

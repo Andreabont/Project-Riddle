@@ -37,7 +37,7 @@
 #include "macaddress.h"
 #include "packet.h"
 
-bool network::TcpStream::factory ( network::TCPv4packet *packet ) {
+bool network::TcpStream::factory ( std::shared_ptr<network::TCPv4packet> packet ) {
 
     if ( packet->isSYN() ) {
 
@@ -56,7 +56,6 @@ bool network::TcpStream::factory ( network::TCPv4packet *packet ) {
             fluxFIN[0] = false;
             fluxFIN[1] = false;
 
-            delete packet;
             return true;
 
         } else {
@@ -64,7 +63,6 @@ bool network::TcpStream::factory ( network::TCPv4packet *packet ) {
             if ( snPointer[0] + 1 == packet->getAcknowledgmentNumber() ) {
                 snPointer[0]++;
                 snPointer[1] = packet->getSequenceNumber() + 1;
-                delete packet;
                 return true;
             }
 
@@ -72,7 +70,6 @@ bool network::TcpStream::factory ( network::TCPv4packet *packet ) {
 
     }
 
-    delete packet;
     return false;
 
 }
@@ -95,7 +92,7 @@ void network::TcpStream::factory ( std::string newflow ) {
 
 }
 
-bool network::TcpStream::addPacket ( network::TCPv4packet *newPacket ) {
+bool network::TcpStream::addPacket ( std::shared_ptr<network::TCPv4packet> newPacket ) {
 
     int a,b;
 
@@ -118,10 +115,10 @@ bool network::TcpStream::addPacket ( network::TCPv4packet *newPacket ) {
         } else return false; // Buffer non identificato.
 
 
-        if ( newPacket->isACK() ) { // Se c'� ACK setto il flag sul pacchetto corrispondente, se c'�.
+        if ( newPacket->isACK() ) { // Se c'e' ACK setto il flag sul pacchetto corrispondente, se c'e'.
 
 
-            std::map<uint32_t, network::TCPv4packet*>::iterator iter = ackExpBuffer[a].find ( newPacket->getAcknowledgmentNumber() );
+            std::map<uint32_t, std::shared_ptr<network::TCPv4packet>>::iterator iter = ackExpBuffer[a].find ( newPacket->getAcknowledgmentNumber() );
 
             if ( iter != ackExpBuffer[a].end() ) {
 
@@ -133,7 +130,7 @@ bool network::TcpStream::addPacket ( network::TCPv4packet *newPacket ) {
 
                 while ( !endLoop ) {
 
-                    std::map<uint32_t, network::TCPv4packet*>::iterator subIter = ackExpBuffer[a].find ( ackExpToFind );
+                    std::map<uint32_t, std::shared_ptr<network::TCPv4packet>>::iterator subIter = ackExpBuffer[a].find ( ackExpToFind );
 
                     if ( subIter != ackExpBuffer[a].end() && ( *subIter ).second->public_flag == false ) {
 
@@ -153,10 +150,10 @@ bool network::TcpStream::addPacket ( network::TCPv4packet *newPacket ) {
 
         if ( newPacket->getPayloadLength() != 0 ) { // Salvo il pacchetto solo se ha del payload.
 
-            // Sovrascrivo se � ritrasmissione.
+            // Sovrascrivo se ritrasmissione.
 
-            std::map<uint32_t, network::TCPv4packet*>::iterator searchIter1 = snBuffer[b].find ( newPacket->getSequenceNumber() );
-            std::map<uint32_t, network::TCPv4packet*>::iterator searchIter2 = ackExpBuffer[b].find ( newPacket->getExpectedAcknowledgmentNumber() );
+            std::map<uint32_t, std::shared_ptr<network::TCPv4packet>>::iterator searchIter1 = snBuffer[b].find ( newPacket->getSequenceNumber() );
+            std::map<uint32_t, std::shared_ptr<network::TCPv4packet>>::iterator searchIter2 = ackExpBuffer[b].find ( newPacket->getExpectedAcknowledgmentNumber() );
 
             if(searchIter1 != snBuffer[b].end()) {
                 snBuffer[b].erase(searchIter1);
@@ -188,8 +185,8 @@ bool network::TcpStream::addPacket ( network::TCPv4packet *newPacket ) {
 
 void network::TcpStream::delPacket ( uint32_t sn, int bufferNumber ) {
 
-    std::map<uint32_t, network::TCPv4packet*>::iterator iter1 = snBuffer[bufferNumber].find ( sn );
-    std::map<uint32_t, network::TCPv4packet*>::iterator iter2 = ackExpBuffer[bufferNumber].find ( sn );
+    std::map<uint32_t, std::shared_ptr<network::TCPv4packet>>::iterator iter1 = snBuffer[bufferNumber].find ( sn );
+    std::map<uint32_t, std::shared_ptr<network::TCPv4packet>>::iterator iter2 = ackExpBuffer[bufferNumber].find ( sn );
 
     if ( iter1 != snBuffer[bufferNumber].end() ) {
         snBuffer[bufferNumber].erase ( iter1 );
@@ -206,7 +203,7 @@ void network::TcpStream::flushBuffer ( int number ) {
 
     while ( true ) {
 
-        std::map<uint32_t, network::TCPv4packet*>::iterator iter = snBuffer[number].find ( snPointer[number] );
+        std::map<uint32_t, std::shared_ptr<network::TCPv4packet>>::iterator iter = snBuffer[number].find ( snPointer[number] );
 
         if ( iter == snBuffer[number].end() ) {
             break;
@@ -243,7 +240,7 @@ uint64_t network::TcpStream::getFirstBufferLength() {
 
     uint64_t bufferlenght = 0;
 
-    for ( std::map<uint32_t, network::TCPv4packet*>::iterator it = snBuffer[0].begin(); it != snBuffer[0].end(); it++ ) {
+    for ( std::map<uint32_t, std::shared_ptr<network::TCPv4packet>>::iterator it = snBuffer[0].begin(); it != snBuffer[0].end(); it++ ) {
 
         bufferlenght += ( *it ).second->getPayloadLength();
 
@@ -257,7 +254,7 @@ uint64_t network::TcpStream::getSecondBufferLength() {
 
     uint64_t bufferlenght = 0;
 
-    for ( std::map<uint32_t, network::TCPv4packet*>::iterator it = snBuffer[1].begin(); it != snBuffer[1].end(); it++ ) {
+    for ( std::map<uint32_t, std::shared_ptr<network::TCPv4packet>>::iterator it = snBuffer[1].begin(); it != snBuffer[1].end(); it++ ) {
 
         bufferlenght += ( *it ).second->getPayloadLength();
 
