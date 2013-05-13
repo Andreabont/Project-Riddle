@@ -75,6 +75,11 @@ void exit_signal ( int id ) {
 }
 #endif
 
+void error_exit( pcap_t* pcap_handle , string func ) {
+    pcap_perror( pcap_handle, (char*) func.c_str() );
+    exit ( EXIT_FAILURE );
+}
+
 int main ( int argc, char **argv ) {
 
 #ifdef __linux__
@@ -203,6 +208,8 @@ int main ( int argc, char **argv ) {
 
         }
 
+        /** PCAP HANDLER */
+
         pcap_handle = pcap_create ( pcap_device.c_str(), error_buffer );
 
         if ( pcap_handle == NULL ) {
@@ -211,6 +218,8 @@ int main ( int argc, char **argv ) {
         }
 
         int status = 0;
+
+        /** PCAP SNAPLEN */
 
         int snaplen = 1500;
 
@@ -221,17 +230,23 @@ int main ( int argc, char **argv ) {
 
         status = pcap_set_snaplen ( pcap_handle, snaplen );
 
-        if ( status != 0 ) {
-            return EXIT_FAILURE;
-        }
+        if ( status != 0 ) error_exit( pcap_handle, "pcap_set_snaplen" );
+
+        /** PCAP BUFFER  TODO */
+
+        // status = pcap_set_buffer_size ( pcap_handle, 0 );
+
+        // if ( status != 0 ) error_exit( pcap_handle, "pcap_set_buffer_size" );
+
+        /** MONITOR MODE */
 
         if ( vm.count ( "rfmon" ) ) {
             status = pcap_set_rfmon ( pcap_handle, 1 );
-            if ( status != 0 ) {
-                return EXIT_FAILURE;
-            }
+            if ( status != 0 ) error_exit( pcap_handle, "pcap_set_rfmon" );
             cerr << ">> Monitor mode enabled." << endl;
         }
+
+        /** PROMISCUOUS MODE */
 
         int promisc = 1;
 
@@ -242,15 +257,15 @@ int main ( int argc, char **argv ) {
 
         status = pcap_set_promisc ( pcap_handle, promisc );
 
-        if ( status != 0 ) {
-            return EXIT_FAILURE;
-        }
+        if ( status != 0 ) error_exit( pcap_handle, "pcap_set_promisc" );
+
+        /** PCAP TIMEOUT */
 
         status = pcap_set_timeout ( pcap_handle, 0 );
 
-        if ( status != 0 ) {
-            return EXIT_FAILURE;
-        }
+        if ( status != 0 ) error_exit( pcap_handle, "pcap_set_timeout" );
+
+        /** START PCAP */
 
         status = pcap_activate ( pcap_handle );
 
@@ -284,7 +299,7 @@ int main ( int argc, char **argv ) {
                 break;
 
             default:
-                cerr << "ERROR >> ID: " << status << "" << endl;
+                error_exit ( pcap_handle, "pcap_activate" );
             }
 
             return EXIT_FAILURE;
