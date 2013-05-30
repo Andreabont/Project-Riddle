@@ -91,18 +91,19 @@ int main ( int argc, char **argv ) {
     desc.add_options()
     ( "help,h", "prints this" )
     ( "dump,d", "enable dump mode" )
-    ( "iface,i", value< string >(), "interface to sniff from. [auto]" )
+    ( "iface,i", value<string>(), "interface to sniff from. [auto]" )
     ( "iface-list,y", "prints all available devices." )
-    ( "pcap,p", value< string >(), "reads packets from a pcap file (disable iface input)" )
-    ( "filter,f", value< vector< string > >()->multitoken(), "use to filter packet with bpf" )
-    ( "limit,l", value< int >(), "set max number of packet" )
-    ( "snaplen,a", value< int >(), "maximum amount of data to be captured. [1500]" )
+    ( "pcap,p", value<string>(), "reads packets from a pcap file (disable iface input)" )
+    ( "filter,f", value<vector<string>>()->multitoken(), "use to filter packet with bpf" )
+    ( "limit,l", value<int>(), "set max number of packet" )
+    ( "snaplen,a", value<int>(), "maximum amount of data to be captured in bytes. [1500]" )
+    ( "buffer,b", value<int>(), "set pcap buffer in KiB. [32]" )
     ( "rfmon,m", "enable monitor mode. (disable promiscuous mode)" )
     ( "no-promisc,n", "disable promiscuous mode." )
     ( "rapid,j", "enable mode for fast connections." )
 #ifdef __linux__
     ( "secure,s", "drop root privileges after initialization." )
-    ( "renice,r", value< int >(), "renice the process. [default 0]" )
+    ( "renice,r", value<int>(), "renice the process. [default 0]" )
 #endif
     ;
 
@@ -221,22 +222,37 @@ int main ( int argc, char **argv ) {
 
         /** PCAP SNAPLEN */
 
-        int snaplen = 1500;
+        int pcap_snaplen = 1500;
 
         if ( vm.count ( "snaplen" ) ) {
-            snaplen=vm["snaplen"].as<int>();
+            pcap_snaplen=vm["snaplen"].as<int>();
+            if ( pcap_snaplen < 1 ) {
+                cerr << "ERROR >> Invalid value for snaplen." << endl;
+                return EXIT_FAILURE;
+            }
             cerr << ">> Capture maximum " << vm["snaplen"].as<int>() << " bytes." << endl;
         }
 
-        status = pcap_set_snaplen ( pcap_handle, snaplen );
+        status = pcap_set_snaplen ( pcap_handle, pcap_snaplen );
 
         if ( status != 0 ) error_exit( pcap_handle, "pcap_set_snaplen" );
 
-        /** PCAP BUFFER  TODO */
+        /** PCAP BUFFER */
 
-        // status = pcap_set_buffer_size ( pcap_handle, 0 );
+        int pcap_buffer = 32;
 
-        // if ( status != 0 ) error_exit( pcap_handle, "pcap_set_buffer_size" );
+        if ( vm.count ( "buffer" ) ) {
+            pcap_buffer=vm["buffer"].as<int>();
+            if ( pcap_buffer < 4 ) {
+                cerr << "ERROR >> Invalid value for buffer size." << endl;
+                return EXIT_FAILURE;
+            }
+            cerr << ">> Set buffer size to " << vm["buffer"].as<int>() << " KiB." << endl;
+        }
+
+        status = pcap_set_buffer_size ( pcap_handle, pcap_buffer * 1024 );
+
+        if ( status != 0 ) error_exit( pcap_handle, "pcap_set_buffer_size" );
 
         /** MONITOR MODE */
 
@@ -373,8 +389,6 @@ int main ( int argc, char **argv ) {
     }
 
     pcap_loop ( pcap_handle , maxpacket , process_packet , NULL );
-
-    // TODO Gesisci segnale di terminazione e usa pcap_breakloop.
 
     cerr << ">> I finished the job, goodbye!" << endl;
 
