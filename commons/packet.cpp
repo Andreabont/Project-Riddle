@@ -413,8 +413,23 @@ std::map< int, std::string > network::TCPv4packet::getOptionMap() {
 }
 
 std::string network::TCPv4packet::getPayLoad() {
-    int start = offset::TCP + this->getHeaderLength();
-    return this->getHexString ( start, this->getPacketLength() - start );
+    int size = this->getHeaderLength();
+    int start = offset::TCP + size;
+    return this->getHexString ( start, size - start );
+}
+
+const char* network::TCPv4packet::getRawPayload() {
+    char* raw;
+    int size = this->getHeaderLength();
+    raw = new char[size];
+    std::string string = this->getPayLoad();
+    std::string::iterator it;
+    int index = 0;
+    for ( it = string.begin() ; it < string.end(); it++ ,index++)
+    {
+      raw[index] = *it;
+    }
+    return (const char*) raw;
 }
 
 /* UDP */

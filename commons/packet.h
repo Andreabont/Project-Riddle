@@ -390,6 +390,11 @@ namespace network {
 	 * \return packet payload.
 	 */
         std::string getPayLoad();
+	
+	/**
+	 * \return raw packet payload
+	 */
+	const char* getRawPayload();
 
         /**
 	 * \return true if flag FIN is set.
