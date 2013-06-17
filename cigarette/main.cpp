@@ -176,6 +176,12 @@ int main ( int argc, char **argv ) {
                     shared_ptr<UDPv4packet> pkg_udpv4 = dynamic_pointer_cast< UDPv4packet > ( pkg );
 
                     cout << "                    From port " << std::dec << pkg_udpv4->getSenderPort() << " to port " << pkg_udpv4->getTargetPort() << endl;
+		    
+                    if ( vm.count ( "payload" ) ) {
+                        cout << "                    + Payload:" << endl;
+                        cout << dump::classicDump ( pkg_udpv4->getPayLoad() ) << endl;
+                    }
+
                     cout << endl;
 
                 } else if ( pkg_ipv4->isICMP() ) {

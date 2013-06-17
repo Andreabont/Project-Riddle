@@ -92,6 +92,11 @@ uint32_t network::packet::getMillis() {
     return timeMillis;
 }
 
+uint32_t network::packet::getLength()
+{
+    return pkgLength;
+}
+
 inline std::string network::packet::getHexString ( int string_cursor, int read_byte ) {
     std::string temp;
     temp.reserve ( read_byte * 2 );
@@ -418,20 +423,6 @@ std::string network::TCPv4packet::getPayLoad() {
     return this->getHexString ( start, size - start );
 }
 
-const char* network::TCPv4packet::getRawPayload() {
-    char* raw;
-    int size = this->getHeaderLength();
-    raw = new char[size];
-    std::string string = this->getPayLoad();
-    std::string::iterator it;
-    int index = 0;
-    for ( it = string.begin() ; it < string.end(); it++ ,index++)
-    {
-      raw[index] = *it;
-    }
-    return (const char*) raw;
-}
-
 /* UDP */
 
 network::UDPv4packet::UDPv4packet ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
@@ -454,6 +445,13 @@ uint16_t network::UDPv4packet::getTargetPort() {
     std::stringstream convert ( this->getHexString ( offset::UDP + 2, 2 ) );
     convert>>std::hex>>port;
     return port;
+}
+
+std::string network::UDPv4packet::getPayLoad() {
+    int start = offset::UDP + 64;
+    int paylen = this->getLength() - start;
+    if(paylen <= 0) return ""; // FIXME
+    return this->getHexString ( start, paylen );
 }
 
 /* UNKNOWN */
