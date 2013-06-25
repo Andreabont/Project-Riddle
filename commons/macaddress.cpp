@@ -3,7 +3,6 @@
  *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
- * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
  *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
