@@ -6,3 +6,4 @@
 build/*
 src/*
 pkg/*
+nbproject/*
