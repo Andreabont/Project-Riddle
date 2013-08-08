@@ -97,7 +97,7 @@ uint32_t network::packet::getLength()
     return pkgLength;
 }
 
-inline std::string network::packet::getHexString ( int string_cursor, int read_byte ) {
+inline std::string network::packet::getHexString ( int string_cursor, int read_byte ) throw(Overflow) {
     std::string temp;
     temp.reserve ( read_byte * 2 );
 
@@ -110,14 +110,14 @@ inline std::string network::packet::getHexString ( int string_cursor, int read_b
     return temp;
 }
 
-inline std::string network::packet::getDecimalIP ( int string_cursor ) {
+inline std::string network::packet::getDecimalIP ( int string_cursor ) throw (Overflow) {
     std::string temp;
     std::string stamp;
     temp.reserve ( 2 );
 
     for ( int i=0; i <= 7; i++ ) {
         temp += rawData[ ( string_cursor*2 ) +i];
-        if ( i%2 != 0 ) {
+        if (i&0x01) { // False if "i" is even
             std::stringstream convert ( temp );
             int a;
             convert>>std::hex>>a;
@@ -129,7 +129,7 @@ inline std::string network::packet::getDecimalIP ( int string_cursor ) {
     return stamp;
 }
 
-inline network::mac_address network::packet::getMacAddress ( int string_cursor ) {
+inline network::mac_address network::packet::getMacAddress ( int string_cursor ) throw (Overflow) {
     mac_address mac_temp ( this->getHexString ( string_cursor, 6 ) );
     return mac_temp;
 }
