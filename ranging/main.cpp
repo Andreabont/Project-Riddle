@@ -3,7 +3,6 @@
  *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
- * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
  *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
@@ -38,8 +37,12 @@
 #include <boost/thread/thread.hpp>
 #include <boost/date_time.hpp>
 #include <sys/time.h>
-
 #include <curses.h>
+
+#ifdef __linux__
+#include <signal.h>
+#endif
+
 #include "commons/macaddress.h"
 #include "commons/packet.h"
 #include "tools.h"
@@ -52,6 +55,13 @@ using namespace boost::gregorian;
 using namespace boost::posix_time;
 using namespace network;
 
+#ifdef __linux__
+void exit_signal ( int id ) {
+    cerr << ">> Exit signal detected. (" << id << ")" << endl;
+    exit ( 0 );
+}
+#endif
+
 boost::mutex mymutex;
 int maxttl = TIMETOLIVE;
 
@@ -62,6 +72,11 @@ void printer(list<device> *found, win_size winxy);
 void scribe(list<device> *found);
 
 int main(int argc, char **argv) {
+    
+    #ifdef __linux__
+    signal ( SIGINT, exit_signal );     /* Ctrl-C */
+    signal ( SIGQUIT, exit_signal );    /* Ctrl-\ */
+    #endif
 
     options_description desc("Ranging - Network Passive Scanner");
     desc.add_options()

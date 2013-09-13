@@ -3,7 +3,6 @@
  *
  * Name        :  Project Riddle
  * Author      :  Andrea Bontempi
- * Version     :  0.1 aplha
  * Description :  Modular Network Sniffer
  *
  * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * - * -
@@ -66,7 +65,7 @@ void precise_process_packet ( u_char* useless, const struct pcap_pkthdr* header,
 
 #ifdef __linux__
 void exit_signal ( int id ) {
-    cout << ">> Exit signal detected. (" << id << ")" << endl;
+    cerr << ">> Exit signal detected. (" << id << ")" << endl;
     if ( pcap_handle != NULL ) {
         pcap_breakloop ( pcap_handle );
         pcap_close ( pcap_handle );
