@@ -58,6 +58,7 @@ using namespace network;
 #ifdef __linux__
 void exit_signal ( int id ) {
     cerr << ">> Exit signal detected. (" << id << ")" << endl;
+    endwin();
     exit ( 0 );
 }
 #endif
