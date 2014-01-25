@@ -1,74 +1,27 @@
 cmake_minimum_required(VERSION 2.6)
 project(ProjectRiddle)
 
+# Project settings
 set(CMAKE_BUILD_TYPE Release)
-
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x") 
 
 set(SYSCONF_INSTALL_DIR 
     "/etc"
     CACHE PATH "Path where to install configuration")
 
-add_subdirectory(commons)	# Commons libraries
-add_subdirectory(config)	# Configuration files
-
+# Projects includes
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/commons/)
 
-set(RIDDLE_SRCS riddle/main.cpp)
-set(CIGARETTE_SRCS cigarette/tools.cpp cigarette/tools.h cigarette/main.cpp)
-set(RANGING_SRCS ranging/tools.h ranging/tools.cpp ranging/main.cpp)
-set(PURSUER_SRCS pursuer/tools.h pursuer/tools.cpp pursuer/main.cpp)
-set(BREEDER_SRCS breeder/tools.h breeder/tools.cpp breeder/main.cpp)
-
-add_executable(ranging ${RANGING_SRCS})
-add_executable(cigarette ${CIGARETTE_SRCS})
-add_executable(riddle ${RIDDLE_SRCS})
-add_executable(pursuer ${PURSUER_SRCS})
-add_executable(breeder ${BREEDER_SRCS})
-
-set(BOOST_LIBS program_options system regex thread)
-find_package(Boost COMPONENTS ${BOOST_LIBS} REQUIRED)
-
-find_library(LIBPCAP pcap)
-
-find_package (Threads)
-
-SET(CURSES_NEED_NCURSES TRUE)
-find_package(Curses)
-
-# Build riddle
-target_link_libraries(riddle ${Boost_LIBRARIES})
-target_link_libraries(riddle ${LIBPCAP})
-target_link_libraries(riddle dump)
-
-# Build cigarette
-target_link_libraries(cigarette ${Boost_LIBRARIES})
-target_link_libraries(cigarette ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(cigarette network)
-target_link_libraries(cigarette dump)
-
-# Build ranging
-target_link_libraries(ranging ${Boost_LIBRARIES})
-target_link_libraries(ranging ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(ranging ${CURSES_LIBRARY})
-target_link_libraries(ranging network)
-
-# Build pursuer
-target_link_libraries(pursuer ${Boost_LIBRARIES})
-target_link_libraries(pursuer ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(pursuer network)
-target_link_libraries(pursuer dump)
-
-# Build breeder
-target_link_libraries(breeder ${Boost_LIBRARIES})
-target_link_libraries(breeder ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(breeder network)
-target_link_libraries(breeder dump)
-
-# Install binaries
-install(TARGETS riddle DESTINATION sbin)
-install(TARGETS breeder cigarette pursuer ranging DESTINATION bin)
+# Project modules (Comment for disable, pay attention to dependencies)
+add_subdirectory(commons)	# Commons libraries
+add_subdirectory(config)	# Configuration files
+add_subdirectory(riddle)	# Riddles files
+add_subdirectory(breeder)	# Breeder files
+add_subdirectory(pursuer)	# Pursuer files
+add_subdirectory(cigarette)	# Cigarette files
+add_subdirectory(ranging)	# Ranging files
 
 # Generate packages
 INCLUDE(InstallRequiredSystemLibraries)

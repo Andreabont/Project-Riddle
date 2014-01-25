@@ -46,6 +46,7 @@
 #include "commons/macaddress.h"
 #include "commons/packet.h"
 #include "tools.h"
+#include "thread.h"
 
 #define TIMETOLIVE 120
 
@@ -62,15 +63,6 @@ void exit_signal ( int id ) {
     exit ( 0 );
 }
 #endif
-
-boost::mutex mymutex;
-int maxttl = TIMETOLIVE;
-
-/** The thread "printer" manages the display. */
-void printer(list<device> *found, win_size winxy);
-
-/** The thread "scribe" listens to incoming packets. */
-void scribe(list<device> *found);
 
 int main(int argc, char **argv) {
     
@@ -104,6 +96,8 @@ int main(int argc, char **argv) {
         cout << desc << "\n";
         return EXIT_SUCCESS;
     }
+    
+    int maxttl = TIMETOLIVE;
 
     if (vm.count("ttl")) {
         maxttl = vm["ttl"].as<int>();
@@ -132,108 +126,11 @@ int main(int argc, char **argv) {
     list<device> found;
 
     boost::thread scribe_t(scribe, &found);
-    boost::thread printer_t(printer, &found, winxy);
+    boost::thread printer_t(printer, &found, winxy, maxttl);
 
     scribe_t.join();
     printer_t.join();
 
     endwin();
     return EXIT_SUCCESS;
-}
-
-void printer(list<device> *found, win_size winxy) {
-
-    static boost::posix_time::seconds delay(1);
-
-    while (1) {
-
-        boost::mutex::scoped_lock mylock(mymutex);
-
-        clear();
-        setHead(winxy);
-
-        int countLine = 1;
-
-        list<device>::iterator r = found->begin();
-
-        while (r != found->end()) {
-
-            if (time(NULL) > r->getEpoch() + maxttl) {
-
-                list<device>::iterator ex = r;
-                r++;
-                found->erase(ex);
-
-            } else {
-
-                printLine(winxy, countLine, maxttl, r);
-                r++;
-
-            }
-
-            countLine++;
-
-        }
-
-        mylock.unlock();
-
-        boost::this_thread::sleep(delay);
-
-    }
-
-}
-
-void scribe(list<device> *found) {
-
-    string r_packet;
-    getline(cin, r_packet);
-    if (cin.eof()) return;
-
-    while (1) {
-        try {
-
-	    shared_ptr<packet> pkg = packet::factory ( r_packet );
-
-            if (pkg->isArp()) {
-
-                boost::mutex::scoped_lock mylock(mymutex);
-
-		shared_ptr<ARPpacket> pkg_arp = dynamic_pointer_cast< ARPpacket > ( pkg );
-
-                bool isFound = false;
-
-                list<device>::iterator p = found->begin();
-
-                while (p != found->end()) {
-
-                    if (p->getMacAddress() == pkg_arp->getSenderMac() && p->getIpAddress() == pkg_arp->getSenderIp()) {
-                        p->setEpoch(pkg_arp->getEpoch());
-                        isFound = true;
-                        break;
-                    }
-
-                    p++;
-                }
-
-                if (!isFound) {
-                    device newDevice(pkg_arp->getSenderMac(), pkg_arp->getSenderIp());
-                    found->push_back(newDevice);
-                }
-
-                mylock.unlock();
-
-            }
-
-            getline(cin, r_packet);
-            if (cin.eof()) return;
-
-        } catch (packet::Overflow) {
-            cerr << "Overflow! :-P" << endl;
-            endwin();
-            return;
-        }
-
-
-    }
-
 }
