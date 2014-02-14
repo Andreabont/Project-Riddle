@@ -7,24 +7,6 @@ https://github.com/Andreabont/Project-Riddle/wiki
 Per la documentazione dei sorgenti visitare il sito web:
 http://andreabont.altervista.org/0x04/
 
-----------
-Dipendenze
-----------
-
-cmake (opzionale)
-libboost
-libpcap
-
--------------
-Installazione
--------------
-
-mkdir build
-cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc
-make
-make install 
-
 -------------
 Esempio d'uso
 -------------

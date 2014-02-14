@@ -1,0 +1,18 @@
+------------
+Dependencies
+------------
+
+* cmake
+* libboost
+* libpcap
+
+-----------------
+Compile & Install
+-----------------
+
+mkdir build
+cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc
+make
+make install
+
