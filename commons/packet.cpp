@@ -54,16 +54,18 @@ std::shared_ptr<network::packet> network::packet::factory ( uint64_t timeEpoch_i
     convert>>std::hex>>protocol_type;
 
     packet *p;
-    if ( protocol_type == ethertype::ARP ) {
+    
+    switch(protocol_type) {
 
+    case ethertype::ARP:
         p = new ARPpacket ( timeEpoch_i, timeMillis_i, rawData_i );
+        break;
 
-    } else if ( protocol_type == ethertype::IPV4 ) {
-
+    case ethertype::IPV4:
         p = IPv4packet::factory ( timeEpoch_i, timeMillis_i, rawData_i );
+        break;
 
-    } else {
-
+    default:
         p = new UnknownPacket ( timeEpoch_i, timeMillis_i, rawData_i );
 
     }
@@ -75,9 +77,8 @@ std::shared_ptr<network::packet> network::packet::factory ( std::string packetLi
     std::vector< std::string > section;
     boost::algorithm::split ( section, packetLine, boost::algorithm::is_any_of ( "!" ) );
 
-    std::shared_ptr<network::packet> pkg = packet::factory ( boost::lexical_cast<int> ( section[0] ), boost::lexical_cast<int> ( section[1] ), section[2] );
+    return packet::factory ( boost::lexical_cast<int> ( section[0] ), boost::lexical_cast<int> ( section[1] ), section[2] );
 
-    return pkg;
 }
 
 uint32_t network::packet::getPacketLength() {
@@ -198,22 +199,25 @@ network::packet* network::IPv4packet::factory ( uint64_t timeEpoch_i, uint32_t t
     convert>>std::hex>>protocol_type;
 
     packet *p;
-    if ( protocol_type == ipv4type::TCP ) {
-
+    
+    switch (protocol_type) {
+      
+    case ipv4type::TCP:
         p = new TCPv4packet ( timeEpoch_i, timeMillis_i, rawData_i );
+        break;
 
-    } else if ( protocol_type == ipv4type::UDP ) {
-
+    case ipv4type::UDP:
         p = new UDPv4packet ( timeEpoch_i, timeMillis_i, rawData_i );
+        break;
 
-    } else if ( protocol_type == ipv4type::ICMP ) {
-
+    case ipv4type::ICMP:
         p = new ICMPv4packet ( timeEpoch_i, timeMillis_i, rawData_i );
+        break;
 
-    } else {
-
+    default:
         p = new UnknownPacket ( timeEpoch_i, timeMillis_i, rawData_i );
-
+        break;
+	
     }
 
     return p;
