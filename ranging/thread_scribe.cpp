@@ -35,18 +35,13 @@ void scribe(list<device> *found) {
 
                 bool isFound = false;
 
-                list<device>::iterator p = found->begin();
-
-                while (p != found->end()) {
-
-                    if (p->getMacAddress() == pkg_arp->getSenderMac() && p->getIpAddress() == pkg_arp->getSenderIp()) {
-                        p->setEpoch(pkg_arp->getEpoch());
+		for(auto deviceObj = found->begin(); deviceObj != found->end();  deviceObj++) {
+		    if (deviceObj->getMacAddress() == pkg_arp->getSenderMac() && deviceObj->getIpAddress() == pkg_arp->getSenderIp()) {
+                        deviceObj->setEpoch(pkg_arp->getEpoch());
                         isFound = true;
                         break;
                     }
-
-                    p++;
-                }
+		}
 
                 if (!isFound) {
                     device newDevice(pkg_arp->getSenderMac(), pkg_arp->getSenderIp());
