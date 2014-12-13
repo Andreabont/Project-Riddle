@@ -1,0 +1,15 @@
+language: cpp
+
+compiler:
+- gcc
+- clang
+
+os:
+- linux
+
+script:
+- mkdir build
+- cd build
+- cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc
+- make
+- make test
