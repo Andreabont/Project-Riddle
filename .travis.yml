@@ -8,7 +8,7 @@ os:
 - linux
 
 before_script:
-- sudo apt-get install -qq libboost-dev
+- sudo apt-get install -qq libboost-all-dev
 
 script:
 - mkdir build
