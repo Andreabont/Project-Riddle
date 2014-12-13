@@ -7,6 +7,9 @@ compiler:
 os:
 - linux
 
+before_script:
+- sudo apt-get install -qq libboost-dev
+
 script:
 - mkdir build
 - cd build
