@@ -10,6 +10,9 @@ set(SYSCONF_INSTALL_DIR
     "/etc"
     CACHE PATH "Path where to install configuration")
 
+# Enable test
+enable_testing()
+
 # Projects includes
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/commons/)
@@ -22,6 +25,7 @@ add_subdirectory(breeder)	# Breeder files
 add_subdirectory(pursuer)	# Pursuer files
 add_subdirectory(cigarette)	# Cigarette files
 add_subdirectory(ranging)	# Ranging files
+add_subdirectory(test)          # Test files
 
 # Generate packages
 INCLUDE(InstallRequiredSystemLibraries)
