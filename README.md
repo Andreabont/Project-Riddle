@@ -1,3 +1,7 @@
+[![Build Status][travis-img]][travis-repo]
+[travis-img]:  https://travis-ci.org/Andreabont/Project-Riddle.svg?branch=master
+[travis-repo]: https://travis-ci.org/Andreabont/Project-Riddle
+
 Build and install
 =================
 
