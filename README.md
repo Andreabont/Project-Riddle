@@ -25,17 +25,17 @@ Example
 Get ARP packets from eth0
 -------------------------
 ```sh
-sudo ./riddle --iface eth0 --filter arp --dump
+sudo riddle --iface eth0 --filter arp --dump
 ```
 
 Show packets from wlan0
 -----------------------
 ```sh
-sudo ./riddle --iface wlan0 | ./cigarette
+sudo riddle --iface wlan0 | cigarette
 ```
 
 Show computers in the network (MAC and IP address)
 --------------------------------------------------
 ```sh
-sudo ./riddle --iface wlan0 | ./ranging
+sudo riddle --iface wlan0 | ranging
 ```
