@@ -80,6 +80,16 @@ public:
         return memcmp(byte,otherMac.byte,sizeof(byte))==0;
     }
 
+    /**
+     * Override - Implements the comparison between mac address (not equal)
+     * \param otherMac This is the other mac address to be compared with the local one.
+     * \return true if the two addresses match.
+     */
+    bool operator!= ( const mac_address& otherMac )
+    {
+        return !operator==(otherMac);
+    }
+
 };
 
 }

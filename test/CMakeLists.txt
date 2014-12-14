@@ -22,6 +22,7 @@ foreach(testSrc ${TEST_SRC})
 
         # link to Boost libraries AND your targets and dependencies
         target_link_libraries(${testName} ${Boost_LIBRARIES})
+        target_link_libraries(${testName} network)
 
         # Add test
         add_test(NAME ${testName} 
