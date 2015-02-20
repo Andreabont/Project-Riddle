@@ -121,7 +121,7 @@ bool network::TcpStream::addPacket ( std::shared_ptr<network::TCPv4packet> newPa
 
             if ( iter != ackExpBuffer[a].end() ) {
 
-                ( *iter ).second->public_flag == true;
+                ( *iter ).second->public_flag = true;
 
                 uint32_t ackExpToFind = ( *iter ).second->getSequenceNumber();
 
@@ -258,6 +258,8 @@ uint64_t network::TcpStream::getSecondBufferLength() {
         bufferlenght += ( *it ).second->getPayloadLength();
 
     }
+    
+    return bufferlenght;
 
 }
 

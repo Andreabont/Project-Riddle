@@ -115,7 +115,7 @@ void printLine(win_size winxy, int countLine, int maxttl, std::list<device>::ite
 
     if (head = (char*) malloc(winxy.cols * sizeof ( char))) {
         int ttl = maxttl - (time(NULL) - epoch);
-        snprintf(head, winxy.cols, " %s | %s | %d | %d", mac.c_str(), ip.c_str(), epoch, ttl);
+        snprintf(head, winxy.cols, " %s | %s | %ld | %d", mac.c_str(), ip.c_str(), epoch, ttl);
 
         ind2 = strlen(head);
 
