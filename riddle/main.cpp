@@ -96,7 +96,7 @@ int main ( int argc, char **argv ) {
     ( "filter,f", value<vector<string>>()->multitoken(), "use to filter packet with bpf" )
     ( "limit,l", value<int>(), "set max number of packet" )
     ( "snaplen,a", value<int>(), "maximum amount of data to be captured in bytes. [1500]" )
-    ( "buffer,b", value<int>(), "set pcap buffer in KiB. [32]" )
+    ( "buffer,b", value<int>(), "set pcap buffer in KiB. [256]" )
     ( "rfmon,m", "enable monitor mode. (disable promiscuous mode)" )
     ( "no-promisc,n", "disable promiscuous mode." )
     ( "rapid,j", "enable mode for fast connections." )
@@ -238,7 +238,7 @@ int main ( int argc, char **argv ) {
 
         /** PCAP BUFFER */
 
-        int pcap_buffer = 32;
+        int pcap_buffer = 256;
 
         if ( vm.count ( "buffer" ) ) {
             pcap_buffer=vm["buffer"].as<int>();
