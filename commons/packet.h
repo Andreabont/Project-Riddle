@@ -181,10 +181,10 @@ namespace network {
 
     protected:
 
-        uint64_t timeEpoch; /** Timestamp */
-        uint32_t timeMillis; /** Millisecond from timestamp */
-        uint32_t pkgLength; /** Packet length */
-        std::string rawData; /** Raw packet recived from riddle */
+        uint64_t timeEpoch = 0; /** Timestamp */
+        uint32_t timeMillis = 0; /** Millisecond from timestamp */
+        uint32_t pkgLength = 0; /** Packet length */
+        std::string rawData = ""; /** Raw packet recived from riddle */
 
         /**
          * Extracts in hexadecimal format a portion of the captured packet.

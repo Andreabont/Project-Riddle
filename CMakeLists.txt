@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 2.6)
 project(ProjectRiddle)
 
 # Project settings
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x") 
 
 # Uncomment to enable compiler warning
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -Weffc++") 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic -Wall -Wextra -Weffc++") 
 
 set(SYSCONF_INSTALL_DIR 
     "/etc"

@@ -58,7 +58,7 @@ inline std::string decodeHexText ( std::string raw ) {
 
     std::string text;
 
-    for ( int i = 0; i <= raw.size(); i += 2 ) {
+    for ( unsigned int i = 0; i <= raw.size(); i += 2 ) {
         std::string comp;
         comp += ( char ) raw[i];
         comp += ( char ) raw[i+1];
@@ -72,12 +72,12 @@ inline std::string decodeHexText ( std::string raw ) {
 
 }
 
-/** enccoding to hex format */
+/** encoding to hex format */
 inline std::string encodeHexText ( const unsigned char *text, uint32_t size ) {
 
     std::stringstream out;
 
-    for ( int i = 0; i < size; i++ ) {
+    for ( unsigned int i = 0; i < size; i++ ) {
 
         out << std::setfill ( '0' ) << std::setw ( 2 ) << std::hex << ( int ) text[i];
 

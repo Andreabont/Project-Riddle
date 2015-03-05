@@ -44,7 +44,6 @@
 void writeout ( network::TcpStream* stream, bool tofile ) {
     if ( tofile ) {
         std::stringstream filename;
-        char buffer[10];
         filename << "flow_";
         filename << stream->getTimeEpoch();
         filename << "_";
