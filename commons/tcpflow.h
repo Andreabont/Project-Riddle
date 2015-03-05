@@ -43,8 +43,8 @@ namespace network {
 class TcpStream
 {
 private:
-    uint64_t timeEpoch = 0;
-    uint32_t timeMillis = 0;
+    uint64_t timeEpoch;
+    uint32_t timeMillis;
 
     network::mac_address macAddress[2];
     boost::asio::ip::address ipAddress[2];
