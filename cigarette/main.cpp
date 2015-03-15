@@ -72,7 +72,7 @@ int main ( int argc, char **argv ) {
         return EXIT_SUCCESS;
     }
 
-    while ( 1 ) {
+    for ( ;; ) {
         try {
             string r_packet;
             getline ( cin,r_packet );
@@ -88,7 +88,7 @@ int main ( int argc, char **argv ) {
 
             if ( pkg->isArp() ) {
 
-                shared_ptr<ARPpacket> pkg_arp = dynamic_pointer_cast< ARPpacket > ( pkg );
+                shared_ptr<ARPpacket> pkg_arp = static_pointer_cast< ARPpacket > ( pkg );
 
                 if ( pkg_arp->getOpCode() == 1 ) {
                     cout << "                    Who has " << pkg_arp->getTargetIp().to_string() << " ? Tell "<< pkg_arp->getSenderIp().to_string() << endl;
@@ -103,7 +103,7 @@ int main ( int argc, char **argv ) {
 
             } else if ( pkg->isIPv4() ) {
 
-                shared_ptr<IPv4packet> pkg_ipv4 = dynamic_pointer_cast< IPv4packet > ( pkg );
+                shared_ptr<IPv4packet> pkg_ipv4 = static_pointer_cast< IPv4packet > ( pkg );
 
                 cout << "                    From " << pkg_ipv4->getSenderIp().to_string() << " to "<< pkg_ipv4->getTargetIp().to_string() << endl;
                 cout << "                    ProtocolType: 0x" << pkg_ipv4->getProtocolType() << " ("<< ipv4_type_decode ( pkg_ipv4->getProtocolType() ) << ")" << endl;
@@ -128,7 +128,7 @@ int main ( int argc, char **argv ) {
 
                 if ( pkg_ipv4->isTCP() ) {
 
-                    shared_ptr<TCPv4packet> pkg_tcpv4 = dynamic_pointer_cast< TCPv4packet > ( pkg );
+                    shared_ptr<TCPv4packet> pkg_tcpv4 = static_pointer_cast< TCPv4packet > ( pkg );
 
                     cout << "                    From port " << std::dec << pkg_tcpv4->getSenderPort() << " to port " << pkg_tcpv4->getTargetPort() << endl;
 
@@ -173,7 +173,7 @@ int main ( int argc, char **argv ) {
 
                 } else if ( pkg_ipv4->isUDP() ) {
 
-                    shared_ptr<UDPv4packet> pkg_udpv4 = dynamic_pointer_cast< UDPv4packet > ( pkg );
+                    shared_ptr<UDPv4packet> pkg_udpv4 = static_pointer_cast< UDPv4packet > ( pkg );
 
                     cout << "                    From port " << std::dec << pkg_udpv4->getSenderPort() << " to port " << pkg_udpv4->getTargetPort() << endl;
 		    
@@ -186,7 +186,7 @@ int main ( int argc, char **argv ) {
 
                 } else if ( pkg_ipv4->isICMP() ) {
 
-                    shared_ptr<ICMPv4packet> pkg_icmpv4 = dynamic_pointer_cast< ICMPv4packet > ( pkg );
+                    shared_ptr<ICMPv4packet> pkg_icmpv4 = static_pointer_cast< ICMPv4packet > ( pkg );
 
                     cout << "                    Message Type: " << pkg_icmpv4->getMessageType() << " (" << icmpv4_type_decode ( pkg_icmpv4->getMessageType() ) << ")" << endl;
                     cout << endl;

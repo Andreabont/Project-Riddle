@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 project (test)
 
 # Setup CMake to run tests
-find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+find_package(Boost COMPONENTS unit_test_framework system REQUIRED)
 include_directories (${Boost_INCLUDE_DIRS})
 
 # Test source files
@@ -23,6 +23,7 @@ foreach(testSrc ${TEST_SRC})
         # link to Boost libraries AND your targets and dependencies
         target_link_libraries(${testName} ${Boost_LIBRARIES})
         target_link_libraries(${testName} network)
+	target_link_libraries(${testName} dump)
 
         # Add test
         add_test(NAME ${testName} 
