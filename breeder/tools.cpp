@@ -112,7 +112,7 @@ std::vector< int > breederConfig::getPortsAvailable(boost::property_tree::ptree 
     boost::algorithm::split ( sports, temp, boost::algorithm::is_any_of ( " " ) );
     std::vector< int > ports( sports.size() );
 
-    for(int i = 0; i < sports.size(); i++) {
+    for (unsigned int i = 0; i < sports.size(); i++) {
         ports[i] = boost::lexical_cast<int> ( sports[i] );
     }
 
