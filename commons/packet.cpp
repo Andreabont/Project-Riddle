@@ -215,7 +215,7 @@ network::packet* network::IPv4packet::factory ( uint64_t timeEpoch_i, uint32_t t
         break;
 
     default:
-        p = new UnknownPacket ( timeEpoch_i, timeMillis_i, rawData_i );
+        p = new UnknownIPv4Packet ( timeEpoch_i, timeMillis_i, rawData_i );
         break;
 	
     }
@@ -460,10 +460,19 @@ std::string network::UDPv4packet::getPayLoad() {
 
 /* UNKNOWN */
 
-network::UnknownPacket::UnknownPacket ( uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i ) {
+network::UnknownPacket::UnknownPacket (uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i) {
     timeEpoch = timeEpoch_i;
     timeMillis = timeMillis_i;
     rawData = rawData_i;
     pkgLength = rawData_i.length() / 2;
     return;
 }
+
+network::UnknownIPv4Packet::UnknownIPv4Packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i) {
+    timeEpoch = timeEpoch_i;
+    timeMillis = timeMillis_i;
+    rawData = rawData_i;
+    pkgLength = rawData_i.length() / 2;
+    return;
+}
+

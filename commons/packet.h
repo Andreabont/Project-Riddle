@@ -511,6 +511,15 @@ namespace network {
         UnknownPacket(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
 
     };
+    
+    /** Class for managing unknown IPv4packets */
+    class UnknownIPv4Packet : public IPv4packet {
+    public:
+
+        /** final constructor. */
+        UnknownIPv4Packet(uint64_t timeEpoch_i, uint32_t timeMillis_i, std::string rawData_i);
+
+    };
 
 }
 
