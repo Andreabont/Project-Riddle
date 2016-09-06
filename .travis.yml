@@ -1,6 +1,6 @@
 sudo: required
 dist: precise
-language: cpp
+language: none
 
 matrix:
   include:
@@ -12,15 +12,15 @@ matrix:
           packages:
             - g++-5
       env: COMPILER=g++-5
-    - compiler: clang
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.7
-          packages:
-            - clang-3.7
-      env: COMPILER=clang++-3.7
+#    - compiler: clang
+#      addons:
+#        apt:
+#          sources:
+#            - ubuntu-toolchain-r-test
+#            - llvm-toolchain-precise-3.7
+#          packages:
+#            - clang-3.7
+#      env: COMPILER=clang++-3.7
 
 before_install:
   - sudo apt-get update -qq
