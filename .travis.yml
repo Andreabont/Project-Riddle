@@ -1,14 +1,15 @@
-os:
-- linux
-
-sudo: required
-dist: trusty
-language: cpp
-
 matrix:
+
   include:
 
     - compiler: gcc
+    
+      os:
+           - linux
+      sudo: required
+      dist: trusty
+      language: cpp
+    
       addons:
         apt:
           sources:
@@ -28,6 +29,13 @@ matrix:
             - make test
 
     - compiler: clang
+    
+      os:
+           - linux
+      sudo: required
+      dist: trusty
+      language: cpp    
+    
       addons:
         apt:
           sources:
