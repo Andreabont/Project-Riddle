@@ -1,15 +1,69 @@
+os:
+- linux
+
+sudo: required
+dist: trusty
 language: cpp
 
 compiler:
 - gcc
-#- clang
+- clang
 
-os:
-- linux
+addons:
 
-before_script:
-- sudo apt-get install -qq libboost-all-dev libpcap-dev
+  apt:
 
+    sources:
+    # add PPAs with more up-to-date toolchains
+    - ubuntu-toolchain-r-test
+    - llvm-toolchain-precise-3.6
+
+    packages:
+    # install toolchains
+    - gcc-5
+    - g++-5
+    - clang-3.6
+    - libboost-all-dev
+    - libpcap-dev
+
+matrix:
+  include:
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+      env: COMPILER=g++-4.9
+    - compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+      env: COMPILER=g++-5
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
+          packages:
+            - clang-3.6
+      env: COMPILER=clang++-3.6
+    - compiler: clang
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.7
+          packages:
+            - clang-3.7
+      env: COMPILER=clang++-3.7
+
+# TEST RUN SCRIPT
 script:
 - mkdir build
 - cd build
