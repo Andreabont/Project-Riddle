@@ -17,7 +17,15 @@ matrix:
             - g++-5
             - libboost-all-dev
             - libpcap-dev
+
       env: COMPILER=g++-5
+
+      script:
+            - mkdir build
+            - cd build
+            - cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc
+            - make
+            - make test
 
     - compiler: clang
       addons:
@@ -31,11 +39,10 @@ matrix:
             - libpcap-dev
 
       env: COMPILER=clang++-3.7
-
-# TEST RUN SCRIPT
-script:
-- mkdir build
-- cd build
-- cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc
-- make
-- make test
+      
+      script:
+            - mkdir build
+            - cd build
+            - cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc
+            - make
+            - make test
