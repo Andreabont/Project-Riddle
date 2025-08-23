@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This repository is migrated [here](https://git.andreabont.it/andreabont/Project-Riddle).
+
 [![Build Status][travis-img]][travis-repo]
 [travis-img]:  https://travis-ci.org/Andreabont/Project-Riddle.svg?branch=master
 [travis-repo]: https://travis-ci.org/Andreabont/Project-Riddle
